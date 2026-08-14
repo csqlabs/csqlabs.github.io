@@ -204,6 +204,89 @@
 .article__sources li p a:hover,
 .article__sources li p a:focus-visible { text-decoration-thickness: 2px; }
 
+/* ---------------------------------------------------------------------- */
+/* Legal pages (privacy, cookies)                                          */
+/* ---------------------------------------------------------------------- */
+/* These reuse the article page wholesale — .article for the white block and
+   top spacing, .measure for the reading column, .article__head for the
+   title, .article__body for the section rhythm. Everything below is only
+   what a policy needs and an essay never did: h3 subheads, lists, inline
+   links, and a table of contents. */
+/* The article page hands off to Related Articles, which carries its own
+   padding; a policy runs straight into the footer, so it needs the closing
+   gap itself. */
+.legal { padding-bottom: var(--article-block-gap); }
+
+.legal__body h3 {
+  color: var(--color-maroon);
+  margin-top: var(--gap-md);
+}
+/* An h3 opening a section sits directly under its h2, where the section's
+   own spacing already applies. */
+.legal__body h2 + h3 { margin-top: var(--gap-sm); }
+
+.legal__body ul {
+  margin-top: var(--gap-sm);
+  padding-left: 1.5em;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-xxs);
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: var(--fs-body);
+  line-height: calc(var(--lh-body) * 1.5);
+  color: var(--color-black);
+}
+.legal__body li { list-style: square; }
+.legal__body li::marker { color: var(--color-salmon); }
+
+/* Inline references, both the in-page TOC jumps and outbound links. */
+.legal__body a {
+  color: var(--color-maroon);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+.legal__body a:hover,
+.legal__body a:focus-visible { text-decoration-thickness: 2px; }
+
+/* Cookie detail tables: label/value rows, so the labels are <th scope="row">
+   down the left rather than a header row across the top. The wrapper scrolls
+   on its own at narrow widths — the page body must never scroll sideways. */
+.legal__table-wrap { margin-top: var(--gap-sm); overflow-x: auto; }
+.legal__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--color-black);
+  text-align: left;
+}
+.legal__table th,
+.legal__table td { padding: var(--gap-xxs) 0; border-bottom: 0.5px solid rgba(85, 0, 0, 0.15); vertical-align: top; }
+.legal__table th {
+  width: 8.5em;
+  padding-right: var(--gap-sm);
+  font-weight: 600;
+  color: var(--color-maroon);
+  white-space: nowrap;
+}
+
+/* Table of contents: mono/uppercase like the rest of the site's index-y
+   type, and unmarked — the entries are numbered in their own text. */
+.legal__toc { padding-left: 0; gap: var(--gap-xs); }
+.legal__toc li { list-style: none; }
+.legal__toc a {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: var(--fs-caption);
+  line-height: var(--lh-caption);
+  text-decoration: none;
+}
+.legal__toc a:hover,
+.legal__toc a:focus-visible { text-decoration: underline; text-underline-offset: 0.18em; }
+
 /* ---- Related articles (reuses the .articles/.article-card component
    from the landing page's Articles section, just retitled) ---- */
 .related-articles { background: var(--color-white); padding-block: var(--article-block-gap); }

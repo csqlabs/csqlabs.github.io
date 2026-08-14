@@ -43,10 +43,26 @@
   var toggle = document.querySelector(".nav-toggle");
   var links = document.querySelector(".site-nav__links");
   if (toggle && links) {
+    var setNavOpen = function (open) {
+      toggle.setAttribute("aria-expanded", String(open));
+      links.classList.toggle("is-open", open);
+      /* The panel covers the whole viewport below the bar, so lock page
+         scroll behind it. Its own class rather than the contact modal's
+         .has-modal-open: the nav's CTA opens that modal, and sharing one
+         class would let whichever closed first unlock scroll for both. */
+      document.body.classList.toggle("has-nav-open", open);
+    };
+
     toggle.addEventListener("click", function () {
-      var open = toggle.getAttribute("aria-expanded") === "true";
-      toggle.setAttribute("aria-expanded", String(!open));
-      links.classList.toggle("is-open", !open);
+      setNavOpen(toggle.getAttribute("aria-expanded") !== "true");
+    });
+
+    /* Close on any link tap. Matters most for the same-page fragment
+       links (#offerings, #engineered-by-veterans …): those scroll without
+       a navigation, so a full-height panel would otherwise stay parked
+       over the section it just jumped to. */
+    links.addEventListener("click", function (event) {
+      if (event.target.closest("a")) setNavOpen(false);
     });
   }
 

@@ -138,6 +138,17 @@
     top: 100%;
     left: 0;
     right: 0;
+    /* Full-screen panel. The 100% inside the calc resolves against the
+       same containing block top:100% does — the fixed header's own
+       padding box — so bar height + panel height always lands exactly on
+       the viewport bottom, without hardcoding a bar height (--header-h
+       is the hero's spacing token and runs several px taller than the
+       bar actually measures on mobile). dvh so the panel still ends at
+       the true bottom edge while mobile browser chrome is showing;
+       the vh line above it is the fallback for browsers without dvh. */
+    height: calc(100vh - 100%);
+    height: calc(100dvh - 100%);
+    overflow-y: auto;
     flex-direction: column;
     align-items: flex-start;
     gap: 0;
@@ -145,6 +156,14 @@
     border-top: 0.5px solid var(--color-bone);
   }
   .site-nav__links.is-open li { width: 100%; }
+  /* Now that the panel is full-height, the CTA anchors to its bottom
+     instead of trailing the last link. auto margin rather than
+     justify-content on the panel, so only this item gets pushed down —
+     the links above it stay stacked tight against the bar. It collapses
+     harmlessly back to a normal flow item if the panel ever runs out of
+     spare height (short landscape viewports), where the panel's own
+     overflow-y takes over. */
+  .site-nav__links.is-open .site-nav__links-cta { margin-top: auto; }
   .site-nav__links.is-open a {
     display: block;
     width: 100%;
@@ -155,6 +174,20 @@
     display: flex;
     width: calc(100% - 2 * var(--container-pad));
     margin: var(--gap-sm) var(--container-pad);
+  }
+
+  /* The open panel is maroon in every header state, so its contents have
+     to stay bone/reversed even once the bar itself has gone solid white.
+     Without this, .site-header--solid (scrolled pages), its static twin
+     .site-header--static-solid (careers/privacy/cookies — pages.css) and
+     .no-js all repaint these links maroon, i.e. maroon-on-maroon: the
+     menu opens looking like an empty block. Scoped through .site-header
+     purely for specificity — pages.css loads after this file, so an
+     equal-specificity rule here would lose the tie to --static-solid. */
+  .site-header .site-nav__links.is-open a:not(.btn) { color: var(--color-bone); }
+  .site-header .site-nav__links.is-open .btn--light {
+    background: var(--color-bone);
+    color: var(--color-maroon);
   }
 }
 
@@ -194,8 +227,22 @@
   padding-bottom: clamp(186px, 108px + 18.2vw, 84px);
 }
 
+/* Mobile: the banner alone owns the first viewport, and the quicklinks drop
+   into normal flow underneath it so they start below the fold instead of
+   overlaying the bottom of it. That means the height moves from .hero to
+   .hero__inner — .hero itself grows to banner + quicklinks — and the
+   224px bottom padding that used to reserve room for the three overlaid
+   rows is no longer needed. dvh so the banner ends at the true bottom edge
+   while the browser chrome is showing; the vh line is the fallback. */
 @media (max-width: 767px) {
-  .hero__inner { padding-bottom: 224px; justify-content: flex-end; padding-top: var(--header-h); }
+  .hero { height: auto; }
+  .hero__inner {
+    height: 100vh;
+    height: 100dvh;
+    padding-bottom: var(--gap-lg);
+    justify-content: flex-end;
+    padding-top: var(--header-h);
+  }
 }
 
 .hero__content {
@@ -245,7 +292,12 @@
 
 @media (max-width: 767px) {
   .hero__quicklinks {
-    position: absolute;
+    /* relative, not absolute: they follow the full-height banner in flow so
+       the first viewport is the banner only (see .hero__inner above).
+       Relative rather than static because .hero__video and .hero__scrim are
+       positioned and would otherwise paint over an unpositioned sibling —
+       this keeps the z-index: 6 below doing its job. */
+    position: relative;
     flex-direction: column;
     align-items: stretch;
     height: auto;
@@ -906,10 +958,33 @@
 
 }
 
-/* Ratio matches the portrait's own 1773x2523 (= 591:841) so object-fit has
-   nothing to crop. object-position pins to the top regardless, so a future
-   photo with a different ratio loses feet rather than a head. */
-.veterans__photo { width: 100%; aspect-ratio: 591 / 841; overflow: hidden; position: relative; }
+/* Photo and its caption row stack as one column; the caption is a sibling
+   of the frame rather than a child because the frame is aspect-ratio'd and
+   overflow:hidden. */
+.veterans__aside { display: flex; flex-direction: column; gap: var(--gap-xs); width: 100%; }
+
+.veterans__photo-meta { display: flex; align-items: center; justify-content: space-between; gap: var(--gap-sm); }
+
+/* The source PNG is a near-black glyph on transparency, so it needs a bone
+   plate to be legible on the maroon section — dark-on-maroon would all but
+   disappear. */
+.veterans__linkedin {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 26px;
+  height: 26px;
+  background: var(--color-bone);
+  transition: opacity 0.25s ease;
+}
+.veterans__linkedin:hover { opacity: 0.8; }
+.veterans__linkedin img { width: 18px; height: 18px; object-fit: contain; }
+
+/* Ratio matches the portrait's own 1164x1164. object-position pins to the
+   top regardless, so a future photo with a different ratio loses feet
+   rather than a head. */
+.veterans__photo { width: 100%; aspect-ratio: 1 / 1; overflow: hidden; position: relative; }
 .veterans__photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; }
 .veterans__photo::after { content: ""; position: absolute; inset: 0; background: rgba(85,0,0,0.1); }
 
@@ -925,11 +1000,15 @@
 /* Desktop: one row, two columns — photo left, copy right. Replaces an
    explicit 12-col grid (photo 1–6, copy 8–12, col 7 left empty as a gap);
    two tracks plus column-gap says the same thing without the empty track.
-   Must come after the base rules above so these overrides win the cascade. */
+   Must come after the base rules above so these overrides win the cascade.
+
+   Tracks are 1fr 3fr, not an even split: the copy here is a single long
+   bio paragraph plus a logo row, so it needs the width far more than the
+   portrait does. */
 @media (min-width: 768px) {
   .veterans__grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 3fr;
     column-gap: var(--gap-lg);
     padding-top: var(--gap-lg);
     padding-bottom: var(--gap-lg);
@@ -942,7 +1021,9 @@
        each take its natural height. */
     align-items: start;
   }
-  .veterans__photo { width: auto; }
+  /* auto, so the column takes its grid track's width via the default
+     justify-self:stretch rather than resolving 100% against it. */
+  .veterans__aside { width: auto; }
   .veterans__copy { max-width: none; width: auto; }
 }
 
@@ -1181,7 +1262,11 @@
 /* [hidden] on open and restores it after the close transition ends.      */
 /* body.has-modal-open locks page scroll while it's open.                  */
 /* ---------------------------------------------------------------------- */
-body.has-modal-open { overflow: hidden; }
+/* .has-nav-open is the mobile nav panel's equivalent lock (it covers the
+   full viewport below the bar) — separate class, same effect, so the two
+   can't unlock each other when the nav's CTA opens this modal. */
+body.has-modal-open,
+body.has-nav-open { overflow: hidden; }
 
 .contact-modal {
   position: fixed;
