@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSquared Labs | Agentic AI Market Research platform</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #ffffff;
+            color: #09090b;
+        }
+
+        /* All Headings rendered globally in Inter SemiBold (600) */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600 !important;
+        }
+
+        /* Paragraph subtext rendered globally in Inter Regular (400) with 1.3 line spacing */
+        p {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            line-height: 1.3 !important;
+        }
+
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Microscopic, ultra-dense dot grid tinted clearly with brand green (#24475B / rgb(36, 71, 91)) */
+        .bg-dot-grid {
+            background-size: 14px 14px;
+            background-image: radial-gradient(rgba(36, 71, 91, 0.4) 0.5px, transparent 0.5px);
+            mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+        }
+
+        /* Symmetric dot grid for the bottom CTA matching the microscopic and greener brand styling */
+        .bg-dot-grid-symmetric {
+            background-size: 14px 14px;
+            background-image: radial-gradient(rgba(36, 71, 91, 0.4) 0.5px, transparent 0.5px);
+            mask-image: linear-gradient(to bottom, transparent 0%, black 30%, black 70%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 30%, black 70%, transparent 100%);
+        }
+
+        /* Stark hover transitions */
+        .hover-invert {
+            transition: all 0.2s ease;
+        }
+        .hover-invert:hover {
+            background-color: #09090b;
+            color: #ffffff;
+        }
+
+        /* Careers transition layers */
+        .page-view {
+            transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-zinc-900 selection:text-white">
+
+    <nav class="fixed w-full z-50 bg-white/40 backdrop-blur-lg border-b border-zinc-200/40 transition-all duration-200" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex justify-between items-center">
+            <a href="#" onclick="showPage('home'); return false;" class="flex items-center gap-3">
+                <img src="csq-logo-black.png" alt="CSQUARED Labs Logo" class="h-5 md:h-6 w-auto">
+            </a>
+            
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-800">
+                <a href="#" onclick="showPage('home'); return false;" class="hover:text-zinc-900 transition-colors nav-link-item font-semibold text-zinc-950" id="nav-home">Home</a>
+                <a href="#features" onclick="navigateToSection('features'); return false;" class="hover:text-zinc-900 transition-colors nav-link-item">Features</a>
+                <a href="#team" onclick="navigateToSection('team'); return false;" class="hover:text-zinc-900 transition-colors nav-link-item">Team</a>
+                <a href="#" onclick="showPage('careers'); return false;" class="hover:text-zinc-900 transition-colors nav-link-item" id="nav-careers">Careers</a>
+                <a href="#contact" onclick="navigateToSection('contact'); return false;" class="px-4 py-2 bg-zinc-900/90 text-white rounded hover:bg-zinc-800 transition-colors backdrop-blur-sm">
+                    Get started
+                </a>
+            </div>
+
+            <button class="md:hidden text-zinc-900" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">
+                <i data-lucide="menu" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <div id="mobile-menu" class="hidden md:hidden bg-white/85 backdrop-blur-lg border-b border-zinc-200/40 px-6 py-4 space-y-4">
+            <a href="#" onclick="showPage('home'); document.getElementById('mobile-menu').classList.add('hidden'); return false;" class="block text-sm font-medium text-zinc-800 hover:text-zinc-900">Home</a>
+            <a href="#features" onclick="navigateToSection('features'); document.getElementById('mobile-menu').classList.add('hidden'); return false;" class="block text-sm font-medium text-zinc-600 hover:text-zinc-900">Features</a>
+            <a href="#team" onclick="navigateToSection('team'); document.getElementById('mobile-menu').classList.add('hidden'); return false;" class="block text-sm font-medium text-zinc-600 hover:text-zinc-900">Team</a>
+            <a href="#" onclick="showPage('careers'); document.getElementById('mobile-menu').classList.add('hidden'); return false;" class="block text-sm font-medium text-zinc-600 hover:text-zinc-900">Careers</a>
+            <a href="#contact" onclick="navigateToSection('contact'); document.getElementById('mobile-menu').classList.add('hidden'); return false;" class="block text-sm font-medium text-zinc-900">Get started &rarr;</a>
+        </div>
+    </nav>
+
+    <div id="main-landing-content" class="page-view">
+        
+        <section class="relative pt-32 pb-24 lg:pt-48 lg:pb-32 overflow-hidden border-b border-zinc-200">
+            <img src="background.png" alt="Hero Background" class="absolute inset-0 w-full h-full object-cover pointer-events-none z-0">
+            <div class="absolute inset-0 bg-dot-grid pointer-events-none z-10"></div>
+            
+            <div class="max-w-7xl mx-auto px-6 relative z-20 flex flex-col items-center text-center">
+                <div class="inline-flex items-center gap-2 px-2.5 py-1 border border-zinc-200 bg-white text-[11px] font-mono font-medium text-zinc-500 uppercase tracking-wider mb-8">
+                    <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                    Backed by Mayfield Ventures and Village Global
+                </div>
+                
+                <h1 class="text-5xl md:text-7xl font-bold tracking-tighter leading-[1.05] text-zinc-900 mb-6 max-w-5xl">
+                    Top-tier research rigor. <br class="hidden md:block"/>
+                    Delivered in <span class="bg-gradient-to-r from-[#24475B] via-[#24475B] via-[70%] to-[#E7BC20] bg-clip-text text-transparent">minutes</span>.
+                </h1>
+                
+                <p class="text-lg text-zinc-600 mb-10 leading-relaxed max-w-2xl mx-auto">
+                    CSquared Labs is an automated, AI-powered platform built for market researchers and consumer insights teams. Drop in your files, set your parameters, and generate high-quality research insights in a single click.
+                </p>
+                
+                <div>
+                    <a href="#contact" onclick="navigateToSection('contact'); return false;" class="inline-flex items-center justify-center px-8 py-4 bg-zinc-900 text-white font-medium text-sm rounded hover:bg-zinc-800 transition-colors whitespace-nowrap">
+                        Get started
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="philosophy" class="py-24 border-b border-zinc-200 bg-white">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+                    <div class="lg:col-span-5 max-w-2xl">
+                        <h2 class="text-3xl md:text-5xl font-bold tracking-tight text-zinc-900 mb-6 leading-tight">Co-built and stress-tested by seasoned experts.</h2>
+                        <p class="text-lg text-zinc-600 leading-relaxed">
+                            Designed with uncompromising attention to detail for your high-stakes work.
+                        </p>
+                    </div>
+                    <div class="w-full lg:col-span-7 aspect-[4/3] border border-zinc-200 overflow-hidden">
+                        <img src="image-2.png" alt="Co-built and stress-tested by seasoned experts" class="w-full h-full object-cover shadow-sm">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="audience" class="py-24 border-b border-zinc-200 bg-white">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-16">
+                    <div class="lg:col-span-1">
+                        <h2 class="text-3xl md:text-5xl font-bold tracking-tight text-zinc-900 mb-6">Designed for</h2>
+                        <p class="text-lg text-zinc-600 leading-relaxed">Our platform is engineered specifically for elite research teams who cannot compromise on accuracy.</p>
+                    </div>
+                    <div class="lg:col-span-2 space-y-12">
+                        <div class="flex gap-6 border-l-2 border-zinc-900 pl-6">
+                            <div>
+                                <h4 class="text-2xl font-bold text-zinc-900 mb-3">Market Researchers</h4>
+                                <p class="text-zinc-600 text-lg leading-relaxed">Who need to scale output without scaling headcount or cutting corners.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-6 border-l-2 border-zinc-900 pl-6">
+                            <div>
+                                <h4 class="text-2xl font-bold text-zinc-900 mb-3">Consumer Insights Leaders</h4>
+                                <p class="text-zinc-600 text-lg leading-relaxed">Who require elite-level, defensible data at the speed of modern business.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="py-24 bg-white border-b border-zinc-200">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="max-w-3xl mb-16">
+                    <h2 class="text-3xl md:text-5xl font-bold tracking-tight text-zinc-900 mb-4">Sophisticated Power. Zero Black Boxes.</h2>
+                    <p class="text-zinc-600 text-lg">We convert the most complex research methodologies into a streamlined, automated workflow, while ensuring the expert always remains in the driver's seat.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16 mb-20">
+                    <div class="flex flex-col">
+                        <div class="w-full aspect-video bg-blue-50 border border-zinc-200 mb-6 relative overflow-hidden">
+                            <img src="feature-1.png" alt="Feature 1" class="w-full h-full object-cover shadow-sm">
+                        </div>
+                        <i data-lucide="eye" class="w-6 h-6 text-zinc-900 mb-4"></i>
+                        <h3 class="text-2xl font-bold text-zinc-900 mb-3">No-Black-Box Philosophy</h3>
+                        <p class="text-zinc-600 leading-relaxed">Maintain end-to-end explainability. You see the logic, trust the process, and own the rigor.</p>
+                    </div>
+
+                    <div class="flex flex-col">
+                        <div class="w-full aspect-video bg-[#CFE3F3] border border-zinc-200 mb-6 relative overflow-hidden">
+                            <img src="feature-2.png" alt="Full Workflow Control" class="w-full h-full object-cover shadow-sm">
+                        </div>
+                        <i data-lucide="sliders-horizontal" class="w-6 h-6 text-zinc-900 mb-4"></i>
+                        <h3 class="text-2xl font-bold text-zinc-900 mb-3">Full Workflow Control</h3>
+                        <p class="text-zinc-600 leading-relaxed">Analyze your own data and seamlessly edit outputs to fit your exact standards.</p>
+                    </div>
+                </div>
+
+                <!-- Scale and Sophistication segment -->
+                <div class="border-t border-zinc-200 pt-16">
+                    <div class="max-w-3xl mb-12">
+                        <h2 class="text-2xl md:text-4xl font-bold tracking-tight text-zinc-900 mb-4">We support scale and sophistication</h2>
+                        <p class="text-zinc-600 text-base">Enterprise-grade architecture built to power high-stakes organizational pipelines.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-16">
+                        <!-- Point 1 -->
+                        <div class="flex flex-col">
+                            <div class="w-full aspect-square bg-zinc-50 border border-zinc-200 mb-6 relative overflow-hidden flex items-center justify-center">
+                                <img src="scalable-infrastructure.png" alt="Scalable Infrastructure" class="w-full h-full object-cover shadow-sm">
+                            </div>
+                            <i data-lucide="server" class="w-6 h-6 text-zinc-900 mb-4"></i>
+                            <h3 class="text-xl font-bold text-zinc-900 mb-2">1. Scalable Infrastructure</h3>
+                            <p class="text-zinc-600 leading-relaxed text-sm">Run 100+ research campaigns simultaneously.</p>
+                        </div>
+
+                        <!-- Point 2 -->
+                        <div class="flex flex-col">
+                            <div class="w-full aspect-square bg-zinc-50 border border-zinc-200 mb-6 relative overflow-hidden flex items-center justify-center">
+                                <img src="elite-support.png" alt="Elite Support" class="w-full h-full object-cover shadow-sm">
+                            </div>
+                            <i data-lucide="headset" class="w-6 h-6 text-zinc-900 mb-4"></i>
+                            <h3 class="text-xl font-bold text-zinc-900 mb-2">2. Elite Support</h3>
+                            <p class="text-zinc-600 leading-relaxed text-sm">Dedicated Forward Deployed Engineers to support organizational change.</p>
+                        </div>
+
+                        <!-- Point 3 -->
+                        <div class="flex flex-col">
+                            <div class="w-full aspect-square bg-zinc-50 border border-zinc-200 mb-6 relative overflow-hidden flex items-center justify-center">
+                                <img src="enterprise-governance.png" alt="Enterprise Governance" class="w-full h-full object-cover shadow-sm">
+                            </div>
+                            <i data-lucide="shield-check" class="w-6 h-6 text-zinc-900 mb-4"></i>
+                            <h3 class="text-xl font-bold text-zinc-900 mb-2">3. Enterprise Governance</h3>
+                            <p class="text-zinc-600 leading-relaxed text-sm">Enterprise ready MSAs, DPAs. SOC2/ISO in-flight.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="value" class="py-24 border-b border-zinc-200 bg-zinc-50">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="max-w-3xl mb-16">
+                    <h2 class="text-3xl md:text-5xl font-bold tracking-tight text-zinc-900 mb-4">The value</h2>
+                    <p class="text-zinc-600 text-lg">Uncompromising outcomes that elevate your operational capabilities and research standing.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="relative border border-zinc-200 p-8 flex flex-col justify-between hover:border-zinc-400 transition-all duration-300 overflow-hidden bg-white min-h-[320px] group">
+                        <img src="value-bg-1.png" alt="" class="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none transition-transform duration-500 group-hover:scale-105">
+                        <div class="relative z-10 flex flex-col justify-between h-full">
+                            <div>
+                                <div class="w-12 h-12 mb-8"><img src="value-icon-1.png" alt="Value Icon 1" class="w-full h-full object-contain"></div>
+                                <h4 class="text-2xl font-bold text-zinc-900 mb-4">Expand Research Capacity</h4>
+                                <p class="text-zinc-600 leading-relaxed">Execute on double the workload without adding overhead, enabling your team to scale insights seamlessly.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="relative border border-zinc-200 p-8 flex flex-col justify-between hover:border-zinc-455 transition-all duration-300 overflow-hidden bg-white min-h-[320px] group">
+                        <img src="value-bg-2.png" alt="" class="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none transition-transform duration-500 group-hover:scale-105">
+                        <div class="relative z-10 flex flex-col justify-between h-full">
+                            <div>
+                                <div class="w-12 h-12 mb-8"><img src="value-icon-2.png" alt="Value Icon 2" class="w-full h-full object-contain"></div>
+                                <h4 class="text-2xl font-bold text-zinc-900 mb-4">Gain a Competitive Edge</h4>
+                                <p class="text-zinc-600 leading-relaxed">Deliver deep methodology reports within hours, leaving slow-moving agencies and traditional setups far behind.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Engineered By Section (Team) -->
+        <section id="team" class="py-24 border-b border-zinc-200 bg-zinc-50">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="max-w-3xl mb-12">
+                    <h2 class="text-3xl md:text-5xl font-bold tracking-tight text-zinc-900 mb-4">Engineered by industry veterans</h2>
+                    <p class="text-lg text-zinc-600">We are built by leaders who understand what it takes to scale high-stakes technology and research infrastructure.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Dinkar Jain Profile -->
+                    <div class="bg-white border border-zinc-200 p-8 hover:border-zinc-300 transition-colors flex flex-col md:flex-row gap-8 items-stretch">
+                        <div class="w-full md:w-56 h-72 bg-blue-100 p-3 border border-zinc-200 relative overflow-hidden flex-shrink-0">
+                            <img src="dinkar-jain.jpg" alt="Dinkar Jain" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex flex-col justify-between flex-grow pt-2">
+                            <div>
+                                <h3 class="text-2xl font-bold text-zinc-900 mb-1">Dinkar Jain</h3>
+                            </div>
+                            <div class="mt-12 md:mt-auto mb-6">
+                                <div class="text-xs font-mono text-zinc-400 font-medium uppercase tracking-wider mb-3">Previously at</div>
+                                <div class="flex flex-wrap items-center gap-4">
+                                    <img src="Meta.png" alt="Meta" title="Meta" class="h-5 w-auto"><img src="Uber.png" alt="Uber" title="Uber" class="h-5 w-auto"><img src="BCG.png" alt="BCG" title="BCG" class="h-5 w-auto"><img src="Amazon.png" alt="Amazon" title="Amazon" class="h-5 w-auto"><img src="Google.png" alt="Google" title="Google" class="h-5 w-auto">
+                                </div>
+                            </div>
+                            <div class="pt-6 border-t border-zinc-100 flex justify-start">
+                                <a href="https://www.linkedin.com/in/dinkarjain/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 -ml-[3px] text-zinc-600 hover:text-zinc-900 text-sm font-medium transition-colors">
+                                    <i data-lucide="linkedin" class="w-4 h-4 text-[#0A66C2]"></i> <span class="underline underline-offset-2">LinkedIn</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Tilak Sharma Profile -->
+                    <div class="bg-white border border-zinc-200 p-8 hover:border-zinc-300 transition-colors flex flex-col md:flex-row gap-8 items-stretch">
+                        <div class="w-full md:w-56 h-72 bg-blue-100 p-3 border border-zinc-200 relative overflow-hidden flex-shrink-0">
+                            <img src="tilak-sharma.jpg" alt="Tilak Sharma" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex flex-col justify-between flex-grow pt-2">
+                            <div>
+                                <h3 class="text-2xl font-bold text-zinc-900 mb-1">Tilak Sharma</h3>
+                            </div>
+                            <div class="mt-12 md:mt-auto mb-6">
+                                <div class="text-xs font-mono text-zinc-400 font-medium uppercase tracking-wider mb-3">Previously at</div>
+                                <div class="flex flex-wrap items-center gap-4">
+                                    <img src="Meta.png" alt="Meta" title="Meta" class="h-5 w-auto"><img src="Palantir.png" alt="Palantir" title="Palantir" class="h-5 w-auto"><img src="Google.png" alt="Google" title="Google" class="h-5 w-auto"><img src="Salesforce.png" alt="Salesforce" title="Salesforce" class="h-5 w-auto">
+                                </div>
+                            </div>
+                            <div class="pt-6 border-t border-zinc-100 flex justify-start">
+                                <a href="https://www.linkedin.com/in/tisharma/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 -ml-[3px] text-zinc-600 hover:text-zinc-900 text-sm font-medium transition-colors">
+                                    <i data-lucide="linkedin" class="w-4 h-4 text-[#0A66C2]"></i> <span class="underline underline-offset-2">LinkedIn</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="relative py-32 overflow-hidden border-b border-zinc-200">
+            <img src="background.png" alt="CTA Background" class="absolute inset-0 w-full h-full object-cover pointer-events-none z-0">
+            <div class="absolute inset-0 bg-dot-grid pointer-events-none z-10"></div>
+            <div class="max-w-3xl mx-auto px-6 text-center relative z-20">
+                <h2 class="text-4xl md:text-6xl font-bold tracking-tight text-zinc-900 mb-6">Upgrade your research capacity.</h2>
+                <p class="text-lg text-zinc-600 mb-10">Experience sleep-easy-at-night quality at modern business speed.</p>
+                <a href="mailto:hello@csqlabs.com" class="inline-flex items-center justify-center px-8 py-4 bg-zinc-900 text-white font-medium text-sm rounded hover:bg-zinc-800 transition-colors whitespace-nowrap">Get started</a>
+            </div>
+        </section>
+    </div>
+
+    <!-- VIRTUAL CAREERS PAGE VIEW WRAPPER -->
+    <div id="careers-content" class="page-view hidden">
+        <!-- Careers Hero Section -->
+        <section class="relative pt-32 pb-20 lg:pt-44 lg:pb-28 overflow-hidden border-b border-zinc-200 bg-zinc-50">
+            <img src="background.png" alt="Careers Hero Background" class="absolute inset-0 w-full h-full object-cover pointer-events-none z-0">
+            <div class="absolute inset-0 bg-dot-grid pointer-events-none z-10"></div>
+            
+            <div class="max-w-4xl mx-auto px-6 relative z-20 text-center flex flex-col items-center">
+                <div class="inline-flex items-center gap-2 px-2.5 py-1 border border-zinc-200 bg-white text-[11px] font-mono font-medium text-zinc-500 uppercase tracking-wider mb-8">
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#E7BC20]"></span>Careers & Culture
+                </div>
+                
+                <!-- Opportunity-oriented Careers Header -->
+                <h1 class="text-4xl md:text-6xl font-bold tracking-tighter leading-[1.08] text-zinc-900 mb-6 max-w-4xl">
+                    Shape the future of market research with Agentic AI.
+                </h1>
+                
+                <!-- Opportunity-oriented Careers Subtext -->
+                <div class="max-w-3xl mx-auto text-lg text-zinc-600 mb-10 text-center leading-relaxed">
+                    <p>
+                        Founded by alumni from Google, Meta, Uber, and Salesforce, and backed by top-tier Valley investors, we are assembling an elite team to define the future of agentic workflows. Today, our platform is already trusted by top-tier market research agencies and research teams at leading consumer brands.
+                    </p>
+                </div>
+                <div>
+                    <a href="#open-roles" onclick="document.getElementById('open-roles').scrollIntoView({ behavior: 'smooth' }); return false;" class="inline-flex items-center justify-center px-8 py-4 bg-zinc-900 text-white font-medium text-sm rounded hover:bg-zinc-800 transition-colors whitespace-nowrap">Join our team</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Our Principles Section -->
+        <section class="py-24 border-b border-zinc-200 bg-white">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="max-w-3xl mb-16"><h2 class="text-3xl md:text-5xl font-bold tracking-tight text-zinc-900">The culture fit we crave</h2></div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="relative border border-zinc-200 p-8 flex flex-col justify-between hover:border-zinc-350 transition-all duration-300 overflow-hidden bg-white min-h-[320px] group">
+                        <img src="value-bg-1.png" alt="" class="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none transition-transform duration-500 group-hover:scale-105">
+                        <div class="relative z-10 flex flex-col justify-between h-full">
+                            <div>
+                                <div class="w-12 h-12 mb-8"><img src="cf-icon-1.png" alt="Icon 1" class="w-full h-full object-contain"></div>
+                                <h4 class="text-2xl font-bold text-zinc-900 mb-4">Pragmatic Innovation</h4>
+                                <p class="text-zinc-600 leading-relaxed">"State of the Art" means nothing if it doesn't solve a real-world problem. We value practical, elegant execution over theoretical perfection. We cut through the noise, move fast, and prioritize building working solutions that deliver immediate value.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="relative border border-zinc-200 p-8 flex flex-col justify-between hover:border-zinc-355 transition-all duration-300 overflow-hidden bg-white min-h-[320px] group">
+                        <img src="value-bg-2.png" alt="" class="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none transition-transform duration-500 group-hover:scale-105">
+                        <div class="relative z-10 flex flex-col justify-between h-full">
+                            <div>
+                                <div class="w-12 h-12 mb-8"><img src="cf-icon-2.png" alt="Icon 2" class="w-full h-full object-contain"></div>
+                                <h4 class="text-2xl font-bold text-zinc-900 mb-4">Radical Autonomy</h4>
+                                <p class="text-zinc-600 leading-relaxed">Startups are a game of momentum. We operate with extreme speed, minimal hierarchy, and zero hand-holding. We look for self-starters who spot gaps, design solutions, and execute without waiting for permission. You own your work end-to-end from week one.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="relative border border-zinc-200 p-8 flex flex-col justify-between hover:border-zinc-350 transition-all duration-300 overflow-hidden bg-white min-h-[320px] group">
+                        <img src="value-bg-3.png" alt="" class="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none transition-transform duration-500 group-hover:scale-105">
+                        <div class="relative z-10 flex flex-col justify-between h-full">
+                            <div>
+                                <div class="w-12 h-12 mb-8"><img src="cf-icon-3.png" alt="Icon 3" class="w-full h-full object-contain"></div>
+                                <h4 class="text-2xl font-bold text-zinc-900 mb-4">The Gold Standard</h4>
+                                <p class="text-zinc-600 leading-relaxed">To build autonomous systems that top-tier global brands trust, our work must be flawless. We do not cut corners on quality or logic. We are a team of bar-raisers who catch the critical nuances others miss, strip away corporate noise, and take pride in delivering elite work.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="open-roles" class="py-24 bg-zinc-50 border-b border-zinc-200">
+            <div class="max-w-4xl mx-auto px-6">
+                <div class="mb-12"><h2 class="text-3xl md:text-5xl font-bold tracking-tight text-zinc-900">Open Roles</h2></div>
+                <div class="border-t border-zinc-200 divide-y divide-zinc-200" id="careers-roles-container">
+                    
+                    <!-- Accordion Item 1: AI Product Engineer -->
+                    <div class="py-6">
+                        <button onclick="toggleAccordion('ai-product-eng')" class="w-full flex justify-between items-center text-left py-2 group focus:outline-none">
+                            <span class="text-lg font-bold text-zinc-900 group-hover:text-zinc-600 transition-colors">AI Product Engineer</span>
+                            <span class="p-2 bg-white flex items-center justify-center w-10 h-10 select-none"><span id="icon-ai-product-eng" class="text-xl font-bold text-zinc-500 leading-none">+</span></span>
+                        </button>
+                        <div id="content-ai-product-eng" class="max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+                            <div class="pt-4 pb-2 text-zinc-600 text-sm md:text-base leading-relaxed space-y-4">
+                                <p class="font-semibold text-zinc-800">Location: SF Bay Area/NYC/Canada (Hybrid/Remote).</p>
+                                <p><strong class="text-zinc-900">About this role:</strong><br>You’ve learned the theory. You’ve built the side projects. You aced the algorithms class. Now, you’re ready to build software that people actually use.</p>
+                                <p>We are looking for a New Grad Product Engineer to join our founding engineering team. This is not a corporate rotation program where you fix bugs in legacy code for two years. At C Squared, you will be shipping production code in your first week. You will be paired with senior engineers who will mentor you, review your code, and help you transition from a "CS Student" to a "Product Engineer."</p>
+                                <div class="space-y-1">
+                                    <strong class="text-zinc-900 block">What You'll Do:</strong>
+                                    <ul class="list-disc pl-5 space-y-1 text-sm md:text-base">
+                                        <li><strong>Ship Features End-to-End:</strong> You will start with smaller, scoped features (e.g., "Add a 'Dark Mode' toggle" or "Build a new API endpoint for user settings") and quickly graduate to owning complex workflows.</li>
+                                        <li><strong>Fix Bugs & Optimize:</strong> You will dig into the codebase to find why a page is loading slowly or why a specific edge case is breaking the app, and you’ll fix it.</li>
+                                        <li><strong>Learn the "AI Stack":</strong> You will get hands-on experience integrating Large Language Models (LLMs) into a web application, handling streaming responses, and managing context windows.</li>
+                                    </ul>
+                                </div>
+                                <div class="space-y-1">
+                                    <strong class="text-zinc-900 block">What We're Looking For:</strong>
+                                    <ul class="list-disc pl-5 space-y-1 text-sm md:text-base">
+                                        <li><strong>Strong Fundamentals:</strong> You understand Data Structures and Algorithms. You know why a Hash Map is faster than a Linked List for lookups.</li>
+                                        <li><strong>Project Experience:</strong> You didn’t just do the homework. You have a GitHub with side projects, hackathon submissions, or a capstone project where you built a full web app (Frontend + Backend + DB).</li>
+                                        <li><strong>Grit:</strong> Startups are hard. Requirements change. Sometimes things break. You need to be resilient and eager to solve the puzzle.</li>
+                                        <li>BS or MS in Computer Science, or equivalent intensive bootcamp experience.</li>
+                                    </ul>
+                                </div>
+                                <p class="text-sm md:text-base font-medium pt-2">If interested, reach out to <a href="mailto:hello@csqlabs.com" class="text-blue-600 underline hover:text-blue-800">hello@csqlabs.com</a> to learn more and apply.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Accordion Item 2: Senior Frontend Engineer -->
+                    <div class="py-6">
+                        <button onclick="toggleAccordion('sr-frontend-eng')" class="w-full flex justify-between items-center text-left py-2 group focus:outline-none">
+                            <span class="text-lg font-bold text-zinc-900 group-hover:text-zinc-600 transition-colors">Senior Frontend Engineer</span>
+                            <span class="p-2 bg-white flex items-center justify-center w-10 h-10 select-none"><span id="icon-sr-frontend-eng" class="text-xl font-bold text-zinc-500 leading-none">+</span></span>
+                        </button>
+                        <div id="content-sr-frontend-eng" class="max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+                            <div class="pt-4 pb-2 text-zinc-600 text-sm md:text-base leading-relaxed space-y-4">
+                                <p class="font-semibold text-zinc-800">Location: SF Bay Area/NYC/Canada (Hybrid/Remote).</p>
+                                <p><strong class="text-zinc-900">About this role:</strong><br>This is an architecture and interaction design role wrapped into one. You will own the frontend engine of our product. You won't just be building features; you will be defining the patterns, primitives, and performance standards that make those features possible.</p>
+                                <p>You will be building B2B software that doesn't feel like B2B software. It needs to be bulletproof, but it also needs to have a pulse.</p>
+                                <div class="space-y-1">
+                                    <strong class="text-zinc-900 block">What You'll Do:</strong>
+                                    <ul class="list-disc pl-5 space-y-1 text-sm md:text-base">
+                                        <li><strong>Visualize the "Brain":</strong> Build interfaces that demystify the AI, showing users exactly how it thought through a problem and why it made specific decisions.</li>
+                                        <li><strong>Render Complexity:</strong> Design and implement visualizations for complex analysis methods that handle massive density without dropping a frame.</li>
+                                        <li><strong>Engineer Nuance:</strong> Build granular, local-level feedback mechanisms. You'll move beyond "thumbs up/down" to create interactions that allow users to coach the AI on specific details efficiently.</li>
+                                        <li><strong>Modernize the Core:</strong> Lead high-impact architectural migrations—like moving from REST to GraphQL—to ensure our data layer is as snappy and efficient as our UI.</li>
+                                        <li><strong>Polish the Physics:</strong> Make interactions feel instant. You will obsess over latency, optimistic updates, and the "snap" of the application.</li>
+                                    </ul>
+                                </div>
+                                <div class="space-y-1">
+                                    <strong class="text-zinc-900 block">What We're Looking For:</strong>
+                                    <ul class="list-disc pl-5 space-y-1 text-sm md:text-base">
+                                        <li><strong>A Systems Thinker:</strong> You don't just write components; you design systems. You think about state management, data synchronization, and the event loop before you write a line of UI code.</li>
+                                        <li><strong>Obsessed with "Feel":</strong> You know the difference between 16ms and 50ms. You care about scroll performance, input latency, and optimistic UI. You can debug a memory leak or a layout thrash as easily as you can center a div.</li>
+                                        <li><strong>Pragmatically Robust:</strong> You write code that is boring in the best way. You value readability and maintainability over clever one-liners. You build interfaces that don't break when the network is slow or the data is weird.</li>
+                                        <li><strong>Design Fluent:</strong> You speak the language of designers. You can take a high-fidelity mock and implement it with pixel-perfect precision, or fill in the gaps when the mock is low-fidelity.</li>
+                                        <li><strong>A Force Multiplier:</strong> You elevate the team. You write documentation, review code with empathy and rigor, and mentor junior engineers to help them see the matrix.</li>
+                                    </ul>
+                                </div>
+                                <div class="space-y-1">
+                                    <strong class="text-zinc-900 block">Tech Requirements:</strong>
+                                    <ul class="list-disc pl-5 space-y-1 text-sm md:text-base">
+                                        <li>Deep, fundamental knowledge of TypeScript and the browser environment (not just the frameworks).</li>
+                                        <li>A track record of shipping complex web applications (e.g., creative tools, data visualizations, IDEs, or high-density dashboards).</li>
+                                        <li>Experience with local-first architectures, complex undo/redo stacks, or CRDTs is a massive plus. A portfolio of work that demonstrates both engineering complexity and design simplicity.</li>
+                                    </ul>
+                                </div>
+                                 
+                                <p class="text-sm md:text-base font-medium pt-2">If interested, reach out to <a href="mailto:hello@csqlabs.com" class="text-blue-600 underline hover:text-blue-800">hello@csqlabs.com</a> to learn more and apply.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Accordion Item 3: AI Research Engineer -->
+                    <div class="py-6">
+                        <button onclick="toggleAccordion('ai-research-eng')" class="w-full flex justify-between items-center text-left py-2 group focus:outline-none">
+                            <span class="text-lg font-bold text-zinc-900 group-hover:text-zinc-600 transition-colors">AI Research Engineer</span>
+                            <span class="p-2 bg-white flex items-center justify-center w-10 h-10 select-none"><span id="icon-ai-research-eng" class="text-xl font-bold text-zinc-500 leading-none">+</span></span>
+                        </button>
+                        <div id="content-ai-research-eng" class="max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+                            <div class="pt-4 pb-2 text-zinc-600 text-sm md:text-base leading-relaxed space-y-4">
+                                <p class="font-semibold text-zinc-800">Location: SF Bay Area/NYC/Canada (Hybrid/Remote).</p>
+                                <p><strong class="text-zinc-900">About this role:</strong><br>We need a researcher who builds. You don't just read Arxiv; you ship it. You are steeped in the nuances of LLMs and agentic AI, bridging the gap between training models and applying them to messy, real-world problems.</p>
+                                <p>You are a pragmatic innovator who knows that "State of the Art" means nothing if it doesn't solve the business problem. You quickly grok academic papers, but can cut through the noise to deliver a working MVP. You obsess over evaluation, not just principles.</p>
+                                <div class="space-y-1">
+                                    <strong class="text-zinc-900 block">What You'll Do:</strong>
+                                    <ul class="list-disc pl-5 space-y-1 text-sm md:text-base">
+                                        <li><strong>Advanced Agentic Systems:</strong> Architect and implement complex agent behaviors, leveraging multi-agent hierarchies, multi-trajectory inference, and RL environments to solve open-ended tasks.</li>
+                                        <li><strong>Automated Optimization:</strong> Move beyond manual prompt engineering. Build and deploy automated optimization pipelines (like DSPy or custom optimizers) to systematically improve agent performance.</li>
+                                        <li><strong>Rigorous Evaluation:</strong> Design and own the evaluation stack. Implement LLM-as-a-judge frameworks and domain-specific metrics to ensure our agents are reliable, safe, and improving over time.</li>
+                                        <li><strong>Applied Research:</strong> Translate the latest papers on RAG techniques and cognitive architectures into production-ready code that drives our product forward.</li>
+                                    </ul>
+                                </div>
+                                <div class="space-y-1">
+                                    <strong class="text-zinc-900 block">Examples of Every-Day Work:</strong>
+                                    <ul class="list-disc pl-5 space-y-1 text-sm md:text-base">
+                                        <li><strong>From Paper to Prototype:</strong> Read a new paper on tree-of-thought reasoning in the morning and have a working implementation testing against our benchmarks by the afternoon.</li>
+                                        <li><strong>Optimize the "Brain":</strong> Diagnose why an agent is hallucinating in a specific edge case and deploy a targeted fix via context engineering or fine-tuning, validating it with regression tests.</li>
+                                        <li><strong>Architect the Swarm:</strong> Design a communication protocol for a hierarchy of agents where a "Manager" agent effectively delegates sub-tasks to specialized "Worker" agents without getting stuck in loops.</li>
+                                        <li><strong>Cut the Fat:</strong> Reject a complex research proposal because a simpler, heuristic-based approach solves 90% of the user's problem with 10% of the compute.</li>
+                                    </ul>
+                                </div>
+                                <div class="space-y-1">
+                                    <strong class="text-zinc-900 block">What We're Looking For:</strong>
+                                    <ul class="list-disc pl-5 space-y-1 text-sm md:text-base">
+                                        <li><strong>Deep AI Fluency:</strong> You are steeped in the latest LLM research. You understand the internals of Transformers, but more importantly, the emergent behaviors of agentic systems.</li>
+                                        <li><strong>Research Agility:</strong> You can quickly digest papers on RAG, multi-agent collaboration, and RLHF, and judge their applicability to our stack.</li>
+                                        <li><strong>Eval Obsession:</strong> You know best practices for evaluation like the back of your hand. You don't trust a prompt until you have the metrics to back it up.</li>
+                                        <li><strong>Product Intuition:</strong> You grok business concepts. You propose creative technical solutions that align with commercial goals, not just academic curiosity.</li>
+                                        <li><strong>MVP Mindset:</strong> You move fast. You prioritize speed of iteration and learning over theoretical perfection.</li>
+                                    </ul>
+                                </div>
+                                 
+                                <p class="text-sm md:text-base font-medium pt-2">If interested, reach out to <a href="mailto:hello@csqlabs.com" class="text-blue-600 underline hover:text-blue-800">hello@csqlabs.com</a> to learn more and apply.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Accordion Item 4: Senior Full-Stack Engineer (IC5/6) -->
+                    <div class="py-6">
+                        <button onclick="toggleAccordion('sr-fullstack-eng')" class="w-full flex justify-between items-center text-left py-2 group focus:outline-none">
+                            <span class="text-lg font-bold text-zinc-900 group-hover:text-zinc-600 transition-colors">Senior Full-Stack Engineer (IC5/6)</span>
+                            <span class="p-2 bg-white flex items-center justify-center w-10 h-10 select-none"><span id="icon-sr-fullstack-eng" class="text-xl font-bold text-zinc-500 leading-none">+</span></span>
+                        </button>
+                        <div id="content-sr-fullstack-eng" class="max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+                            <div class="pt-4 pb-2 text-zinc-600 text-sm md:text-base leading-relaxed space-y-4">
+                                <p class="font-semibold text-zinc-800">Location: SF Bay Area/NYC/Canada (Hybrid/Remote).</p>
+                                <p><strong class="text-zinc-900">About this role:</strong><br>At C Squared Labs, we are moving beyond AI prototypes and into the era of production-grade enterprise agency. We are looking for a heavy-hitting Senior/Staff Full-Stack Engineer who can build for Fortune 500 applications.</p>
+                                <p>You aren't just building a UI; you are architecting the secure, multi-tenant backbone of an AI-native ecosystem. We need a builder who understands that an AI agent is only as good as the infrastructure it runs on—someone who prioritizes security, observability, and scale as first-class citizens.</p>
+                                <div class="space-y-1">
+                                    <strong class="text-zinc-900 block">What You'll Do:</strong>
+                                    <ul class="list-disc pl-5 space-y-1 text-sm md:text-base">
+                                        <li><strong>Architect Multi-Tenancy:</strong> Design and implement robust data isolation and RBAC structures to ensure enterprise customers can safely deploy agents across diverse organizational units.</li>
+                                        <li><strong>Scale the Workload:</strong> Build and manage the orchestration layer that handles high-concurrency agentic workloads, utilizing containerization (Docker/K8s) to ensure seamless scaling.</li>
+                                        <li><strong>Hardened Security:</strong> Take ownership of the platform's security posture, from implementing sophisticated Auth patterns to leading pen-testing efforts and remediating vulnerabilities.</li>
+                                        <li><strong>Interface Evolution:</strong> Lead the debate on GraphQL vs. REST for complex data fetching, while implementing Server-Sent Events (SSE) or WebSockets for real-time AI streaming.</li>
+                                        <li><strong>Optimize the Edge:</strong> Design rate-limiting and circuit-breaking strategies that protect our infrastructure (and our LLM spend) from non-deterministic agent behavior.</li>
+                                        <li><strong>Product Onboarding:</strong> Build friction-free, enterprise-grade onboarding flows that simplify complex configuration for non-technical administrators.</li>
+                                    </ul>
+                                </div>
+                                <div class="space-y-1">
+                                    <strong class="text-zinc-900 block">What We're Looking For:</strong>
+                                    <ul class="list-disc pl-5 space-y-1 text-sm md:text-base">
+                                        <li><strong>Senior Pedigree:</strong> You have 7+ years of experience, with a significant portion spent building and maintaining distributed systems or enterprise SaaS platforms in the US/Canada market.</li>
+                                        <li><strong>Security Mindset:</strong> You don't view RBAC or pen-testing as an afterthought. You understand OIDC, SAML, and the nuances of securing LLM-based applications against prompt injection and data leakage.</li>
+                                        <li><strong>Infrastructure Fluency:</strong> You are a master of modern DevOps. You know how to containerize a complex microservice architecture and keep it running at 99.9% uptime.</li>
+                                        <li><strong>Opinionated Tech Selection:</strong> You can articulate exactly when to use a relational DB vs. a vector store, and when to opt for a GraphQL schema over a traditional RESTful API.</li>
+                                        <li><strong>The "Lead from the Front" Mentality:</strong> You write clean, testable code that serves as the gold standard for the rest of the engineering team.</li>
+                                    </ul>
+                                </div>
+                                <div class="space-y-1">
+                                    <strong class="text-zinc-900 block">Technical Requirements:</strong>
+                                    <ul class="list-disc pl-5 space-y-1 text-sm md:text-base">
+                                        <li><strong>Languages:</strong> Mastery of Python and TypeScript.</li>
+                                        <li><strong>Architecture:</strong> Deep experience with multi-tenant SaaS architecture, RBAC/ABAC, and Auth0/Okta integration.</li>
+                                        <li><strong>Communication:</strong> Proven experience implementing SSE, WebSockets, REST vs. GraphQL, and high-performance frontends.</li>
+                                        <li><strong>Infrastructure:</strong> Proficiency with Docker, Kubernetes, Terraform, and cloud providers (AWS/GCP).</li>
+                                        <li><strong>AI Exposure:</strong> While you are an engineering specialist, you have a working knowledge of RAG pipelines and how to optimize the latency of LLM responses in a production UI.</li>
+                                    </ul>
+                                </div>
+                                 
+                                <p class="text-sm md:text-base font-medium pt-2">If interested, reach out to <a href="mailto:hello@csqlabs.com" class="text-blue-600 underline hover:text-blue-800">hello@csqlabs.com</a> to learn more and apply.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Accordion Item 5: Senior AI Engineer -->
+                    <div class="py-6">
+                        <button onclick="toggleAccordion('sr-ai-eng')" class="w-full flex justify-between items-center text-left py-2 group focus:outline-none">
+                            <span class="text-lg font-bold text-zinc-955 group-hover:text-zinc-600 transition-colors">Senior AI Engineer</span>
+                            <span class="p-2 bg-white flex items-center justify-center w-10 h-10 select-none"><span id="icon-sr-ai-eng" class="text-xl font-bold text-zinc-500 leading-none">+</span></span>
+                        </button>
+                        <div id="content-sr-ai-eng" class="max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+                            <div class="pt-4 pb-2 text-zinc-600 text-sm md:text-base leading-relaxed space-y-4">
+                                <p class="font-semibold text-zinc-800">Location: SF Bay Area/NYC/Canada (Hybrid/Remote).</p>
+                                <p><strong class="text-zinc-900">About this role:</strong><br>You've built complex systems at scale. You've navigated the ambiguity of zero-to-one product development. Now, you're ready to define the future of how users interact with agentic workflows.</p>
+                                <p>We are looking for a Senior/Staff AI Product Engineer to join our founding engineering team. This is not a role for someone who just wants to wrap a basic prompt around an API. At C Squared, you will be architecting production-grade GenAI pipelines and embedding deep Market Research methodologies into intelligent, autonomous agents.</p>
+                                <p>You will operate at the intersection of hardcore engineering, domain-specific data science, and product design. You will set the technical bar, shape the user experience, and build the scaffolding that our future engineering team will scale.</p>
+                                <div class="space-y-1">
+                                    <strong class="text-zinc-900 block">What You'll Do:</strong>
+                                    <ul class="list-disc pl-5 space-y-1 text-sm md:text-base">
+                                        <li><strong>Architect GenAI Orchestration:</strong> Design and build complex, reliable LLM pipelines. You will go far beyond basic prompts to engineer multi-agent DAGs, advanced RAG architectures, and custom tool-use integrations that operate predictably in production.</li>
+                                        <li><strong>Embed Domain Intelligence:</strong> Translate complex statistical and experimental methods specific to Market Research into algorithmic workflows that our AI agents can execute flawlessly.</li>
+                                        <li><strong>Drive Product Design & UX:</strong> Own the end-to-end user experience. You won't just build the backend systems; you will design how users interact with non-deterministic AI outputs, ensuring the experience feels intuitive, transparent, and trustworthy.</li>
+                                        <li><strong>Lead & Mentor:</strong> Act as a technical pillar for the founding team. You will make foundational architecture decisions, establish best practices for AI evaluation, and eventually mentor junior product engineers.</li>
+                                    </ul>
+                                </div>
+                                <div class="space-y-1">
+                                    <strong class="text-zinc-900 block">What We're Looking For:</strong>
+                                    <ul class="list-disc pl-5 space-y-1 text-sm md:text-base">
+                                        <li><strong>You are a Battle-Tested Builder:</strong> You have 6+ years of software engineering experience, with a proven track record of taking complex, data-heavy products from zero to one.</li>
+                                        <li><strong>You know the "AI Stack" in Production:</strong> You have deep, hands-on experience building with LLMs in production environments. You understand the nuances of context management, latency optimization, evals, and agentic orchestration (LangChain, LlamaIndex, custom frameworks).</li>
+                                        <li><strong>You have Domain Fluency:</strong> You have a strong grasp of the statistical methods, experimental designs, and data modeling required in Market Research, and you know how to build software that respects those principles.</li>
+                                    </ul>
+                                </div>
+                                 
+                                <p class="text-sm md:text-base font-medium pt-2">If interested, reach out to <a href="mailto:hello@csqlabs.com" class="text-blue-600 underline hover:text-blue-800">hello@csqlabs.com</a> to learn more and apply.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Accordion Item 6: Senior Backend Engineer -->
+                    <div class="py-6">
+                        <button onclick="toggleAccordion('sr-backend-eng')" class="w-full flex justify-between items-center text-left py-2 group focus:outline-none">
+                            <span class="text-lg font-bold text-zinc-900 group-hover:text-zinc-600 transition-colors">Senior Backend Engineer</span>
+                            <span class="p-2 bg-white flex items-center justify-center w-10 h-10 select-none"><span id="icon-sr-backend-eng" class="text-xl font-bold text-zinc-500 leading-none">+</span></span>
+                        </button>
+                        <div id="content-sr-backend-eng" class="max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+                            <div class="pt-4 pb-2 text-zinc-600 text-sm md:text-base leading-relaxed space-y-4">
+                                <p class="font-semibold text-zinc-800">Location: SF Bay Area/NYC/Canada (Hybrid/Remote).</p>
+                                <p><strong class="text-zinc-900">About this role:</strong><br>We need a builder, not a maintenance engineer. You bring disciplined engineering and structural clarity to early-stage AI infrastructure. You have built scalable, fault-tolerant systems at top-tier tech companies or managed complex enterprise data pipelines for B2B AI applications.</p>
+                                <p>You are a self-starter who identifies issues and fixes them without waiting for permission. You move fast, owning the stack from architecture to implementation, making practical, watertight infrastructure tradeoffs. You know when to ship a "good enough" solution to unblock a feature, and when to build bulletproof systems for the long haul.</p>
+                                <div class="space-y-1">
+                                    <strong class="text-zinc-900 block">What You'll Do:</strong>
+                                    <ul class="list-disc pl-5 space-y-1 text-sm md:text-base">
+                                        <li><strong>Agentic Infrastructure:</strong> Select and implement agentic frameworks to maximize configurability and observability while minimizing switching costs for future LLMs.</li>
+                                        <li><strong>Security & Reliability:</strong> Design robust rate-limiting and authorization stacks. In an agentic world, verifying who is acting is as critical as what they are doing.</li>
+                                        <li><strong>High-Volume Data Pipelines:</strong> Own cloud ingestion and crawl pipelines. You'll build systems handling messy, unstructured data at scale to reliably feed our agents.</li>
+                                        <li><strong>API Hygiene:</strong> Drive efficiency and strict DevOps standards. Lead the migration from REST to GraphQL to enable faster frontend iteration without backend bottlenecks.</li>
+                                    </ul>
+                                </div>
+                                <div class="space-y-1">
+                                    <strong class="text-zinc-900 block">Examples of Every-Day Work:</strong>
+                                    <ul class="list-disc pl-5 space-y-1 text-sm md:text-base">
+                                        <li><strong>Debate the Stack:</strong> Evaluate open-source agent frameworks. Decide to fork, wrap, or build from scratch to avoid ecosystem lock-in.</li>
+                                        <li><strong>Architect for Scale:</strong> Design a distributed rate-limiter to protect downstream LLM providers without degrading the power-user experience.</li>
+                                        <li><strong>Debug the "Black Box":</strong> Trace failed actions through crawl, embedding, and inference layers, and ship immediate fixes.</li>
+                                        <li><strong>Elevate the DX:</strong> Refactor legacy endpoints into flexible GraphQL schemas, unblocking the product team.</li>
+                                    </ul>
+                                </div>
+                                <div class="space-y-1">
+                                    <strong class="text-zinc-900 block">What We're Looking For:</strong>
+                                    <ul class="list-disc pl-5 space-y-1 text-sm md:text-base">
+                                        <li><strong>Experience:</strong> 5+ years of backend engineering experience, with a track record of high-impact technical ownership.</li>
+                                        <li><strong>Autonomy:</strong> You don't need hand-holding. You spot problems, design solutions, and execute.</li>
+                                        <li><strong>System Design:</strong> You have architected systems handling significant scale or complexity. CAP theorem is a reality for you, not just an interview topic.</li>
+                                        <li><strong>Data & AI Fluency:</strong> You understand data ingestion and ML infrastructure. You know how to build the pipes that feed the models.</li>
+                                        <li><strong>Practicality:</strong> You disdain over-engineering. You write clean, testable code but never lose sight of shipping the product.</li>
+                                    </ul>
+                                </div>
+                                <div class="space-y-1">
+                                    <strong class="text-zinc-900 block">Tech Stack:</strong>
+                                    <ul class="list-disc pl-5 space-y-1 text-sm md:text-base">
+                                        <li><strong>Languages:</strong> Python (AI/Backend), Go (High-performance services), TypeScript.</li>
+                                        <li><strong>Infrastructure:</strong> AWS/GCP, Kubernetes, Terraform.</li>
+                                        <li><strong>Data:</strong> Postgres, Vector Databases (Pinecone/Weaviate), Redis.</li>
+                                        <li><strong>API:</strong> GraphQL, REST, gRPC.</li>
+                                    </ul>
+                                </div>
+                                 
+                                <p class="text-sm md:text-base font-medium pt-2">If interested, reach out to <a href="mailto:hello@csqlabs.com" class="text-blue-600 underline hover:text-blue-800">hello@csqlabs.com</a> to learn more and apply.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Accordion Item 7: Social Listening Data Analyst (Entry-level) -->
+                    <div class="py-6">
+                        <button onclick="toggleAccordion('social-analyst')" class="w-full flex justify-between items-center text-left py-2 group focus:outline-none">
+                            <span class="text-lg font-bold text-zinc-900 group-hover:text-zinc-600 transition-colors">Social Listening Data Analyst (Entry-level)</span>
+                            <span class="p-2 bg-white flex items-center justify-center w-10 h-10 select-none"><span id="icon-social-analyst" class="text-xl font-bold text-zinc-500 leading-none">+</span></span>
+                        </button>
+                        <div id="content-social-analyst" class="max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+                            <div class="pt-4 pb-2 text-zinc-600 text-sm md:text-base leading-relaxed space-y-4">
+                                <p class="font-semibold text-zinc-800">Location: Canada (Remote)</p>
+                                <p><strong class="text-zinc-900">Our Mission:</strong><br>We are an agentic AI company building the world's first autonomous research workforce. Our goal is not just to automate tasks, but to replicate high-level research reasoning. To do this, we need the "Gold Standard." We are looking for veterans who have lived through the evolution of the industry—from telephone units to mobile ethnography—to serve as the Human-in-the-Loop (HITL) Experts who will grade, correct, and shape the behavior of our AI agents.</p>
+                                <p><strong class="text-zinc-900">The Role:</strong><br>You will not be running studies. You will be the Auditor and Mentor to our AI agents. Your job is to review the output generated by our models (analyses of key business questions around social conversations about brand attributes) and rigorously evaluate them against the quality standards of top-tier global consultancies, especially in the space of social listening.</p>
+                                <div class="space-y-1">
+                                    <strong class="text-zinc-900 block">Key Responsibilities:</strong>
+                                    <ul class="list-disc pl-5 space-y-1 text-sm md:text-base">
+                                        <li><strong>Forensic Evaluation:</strong> Review agent outputs (e.g., classification of social verbatim based on topic, relevancy) and score them on logic, bias, accuracy, and commercial viability.</li>
+                                        <li><strong>Gap Analysis:</strong> Identify why the AI failed. Did it miss a cultural nuance? Did it confuse correlation with causation? Did it ask a leading question?</li>
+                                        <li><strong>Ground Truth Creation:</strong> Create "perfect" examples and documentation of specific research tasks to feed into our training datasets (few-shot prompting).</li>
+                                        <li><strong>Engineering Feedback Loop:</strong> Translate "analyst intuition" into structured feedback that our Engineering and ML teams can use to fine-tune the models.</li>
+                                    </ul>
+                                </div>
+                                <div class="space-y-1">
+                                    <strong class="text-zinc-900 block">What We're Looking For:</strong>
+                                    <ul class="list-disc pl-5 space-y-1 text-sm md:text-base">
+                                        <li>Preferably 2–5 years of hands-on experience in Market Research and Insights or Social Listening.</li>
+                                        <li><strong>The "500 Reps" Standard:</strong> You have personally designed, executed, or delivered over 500 quantitative or qualitative studies in your career.</li>
+                                        <li><strong>Big Agency Pedigree:</strong> Proven tenure at top-tier firms (e.g., BCG, Kantar, Sprinklr, etc.) or client-side experience at Fortune 500 brands.</li>
+                                        <li><strong>Uncompromising Standards:</strong> You are the person who used to catch the errors that junior researchers missed. You have a reputation for being a "tough grader" or "bar raiser."</li>
+                                    </ul>
+                                </div>
+                                <div class="space-y-1">
+                                    <strong class="text-zinc-900 block">Why Join Us?</strong>
+                                    <ul class="list-disc pl-5 space-y-1 text-sm md:text-base">
+                                        <li><strong>Shape the Future:</strong> Stop fearing AI and start teaching it. Your intuition will literally become part of the code base for the next generation of research tools.</li>
+                                        <li><strong>High-Leverage Work:</strong> No more chasing clients, fielding costs, or formatting PowerPoint slides. This is pure intellectual application of your expertise.</li>
+                                        <li><strong>Flexible Engagement:</strong> We offer flexible hours and project-based work that fits around other consulting gigs or lifestyle requirements.</li>
+                                    </ul>
+                                </div>
+                                <div class="space-y-1">
+                                    <strong class="text-zinc-900 block">Application Instructions:</strong>
+                                    <p class="text-sm md:text-base">Please include the following in your application:</p>
+                                    <ul class="list-disc pl-5 space-y-1 text-sm md:text-base">
+                                        <li>CV</li>
+                                        <li>Link to your LinkedIn profile</li>
+                                        <li>Most recent transcript</li>
+                                        <li>Qual/Quant study portfolio consisting of an anonymized inventory of prior projects (e.g., "Conducted a large conjoint analysis across 25,000 participants to determine X in industry Y for a company of scale ABC in country Z")</li>
+                                    </ul>
+                                </div>
+                                 
+                                <p class="text-sm md:text-base font-medium pt-2">If interested, reach out to <a href="mailto:hello@csqlabs.com" class="text-blue-600 underline hover:text-blue-800">hello@csqlabs.com</a> to learn more and apply.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Accordion Item 8: Quality Assurance (Entry-level) -->
+                    <div class="py-6">
+                        <button onclick="toggleAccordion('qa-entry')" class="w-full flex justify-between items-center text-left py-2 group focus:outline-none">
+                            <span class="text-lg font-bold text-zinc-900 group-hover:text-zinc-600 transition-colors">Quality Assurance (Entry-level)</span>
+                            <span class="p-2 bg-white flex items-center justify-center w-10 h-10 select-none"><span id="icon-qa-entry" class="text-xl font-bold text-zinc-500 leading-none">+</span></span>
+                        </button>
+                        <div id="content-qa-entry" class="max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+                            <div class="pt-4 pb-2 text-zinc-600 text-sm md:text-base leading-relaxed space-y-4">
+                                <p class="font-semibold text-zinc-800">Location: Canada (Remote)</p>
+                                <p><strong class="text-zinc-900">About this role:</strong><br>As the internal auditor of our agentic AI platform, you will champion the quality, reliability, and seamless performance of our products. You will work hand-in-hand with our engineering team—across both backend and frontend—to design, execute, and meticulously document quality assurance frameworks, workflows, and issue resolution processes.</p>
+                                <div class="space-y-1">
+                                    <strong class="text-zinc-900 block">Examples of Every-Day Work:</strong>
+                                    <ul class="list-disc pl-5 space-y-1 text-sm md:text-base">
+                                        <li><strong>End-to-End Testing:</strong> Design and execute comprehensive tests across our AI platform, covering an exhaustive range of angles, edge cases, and scenarios across our entire product suite.</li>
+                                        <li><strong>Full-Stack Troubleshooting:</strong> Proactively detect, document, and trace issues across the stack—from UI/frontend glitches to backend data mapping and output population.</li>
+                                        <li><strong>Process Engineering:</strong> Collaborate with the team to establish and refine the QA pipeline from the ground up.</li>
+                                    </ul>
+                                </div>
+                                <div class="space-y-1">
+                                    <strong class="text-zinc-900 block">What We're Looking For:</strong>
+                                    <ul class="list-disc pl-5 space-y-1 text-sm md:text-base">
+                                        <li><strong>Uncompromising Standards:</strong> You are highly diligent, detail-oriented, and refuse to lower your bar for quality.</li>
+                                        <li><strong>Analytical Thinker:</strong> You possess strong critical thinking skills and a proven ability to build structured workflows and Standard Operating Procedures (SOPs) for QA.</li>
+                                        <li><strong>Domain Knowledge:</strong> A solid understanding of market research products.</li>
+                                        <li><strong>Technical Proficiency:</strong> Comfortable navigating technical tech stacks, with a strong foundational knowledge of infrastructure and APIs.</li>
+                                        <li>A tracked academic record in the fields of Computer Science, Information Technology, or Data Science.</li>
+                                    </ul>
+                                </div>
+                                <div class="space-y-1">
+                                    <strong class="text-zinc-900 block">Tech Stack:</strong>
+                                    <ul class="list-disc pl-5 space-y-1 text-sm md:text-base">
+                                        <li><strong>System Infrastructure:</strong> Solid understanding of technical infrastructure, cloud environments, and system architecture to effectively navigate and test backend processes.</li>
+                                        <li><strong>API Proficiency:</strong> Hands-on experience interacting with and testing APIs, including verifying data mapping, integration points, and endpoint responses.</li>
+                                    </ul>
+                                </div>
+                                <div class="space-y-1">
+                                    <strong class="text-zinc-900 block">Application Instructions:</strong>
+                                    <p class="text-sm md:text-base">Please include the following in your application:</p>
+                                    <ul class="list-disc pl-5 space-y-1 text-sm md:text-base">
+                                        <li>CV</li>
+                                        <li>Link to your LinkedIn profile</li>
+                                        <li>Most recent transcript </li>
+                                    </ul>
+                                </div>
+                                 
+                                <p class="text-sm md:text-base font-medium pt-2">If interested, reach out to <a href="mailto:hello@csqlabs.com" class="text-blue-600 underline hover:text-blue-800">hello@csqlabs.com</a> to learn more and apply.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Careers Final CTA Section (Value Swapped Header & Subtext) -->
+        <section id="careers-contact" class="relative py-32 overflow-hidden border-b border-zinc-200">
+            <img src="background.png" alt="CTA Background" class="absolute inset-0 w-full h-full object-cover pointer-events-none z-0">
+            <div class="absolute inset-0 bg-dot-grid pointer-events-none z-10"></div>
+            <div class="max-w-3xl mx-auto px-6 text-center relative z-20">
+                <h2 class="text-4xl md:text-6xl font-bold tracking-tight text-zinc-900 mb-6">Define the frontier with us.</h2>
+                <p class="text-lg text-zinc-600 mb-10 leading-relaxed">We are moving fast, scaling our platform, and setting the standard for agentic workflows. Come join our team and build the future from zero-to-one.</p>
+                <a href="mailto:hello@csqlabs.com" class="inline-flex items-center justify-center px-8 py-4 bg-zinc-900 text-white font-medium text-sm rounded hover:bg-zinc-800 transition-colors whitespace-nowrap">Get in Touch</a>
+            </div>
+        </section>
+    </div>
+
+    <!-- Global shared Footer -->
+    <footer class="border-t border-zinc-200 bg-white pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16 text-sm">
+                <div class="col-span-1">
+                    <a href="#" onclick="showPage('home'); return false;" class="flex items-center gap-2 mb-4">
+                        <img src="csq-logo-black.png" alt="CSQUARED Labs Logo" class="h-5 w-auto">
+                    </a>
+                    <p class="text-zinc-500 max-w-sm">An automated, AI-powered platform built for market researchers and consumer insights teams.</p>
+                </div>
+                <div class="col-span-1">
+                    <h4 class="font-mono text-xs text-zinc-400 uppercase tracking-widest mb-4">Navigation</h4>
+                    <ul class="space-y-3 text-zinc-600">
+                        <li><a href="#" onclick="showPage('home'); return false;" class="hover:text-zinc-900 transition-colors">Home</a></li>
+                        <li><a href="#features" onclick="navigateToSection('features'); return false;" class="hover:text-zinc-900 transition-colors">Features</a></li>
+                        <li><a href="#team" onclick="navigateToSection('team'); return false;" class="hover:text-zinc-900 transition-colors">Team</a></li>
+                        <li><a href="#" onclick="showPage('careers'); return false;" class="hover:text-zinc-900 transition-colors">Careers</a></li>
+                    </ul>
+                </div>
+                <div class="col-span-1">
+                    <h4 class="font-mono text-xs text-zinc-400 uppercase tracking-widest mb-4">Connect</h4>
+                    <ul class="space-y-3 text-zinc-600">
+                        <li><a href="mailto:hello@csqlabs.com" class="hover:text-zinc-900 transition-colors flex items-center justify-between">Email <i data-lucide="arrow-up-right" class="w-3 h-3"></i></a></li>
+                        <li><a href="https://www.linkedin.com/company/csquared-labs/" class="hover:text-zinc-900 transition-colors flex items-center justify-between">LinkedIn <i data-lucide="arrow-up-right" class="w-3 h-3"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-zinc-200 text-xs font-mono text-zinc-400">
+                <p>&copy; 2026 CSQ Labs. All Rights Reserved.</p>
+                <div class="flex gap-6 mt-4 md:mt-0">
+                    <a href="privacy.html" class="hover:text-zinc-900 transition-colors">Privacy Policy</a>
+                    <a href="cookies.html" class="hover:text-zinc-900 transition-colors">Cookie Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Interactive Animation controller script -->
+    <script>
+        function showPage(pageId) {
+            const mainContent = document.getElementById("main-landing-content");
+            const careersContent = document.getElementById("careers-content");
+            const homeLink = document.getElementById("nav-home");
+            const careersLink = document.getElementById("nav-careers");
+
+            if (pageId === "careers") {
+                mainContent.classList.add("hidden");
+                careersContent.classList.remove("hidden");
+                homeLink.classList.remove("font-semibold", "text-zinc-950");
+                careersLink.classList.add("font-semibold", "text-zinc-950");
+            } else {
+                mainContent.classList.remove("hidden");
+                careersContent.classList.add("hidden");
+                careersLink.classList.remove("font-semibold", "text-zinc-950");
+                homeLink.add("font-semibold", "text-zinc-950");
+            }
+            window.scrollTo({ top: 0, behavior: 'auto' });
+        }
+
+        // Navigate cleanly to sections on the homepage
+        function navigateToSection(sectionId) {
+            showPage('home');
+            setTimeout(() => {
+                const element = document.getElementById(sectionId);
+                if (element) { element.scrollIntoView({ behavior: 'smooth' }); }
+            }, 100);
+        }
+
+        // Keep the nav links functioning properly with the re-ordered sections
+        window.addEventListener('hashchange', () => {
+            const hash = window.location.hash;
+            if (hash) {
+                navigateToSection(hash.substring(1));
+            }
+        });
+
+        // Toggle role accordions
+        function toggleAccordion(id) {
+            const content = document.getElementById(`content-${id}`);
+            const icon = document.getElementById(`icon-${id}`);
+            const isOpen = content.style.maxHeight && content.style.maxHeight !== '0px';
+            
+            if (isOpen) {
+                content.style.maxHeight = '0px';
+                icon.textContent = '+';
+            } else {
+                content.style.maxHeight = content.scrollHeight + 'px';
+                icon.textContent = '−';
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html>
