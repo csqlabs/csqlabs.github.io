@@ -222,9 +222,26 @@
   z-index: 5;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  /* The copy is centred between the two bars that overlay this section —
+     the fixed header above, the quicklinks below. It used to be flex-end
+     with a flat 186px bottom padding, which pinned it to the quicklinks
+     and dumped every spare pixel into one gap up top, so it sat lower on
+     short viewports and stranded a void on tall ones.
+
+     Centring only reads as centred if the two paddings match, and both
+     bars are --header-h tall, so both paddings are --header-h: equal
+     space above the pill and below the button at every height. They also
+     act as floors, keeping the copy clear of the header and the
+     quicklinks rather than sliding under either.
+
+     (The old value was clamp(186px, 108px + 18.2vw, 84px) — its minimum
+     exceeded its maximum, and an inverted clamp() returns the minimum, so
+     it resolved to a flat 186px at every width and the vw term never
+     applied.) */
+  justify-content: center;
   height: 100%;
-  padding-bottom: clamp(186px, 108px + 18.2vw, 84px);
+  padding-top: var(--header-h);
+  padding-bottom: var(--header-h);
 }
 
 /* Mobile: the banner alone owns the first viewport, and the quicklinks drop
@@ -239,9 +256,11 @@
   .hero__inner {
     height: 100vh;
     height: 100dvh;
+    /* Centring and the top floor come from the base rule. Only the bottom
+       differs: there is no quicklinks bar overlaying the banner here (they
+       sit in flow below it), so this just needs a closing gutter rather
+       than the height of a bar. */
     padding-bottom: var(--gap-lg);
-    justify-content: flex-end;
-    padding-top: var(--header-h);
   }
 }
 
@@ -739,6 +758,11 @@
   line-height: var(--lh-h2);
 }
 
+/* The closing line starts its own line at every width. display:block rather
+   than a <br> so the clause still wraps normally within itself on narrow
+   viewports instead of being forced to break in a fixed place. */
+.stats__lede-break { display: block; }
+
 .stats__row {
   margin-top: var(--stats-lede-gap);
   display: flex;
@@ -773,10 +797,25 @@
 .stat__label { font-family: var(--font-mono); font-weight: 500; font-size: var(--fs-stat-label); line-height: var(--lh-stat-label); text-transform: uppercase; }
 .stat__body { font-family: var(--font-body); font-weight: 300; font-size: var(--fs-body); line-height: var(--lh-body); color: var(--color-white); }
 
+/* Columns are fluid and merely *capped* at the Figma width, rather than
+   pinned to it. Three hard 360px badges plus their gaps need a ~1200px
+   container, and --container-pad scales with the viewport (9.505vw), so
+   that container only exists at viewports ≥1440px — at 1200px it is
+   1006px, at 768px only 656px. Below 1440 the third column therefore ran
+   past the container and .stats' own overflow:clip cut it off. flex:1 with
+   max-width keeps the layout identical from 1440 up (items cap at 360 and
+   space-between spreads the slack into the usual 60px gutters) while
+   letting them shrink together on tablets and smaller laptops. */
 @media (min-width: 768px) {
-  .stats__row { flex-direction: row; align-items: flex-end; justify-content: space-between; gap: 0; }
-  .stat { width: var(--stat-badge-w); }
-  .stat__badge { width: var(--stat-badge-w); }
+  /* flex-start, not flex-end. Bottom-aligning made each column's badge
+     position depend on how many lines its label and body happened to wrap
+     to, so the badges staggered into a staircase as soon as the columns
+     stopped coming out the same height (which is any width narrower than
+     full desktop). Top-aligning pins all three badges to one line, and
+     since the badges are equal height the labels line up under them too. */
+  .stats__row { flex-direction: row; align-items: flex-start; justify-content: space-between; gap: var(--gap-md); }
+  .stat { flex: 1 1 0; min-width: 0; max-width: var(--stat-badge-w); }
+  .stat__badge { width: 100%; }
 }
 
 /* ---------------------------------------------------------------------- */
