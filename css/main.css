@@ -562,6 +562,41 @@
 .tile--pricing { background: var(--color-aegean-blue); }
 .tile--cx { background: var(--color-teal); }
 
+/* Mobile: the tiles stack single-column and stay short (--tile-h bottoms
+   out at 300px) while the body copy wraps to 3–4 lines, so text fills
+   roughly the top 70–80% of every card. The per-graphic positions (inline
+   in index.html, lifted from each source SVG) are tuned for the desktop
+   card proportions and ride up through the title and body at this size.
+
+   Fix is to re-anchor each graphic by its TOP edge (top:…; bottom:auto)
+   rather than its bottom: the top edge is the one that has to clear the
+   text, and anchoring it directly keeps that clearance fixed no matter
+   how tall the card or the graphic itself resolves to at a given viewport
+   width (graphic heights come from aspect-ratio × a % width, so a
+   bottom-anchored offset drifts as the viewport changes). Whatever hangs
+   past the card is cropped by .tile's own overflow:clip — the same
+   "cropped by the card edge" treatment the desktop composition already
+   relies on for cards 3 and 4.
+
+   !important is unavoidable here: the properties being overridden are
+   inline styles, which outrank any stylesheet rule without it. */
+@media (max-width: 767px) {
+  .tile__graphic--rings    { top: 70% !important; bottom: auto !important; }
+  .tile__graphic--diamonds { top: 68% !important; bottom: auto !important; }
+  /* Card 4's copy is the longest of the six (4 lines), so its arcs start
+     lower than the rest — only the ellipse tips clear the text, which is
+     the same read the desktop version's bottom:-62% crop was after. */
+  .tile__graphic--orbs     { top: 78% !important; bottom: auto !important; }
+  .tile__graphic--atom     { top: 72% !important; left: 50% !important; }
+  .hex-draw                { top: 72% !important; }
+  /* Card 2 is the exception: six 2px rules are far less intrusive behind
+     text than the other cards' large curves, and top-anchoring them would
+     push two of the six lines (plus a ball) off the bottom edge entirely.
+     A small nudge down clears the last line of copy while costing only the
+     bottom-most rule, which slides under the card edge. */
+  .tile__graphic--balls    { bottom: -8% !important; }
+}
+
 /* ---------------------------------------------------------------------- */
 /* Offerings list                                                          */
 /* ---------------------------------------------------------------------- */
@@ -859,44 +894,56 @@
   box-sizing: border-box;
 }
 
+/* The row carries the padding (not the section, not the columns), so the
+   maroon block always keeps a margin around its contents at every width. */
 .veterans__grid {
   display: flex;
   flex-direction: column-reverse;
   gap: var(--gap-md);
   align-items: center;
+  padding-top: var(--gap-md);
+  padding-bottom: var(--gap-md);
+
 }
 
-.veterans__photo { width: 100%; aspect-ratio: 591 / 443; overflow: hidden; position: relative; }
-.veterans__photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+/* Ratio matches the portrait's own 1773x2523 (= 591:841) so object-fit has
+   nothing to crop. object-position pins to the top regardless, so a future
+   photo with a different ratio loses feet rather than a head. */
+.veterans__photo { width: 100%; aspect-ratio: 591 / 841; overflow: hidden; position: relative; }
+.veterans__photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; }
 .veterans__photo::after { content: ""; position: absolute; inset: 0; background: rgba(85,0,0,0.1); }
 
-/* justify-content:space-between splits .veterans__copy into two groups —
-   .veterans__copy-top (header/subtext/logos) and .veterans__actions —
-   pinned to the top and bottom of the column respectively. On desktop
-   that column is stretched (align-items:stretch on .veterans__grid) to
-   the photo's own height, so this is what puts the header's top edge
-   level with the photo's top edge and the actions row's bottom edge
-   level with the photo's bottom edge. gap is a floor, not the driver of
-   that split — on mobile, where .veterans__copy isn't height-stretched
-   to anything, space-between has no extra room to distribute, so gap is
-   what actually provides the spacing there. */
-.veterans__copy { display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; gap: var(--gap-md); max-width: 490px; width: 100%; }
+/* flex-start, not space-between. The column is no longer height-stretched
+   to the photo (the grid starts both columns), so there is no slack for
+   space-between to distribute — and when the photo was the taller column it
+   distributed that slack into a gap between the logos and the buttons. gap
+   is what drives the spacing here now. */
+.veterans__copy { display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: var(--gap-md); max-width: 490px; width: 100%; }
 .veterans__copy-top { display: flex; flex-direction: column; align-items: flex-start; gap: var(--gap-sm); }
 .veterans__actions { display: flex; align-items: center; gap: var(--gap-md); }
 
-/* Desktop: explicit 12-col grid — photo spans 1–6, copy spans 8–12, col 7
-   left empty as a deliberate gap between them (photo/copy previously sat
-   flush against each other with no breathing room). Must come after the
-   base rules above so these overrides win the cascade. */
+/* Desktop: one row, two columns — photo left, copy right. Replaces an
+   explicit 12-col grid (photo 1–6, copy 8–12, col 7 left empty as a gap);
+   two tracks plus column-gap says the same thing without the empty track.
+   Must come after the base rules above so these overrides win the cascade. */
 @media (min-width: 768px) {
   .veterans__grid {
     display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    column-gap: 16px;
-    align-items: stretch;
+    grid-template-columns: 1fr 1fr;
+    column-gap: var(--gap-lg);
+    padding-top: var(--gap-lg);
+    padding-bottom: var(--gap-lg);
+    /* start, not stretch. Stretch made each column's height depend on the
+       other, which broke both ways: a taller copy column stretched the
+       photo, and since the photo is width:auto + aspect-ratio, CSS derived
+       its *width* from that height and burst it out of its track over the
+       copy; a taller photo stretched the copy, and its space-between then
+       dropped a gap between the logos and the buttons. Starting both lets
+       each take its natural height. */
+    align-items: start;
   }
-  .veterans__photo { grid-column: 1 / 7; width: auto; }
-  .veterans__copy { grid-column: 8 / 13; max-width: none; width: auto; }
+  .veterans__photo { width: auto; }
+  .veterans__copy { max-width: none; width: auto; }
 }
 
 /* justify-content:flex-start (not space-between) so gap is the actual

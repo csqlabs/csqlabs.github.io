@@ -198,6 +198,11 @@
    matching it to the nearest loaded weight rather than rendering true
    medium/bold. 600 is the real bold variant. */
 .article__sources li p strong { font-weight: 600; color: var(--color-maroon); }
+/* Sources that point at an online original are underlined so they read as
+   clickable; they inherit their surrounding color (maroon inside <strong>). */
+.article__sources li p a { color: inherit; text-decoration: underline; text-underline-offset: 0.18em; }
+.article__sources li p a:hover,
+.article__sources li p a:focus-visible { text-decoration-thickness: 2px; }
 
 /* ---- Related articles (reuses the .articles/.article-card component
    from the landing page's Articles section, just retitled) ---- */
