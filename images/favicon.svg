@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <title>Serifo</title>
+  <style>
+    /* Transparent tile, so the mark has to carry itself on whatever the tab
+       colour happens to be: maroon on light chrome, bone on dark chrome. */
+    circle { fill: #550000; }
+    @media (prefers-color-scheme: dark) {
+      circle { fill: #f8f7f5; }
+    }
+  </style>
+  <!-- Logo mark, source viewBox 0 0 31.4329 36, scaled to 44px tall and centred. -->
+  <g transform="translate(4.791 2) scale(1.222222)">
+    <circle cx="15.3134" cy="17.4627" r="4.02985"/>
+    <circle cx="15.3134" cy="8.59702" r="2.68657"/>
+    <circle cx="6.98504" cy="13.1642" r="2.68657"/>
+    <circle cx="23.6417" cy="13.1642" r="2.68657"/>
+    <circle cx="6.98504" cy="22.0298" r="2.68657"/>
+    <circle cx="23.6417" cy="22.0298" r="2.68657"/>
+    <circle cx="15.3134" cy="27.403" r="2.68657"/>
+    <circle cx="8.32839" cy="5.64179" r="1.34328"/>
+    <circle cx="22.2985" cy="5.91046" r="1.34328"/>
+    <circle cx="1.34328" cy="18" r="1.34328"/>
+    <circle cx="30.0896" cy="18" r="1.34328"/>
+    <circle cx="8.32839" cy="29.5522" r="1.34328"/>
+    <circle cx="23.1045" cy="29.5522" r="1.34328"/>
+    <circle cx="15.1791" cy="0.940299" r="0.940299"/>
+    <circle cx="0.940299" cy="8.19402" r="0.940299"/>
+    <circle cx="30.4926" cy="8.19402" r="0.940299"/>
+    <circle cx="0.940299" cy="27.2687" r="0.940299"/>
+    <circle cx="30.4926" cy="27.2687" r="0.940299"/>
+    <circle cx="15.1791" cy="35.0597" r="0.940299"/>
+  </g>
+</svg>

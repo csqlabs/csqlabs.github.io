@@ -65,6 +65,17 @@
     var contactDialog = contactModal.querySelector(".contact-modal__dialog");
     var contactFields = contactForm.querySelector(".contact-form__fields");
     var contactSuccess = contactForm.querySelector(".contact-form__success");
+    var contactError = contactForm.querySelector(".contact-form__error");
+    var contactSubmit = contactForm.querySelector(".contact-form__submit");
+    /* Read once at init, not per submit: the label is overwritten with
+       "Sending…" while a submit is in flight, so re-reading it later would
+       latch that placeholder in as the "original" and never recover. */
+    var contactSubmitLabel = contactSubmit ? contactSubmit.textContent : "";
+    var resetContactSubmit = function () {
+      if (!contactSubmit) return;
+      contactSubmit.disabled = false;
+      contactSubmit.textContent = contactSubmitLabel;
+    };
     var reduceMotionModal = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     var lastFocusedBeforeModal = null;
 
@@ -127,8 +138,13 @@
       var finish = function () {
         contactModal.hidden = true;
         contactForm.reset();
+        /* The button and the error note live outside .contact-form__fields, so
+           form.reset() doesn't touch them — without this a modal reopened after
+           a submit shows a blank form with a dead "Sending…" button. */
+        resetContactSubmit();
         contactFields.hidden = false;
         contactSuccess.hidden = true;
+        if (contactError) contactError.hidden = true;
         if (lastFocusedBeforeModal) lastFocusedBeforeModal.focus();
       };
       if (reduceMotionModal) {
@@ -149,17 +165,59 @@
       el.addEventListener("click", closeContactModal);
     });
 
-    /* This is a static front end with no backend wired up — submitting
-       just swaps the form for a confirmation message rather than sending
-       the data anywhere. */
+    /* GitHub Pages can't run server-side code, so the form posts to
+       Web3Forms (https://web3forms.com) and they relay it to the address the
+       access_key is registered to. The key lives in a hidden input in the
+       markup — it is a public, submit-only token by design, so shipping it in
+       the page is expected and can't be used to read past submissions.
+       Posting via fetch rather than a plain form submit keeps the visitor in
+       the modal instead of bouncing them to a Web3Forms thank-you page. */
     contactForm.addEventListener("submit", function (e) {
       e.preventDefault();
       if (!contactForm.checkValidity()) {
         contactForm.reportValidity();
         return;
       }
-      contactFields.hidden = true;
-      contactSuccess.hidden = false;
+
+      if (contactError) contactError.hidden = true;
+      if (contactSubmit) {
+        contactSubmit.disabled = true;
+        contactSubmit.textContent = "Sending…";
+      }
+
+      var payload = {};
+      new FormData(contactForm).forEach(function (value, key) {
+        payload[key] = value;
+      });
+
+      fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(payload)
+      })
+        .then(function (res) {
+          /* Web3Forms reports failures in the JSON body as well as the status
+             code, so both have to be checked before claiming success. */
+          return res.json().then(function (data) {
+            if (!res.ok || !data.success) {
+              throw new Error(data && data.message ? data.message : "Submission failed");
+            }
+          });
+        })
+        .then(function () {
+          /* Restored even though the fields (and the button with them) are
+             about to be hidden — closing the modal un-hides them again. */
+          resetContactSubmit();
+          contactFields.hidden = true;
+          contactSuccess.hidden = false;
+        })
+        .catch(function () {
+          resetContactSubmit();
+          if (!contactError) return;
+          contactError.textContent =
+            "Sorry — that didn't send. Please try again, or email us at hello@serifo.ai.";
+          contactError.hidden = false;
+        });
     });
   }
 

@@ -1271,6 +1271,27 @@ body.has-modal-open { overflow: hidden; }
   text-align: center;
 }
 
+/* Shown in place of the success note when the Web3Forms POST fails, so a
+   dropped submission can't masquerade as a delivered one. */
+.contact-form__error {
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  color: var(--color-burnt-orange);
+  text-align: center;
+  margin-top: var(--gap-md);
+}
+
+/* Honeypot — must stay in the DOM and focus order for bots to take the bait,
+   so it is hidden outright rather than merely moved offscreen. */
+.contact-form__botcheck {
+  display: none !important;
+}
+
+.contact-form__submit[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 @media (max-width: 767px) {
   .contact-modal { padding: 0; }
   .contact-modal__dialog {

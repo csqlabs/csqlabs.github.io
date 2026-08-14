@@ -5,6 +5,9 @@
 <script>document.documentElement.classList.remove("no-js");</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Cheap Illusion of Intelligence — Serifo</title>
+<link rel="icon" href="favicon.ico" sizes="32x32" />
+<link rel="icon" href="images/favicon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="images/apple-touch-icon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,500;0,700;1,500&family=Geist:wght@300;600&family=DM+Mono:wght@500&family=Space+Grotesk:wght@500&display=swap" rel="stylesheet" />
@@ -247,11 +250,8 @@
     </nav>
 
     <div class="site-footer__social" aria-label="Social links">
-      <a href="#" aria-label="Serifo on LinkedIn">
+      <a href="https://www.linkedin.com/company/csquared-labs/posts/?feedView=all" target="_blank" rel="noopener noreferrer" aria-label="Serifo on LinkedIn">
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M6.94 8.5H3.56V20.5H6.94V8.5Z" fill="currentColor"/><path d="M5.25 7C6.35 7 7.25 6.1 7.25 5C7.25 3.9 6.35 3 5.25 3C4.15 3 3.25 3.9 3.25 5C3.25 6.1 4.15 7 5.25 7Z" fill="currentColor"/><path d="M13.16 8.5H9.94V20.5H13.16V14.3C13.16 12.6 13.9 11.6 15.36 11.6C16.7 11.6 17.31 12.53 17.31 14.3V20.5H20.53V13.66C20.53 10.36 18.77 8.24 15.98 8.24C14.34 8.24 13.53 9.03 13.16 9.62V8.5Z" fill="currentColor"/></svg>
-      </a>
-      <a href="#" aria-label="Serifo on X (Twitter)">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M13.66 10.36L20.5 3h-2.2l-5.6 6.42L8.05 3H3l7.17 10.02L3 21h2.2l6.03-6.9L16.95 21H22l-8.34-10.64Zm-2.13 2.44-.7-.96L5.9 4.62h2.02l4.47 6.16.7.96 5.8 8.01h-2.02l-4.34-5.95Z" fill="currentColor"/></svg>
       </a>
     </div>
   </div>
@@ -259,8 +259,8 @@
   <div class="container site-footer__bottom">
     <p class="site-footer__copyright">&copy; 2026 CSQ Labs. All Rights Reserved.</p>
     <div class="site-footer__legal">
-      <a href="#">Privacy Policy</a>
-      <a href="#">Cookie Policy</a>
+      <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>
+      <a href="cookies.html" target="_blank" rel="noopener">Cookie Policy</a>
     </div>
   </div>
   </footer>
@@ -307,6 +307,16 @@
     </div>
 
     <form class="contact-form" id="contact-form" novalidate>
+      <!-- Web3Forms delivery config. Get the access key at https://web3forms.com
+           (enter the destination address, the key arrives by email) and paste it
+           below. It is a public submit-only token, safe to ship in the page. -->
+      <input type="hidden" name="access_key" value="98f2d3a8-a3a4-4220-bde7-7f99dcb2ed40" />
+      <input type="hidden" name="subject" value="New enquiry from serifo.ai" />
+      <input type="hidden" name="from_name" value="Serifo website" />
+      <!-- Honeypot: hidden from people, filled in by bots — Web3Forms drops
+           any submission where it comes back non-empty. -->
+      <input type="checkbox" name="botcheck" class="contact-form__botcheck" tabindex="-1" autocomplete="off" />
+
       <div class="contact-form__fields">
         <div class="contact-form__row">
           <div class="contact-form__field">
@@ -355,10 +365,11 @@
       </div>
 
       <p class="contact-form__success" role="status" hidden>Thanks — we've got your message and will be in touch shortly.</p>
+      <p class="contact-form__error" role="alert" hidden></p>
     </form>
   </div>
 </div>
 
-<script src="js/main.js?v=7"></script>
+<script src="js/main.js?v=9"></script>
 </body>
 </html>
