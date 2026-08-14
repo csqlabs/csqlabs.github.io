@@ -1,0 +1,87 @@
+<!--
+  Motion type: SCROLL (triggers once on scroll into view)
+  Description: "Grades for outputs" bar chart. Starts in .pre-reveal resting
+  state (0 opacity, offset down 24px) and should fade/slide up once when the
+  element enters the viewport (wire an IntersectionObserver to toggle
+  .is-visible, see main site js/main.js for the reference implementation).
+  Used in: index.html "Built by market research experts" section.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Line graphic — grades chart (scroll reveal)</title>
+<style>
+  body { margin: 0; padding: 40px; background: #fff; font-family: "Geist", sans-serif; }
+
+  .pre-reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .pre-reveal.is-visible { opacity: 1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce) {
+    .pre-reveal { opacity: 1; transform: none; transition: none; }
+  }
+
+  #grades-chart {
+    position: relative;
+    width: 389px;
+    height: 520px;
+    background: #ff8f8a;
+    overflow: hidden;
+  }
+  #grades-chart .label {
+    position: absolute; top: 33px; left: 37px;
+    display: flex; align-items: center; gap: 8px;
+    font-size: 20px; font-weight: 500; color: #000;
+  }
+</style>
+</head>
+<body>
+
+<div id="grades-chart" class="pre-reveal">
+  <div class="label">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 0L11.6263 8.37365L20 10L11.6263 11.6263L10 20L8.37365 11.6263L0 10L8.37365 8.37365L10 0Z" fill="black"/>
+    </svg>
+    Grades for outputs
+  </div>
+  <svg viewBox="0 0 389 520" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;">
+    <line x1="0" y1="239" x2="389" y2="239" stroke="#000" stroke-dasharray="4 4" stroke-linecap="round" />
+    <g font-family="Space Grotesk, sans-serif" font-weight="500">
+      <rect x="60" y="277" width="40" height="149" fill="#550000"/>
+      <text x="80" y="272" text-anchor="middle" font-size="24" fill="#550000">85%</text>
+      <text x="65" y="185" font-size="16" fill="#F8F7F5" transform="rotate(-90 65 355)">50%</text>
+
+      <rect x="172" y="253" width="40" height="239" fill="#550000"/>
+      <text x="192" y="248" text-anchor="middle" font-size="24" fill="#550000">90%</text>
+      <text x="177" y="150" font-size="16" fill="#F8F7F5" transform="rotate(-90 177 350)">80%</text>
+
+      <rect x="281" y="266" width="40" height="195" fill="#550000"/>
+      <text x="301" y="261" text-anchor="middle" font-size="24" fill="#550000">85%</text>
+      <text x="286" y="180" font-size="16" fill="#F8F7F5" transform="rotate(-90 286 355)">65%</text>
+
+      <text x="80" y="450" text-anchor="middle" font-size="12" fill="#000" transform="rotate(-90 80 450)">Questionnaire</text>
+      <text x="192" y="450" text-anchor="middle" font-size="12" fill="#000" transform="rotate(-90 192 450)">Analysis</text>
+      <text x="301" y="450" text-anchor="middle" font-size="12" fill="#000" transform="rotate(-90 301 450)">Powerpoints</text>
+    </g>
+  </svg>
+</div>
+
+<script>
+  var el = document.getElementById("grades-chart");
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) { entry.target.classList.add("is-visible"); io.unobserve(entry.target); }
+      });
+    }, { threshold: 0.2 });
+    io.observe(el);
+  } else {
+    el.classList.add("is-visible");
+  }
+</script>
+
+</body>
+</html>

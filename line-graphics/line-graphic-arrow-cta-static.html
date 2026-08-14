@@ -1,0 +1,31 @@
+<!--
+  Motion type: STATIC (a hover micro-interaction — nudge right 4px on
+  hover/focus — is stubbed via CSS but no scroll/loop motion is intended)
+  Description: Trailing arrow icon used after every text link ("Read",
+  "Consulting", "LinkedIn", etc.) throughout the site.
+  Used in: index.html hero quicklinks, offering rows, veterans, articles.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Line graphic — CTA arrow (static)</title>
+<style>
+  body { margin: 0; padding: 40px; background: #f8f7f5; }
+  .text-link {
+    display: inline-flex; align-items: center; gap: 12px;
+    font-family: "Geist", sans-serif; font-weight: 600; font-size: 18px; color: #550000;
+  }
+  .text-link svg { transition: transform 0.2s ease; }
+  .text-link:hover svg, .text-link:focus-visible svg { transform: translateX(4px); }
+</style>
+</head>
+<body>
+  <a class="text-link" href="#">
+    Read
+    <svg id="cta-arrow" width="17" height="14.7279" viewBox="0 0 17 14.7279" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M16.7071 8.07107C17.0976 7.68054 17.0976 7.04738 16.7071 6.65685L10.3431 0.292893C9.95262 -0.097631 9.31946 -0.097631 8.92893 0.292893C8.53841 0.683418 8.53841 1.31658 8.92893 1.70711L14.5858 7.36396L8.92893 13.0208C8.53841 13.4113 8.53841 14.0445 8.92893 14.435C9.31946 14.8256 9.95262 14.8256 10.3431 14.435L16.7071 8.07107ZM0 7.36396V8.36396H16V7.36396V6.36396H0V7.36396Z" fill="#550000"/>
+    </svg>
+  </a>
+</body>
+</html>

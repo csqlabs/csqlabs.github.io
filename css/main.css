@@ -1,0 +1,1349 @@
+/* ==========================================================================
+   Serifo — Page sections
+   Structural rearrangement (nav pattern, grid column-count, 2-col -> stack)
+   happens at the single --mobile-bp breakpoint below, matching genuinely
+   different component arrangements in the Figma Mobile frame. All sizing
+   within each regime (type, spacing, component dimensions) is fluid via
+   tokens.css clamp() variables between 430px and 1440px.
+   ========================================================================== */
+
+:root { --mobile-bp: 767px; }
+
+/* ---------------------------------------------------------------------- */
+/* Header / Nav                                                            */
+/* Sticky/fixed to the viewport at all times (not just over the hero).     */
+/* Starts transparent over the hero video, then transitions to a solid    */
+/* white bar once scrolled past the hero — toggled via .site-header--solid */
+/* (added by js/main.js on scroll). Falls back to plain white if JS is     */
+/* unavailable, since a transparent bar over body content is unreadable.   */
+/* ---------------------------------------------------------------------- */
+.site-header {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 50;
+  width: 100%;
+  /* A black 10%-opacity fill on top of the blur — the blur alone still let
+     busy hero footage show enough contrast variation to hurt legibility of
+     the nav text sitting over it. */
+  background: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5.2px);
+  border-bottom: 0.5px solid var(--color-bone);
+  transition: background-color 0.25s ease, backdrop-filter 0.25s ease, border-color 0.25s ease, transform 0.25s ease, opacity 0.25s ease;
+}
+
+/* Hidden once the footer scrolls into view (toggled by js/main.js via
+   IntersectionObserver) — the fixed header would otherwise float over the
+   footer's own nav links for the rest of the scroll, duplicating them. */
+.site-header--hidden {
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.no-js .site-header,
+.site-header--solid {
+  background: var(--color-white);
+  backdrop-filter: none;
+  border-bottom-color: rgba(85, 0, 0, 0.15);
+}
+
+.site-header__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: var(--gap-xxs);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-xxs);
+}
+
+.brand__logo { width: var(--logo-w); height: var(--logo-h); }
+.brand__logo circle { fill: var(--color-bone); transition: fill 0.25s ease; }
+.no-js .brand__logo circle,
+.site-header--solid .brand__logo circle { fill: var(--color-maroon); }
+
+.brand__name {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 24px;
+  color: var(--color-bone);
+  transition: color 0.25s ease;
+}
+
+.no-js .brand__name,
+.site-header--solid .brand__name { color: var(--color-maroon); }
+
+.site-nav {
+  display: flex;
+  align-items: center;
+}
+
+.site-nav__links {
+  display: flex;
+  align-items: center;
+  gap: var(--nav-links-gap);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.site-nav__links a:not(.btn) {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: var(--fs-caption);
+  letter-spacing: 0;
+  color: var(--color-bone);
+  text-transform: uppercase;
+  transition: color 0.25s ease;
+}
+
+.no-js .site-nav__links a:not(.btn),
+.site-header--solid .site-nav__links a:not(.btn) { color: var(--color-maroon); }
+
+.site-nav__links-cta { display: flex; }
+@media (min-width: 768px) { .site-nav__links-cta { list-style: none; } }
+
+/* Nav CTA reverses with the header: bone-on-maroon over the hero,
+   maroon-on-bone once the header goes solid white (otherwise it'd render
+   as a near-invisible white button on a white bar). */
+.no-js .site-nav__links-cta .btn--light,
+.site-header--solid .site-nav__links-cta .btn--light {
+  background: var(--color-maroon);
+  color: var(--color-bone);
+}
+
+.nav-toggle {
+  display: none;
+  background: var(--color-bone);
+  border: none;
+  width: 38px;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-toggle__bars { display: flex; flex-direction: column; gap: 6px; }
+.nav-toggle__bars span { width: 18px; height: 2px; background: var(--color-black); display: block; }
+
+@media (max-width: 767px) {
+  .site-nav__links { display: none; }
+  .nav-toggle { display: inline-flex; }
+
+  .site-nav__links.is-open {
+    display: flex;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    background: var(--color-maroon);
+    border-top: 0.5px solid var(--color-bone);
+  }
+  .site-nav__links.is-open li { width: 100%; }
+  .site-nav__links.is-open a {
+    display: block;
+    width: 100%;
+    padding: var(--gap-sm) var(--container-pad);
+    border-bottom: 0.25px solid rgba(248, 247, 245, 0.3);
+  }
+  .site-nav__links.is-open .btn {
+    display: flex;
+    width: calc(100% - 2 * var(--container-pad));
+    margin: var(--gap-sm) var(--container-pad);
+  }
+}
+
+/* ---------------------------------------------------------------------- */
+/* Hero                                                                     */
+/* ---------------------------------------------------------------------- */
+.hero {
+  position: relative;
+  height: 100vh;
+  background: var(--color-maroon);
+  color: var(--color-bone);
+  overflow: clip;
+}
+
+.hero__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero__scrim {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 90% at 20% 85%, rgba(0,0,0,0.85) 0%, rgba(21,0,0,0.75) 25%, rgba(43,0,0,0.5) 50%, rgba(85,0,0,0) 100%);
+  pointer-events: none;
+}
+
+.hero__inner {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 100%;
+  padding-bottom: clamp(186px, 108px + 18.2vw, 84px);
+}
+
+@media (max-width: 767px) {
+  .hero__inner { padding-bottom: 224px; justify-content: flex-end; padding-top: var(--header-h); }
+}
+
+.hero__content {
+  max-width: 709px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-md);
+}
+
+.hero__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  width: max-content;
+  max-width: 100%;
+  color: var(--color-white);
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: var(--hero-pill-fs);
+  line-height: 1.6;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+.hero__pill-dot { flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--color-white); }
+
+.hero__title { opacity: 0.96; }
+.hero__body { max-width: 708px; }
+
+.hero__quicklinks {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap-xxs);
+  padding-inline: var(--container-pad);
+  height: var(--header-h);
+  backdrop-filter: blur(6px);
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.hero__quicklinks a { display: inline-flex; align-items: center; gap: var(--gap-xxs); }
+.hero__quicklinks img { width: 16px; }
+
+@media (max-width: 767px) {
+  .hero__quicklinks {
+    position: absolute;
+    flex-direction: column;
+    align-items: stretch;
+    height: auto;
+    gap: 0;
+    padding-inline: 0;
+    background: none;
+    backdrop-filter: none;
+  }
+  .hero__quicklinks a {
+    justify-content: space-between;
+    padding: 18px var(--container-pad);
+    border-top: 0.25px solid var(--color-bone);
+    backdrop-filter: blur(6px);
+    background: rgba(0, 0, 0, 0.4);
+  }
+}
+
+/* ---------------------------------------------------------------------- */
+/* Capabilities intro + tiles + Offerings                                  */
+/* Figma merges these into one continuous white block on mobile (single   */
+/* frame) and keeps them as two contiguous frames on desktop — modeled    */
+/* here as one section so the tiles→offerings gap matches exactly at      */
+/* both breakpoints instead of being split across two independent         */
+/* section paddings.                                                      */
+/* ---------------------------------------------------------------------- */
+.capabilities-offerings {
+  background: var(--color-white);
+  padding-top: var(--caps-top);
+  padding-bottom: var(--caps-top);
+}
+
+.section-intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gap-md);
+  text-align: center;
+  max-width: 795px;
+  margin-inline: auto;
+}
+
+.section-intro--dark { color: var(--color-bone); }
+
+.tiles {
+  margin-top: var(--caps-intro-gap);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--gap-xs);
+}
+
+.tile {
+  position: relative;
+  overflow: clip;
+  padding: var(--tile-pad);
+  height: var(--tile-h);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-xxs);
+  color: var(--color-bone);
+}
+
+/* Scroll-reveal for the tile cards — ROW-based, not whole-grid: js/main.js
+   runs two independent IntersectionObservers, one per row (tiles 1–3,
+   tiles 4–6), each using a shrunk "centered band" root so a row only
+   triggers once it's actually centered in the viewport, not just
+   partially visible. Each observer adds .is-visible directly to its own
+   row's three tiles — there's no longer a single shared container class
+   gating this, which is what lets the two rows fire independently.
+   transform only ever holds this translateY here — desktop's masonry
+   placement below uses top/left, not transform, so they don't conflict.
+   nth-child delays reset per row (4/5/6 reuse 1/2/3's 0/0.4s/0.8s
+   pattern) since each row's .is-visible lands at its own, independent
+   moment — the delay is relative to THAT event, not to page load or to
+   the other row. */
+.tile {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 3s ease, transform 3s ease;
+}
+.tile.is-visible { opacity: 1; transform: translateY(0); }
+.tile:nth-child(1) { transition-delay: 0s; }
+.tile:nth-child(2) { transition-delay: 0.4s; }
+.tile:nth-child(3) { transition-delay: 0.8s; }
+.tile:nth-child(4) { transition-delay: 0s; }
+.tile:nth-child(5) { transition-delay: 0.4s; }
+.tile:nth-child(6) { transition-delay: 0.8s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tile { transition: none; }
+}
+
+/* Desktop: true masonry via absolute placement (matches Figma's own
+   technique) — the middle column (usage + pricing) sits --tile-stagger
+   lower than the outer two columns. Plain CSS Grid can't do this: a
+   shared row track would either force all three columns to shift together
+   or let the offset tile overlap the row below it. DOM order stays 1–6
+   (reading order for mobile/AT); position is purely visual. Must come
+   after the base .tile rule above so position:absolute wins the cascade. */
+@media (min-width: 768px) {
+  .tiles {
+    position: relative;
+    display: block;
+    height: calc(2 * var(--tile-h) + var(--tile-gap) + var(--tile-stagger));
+  }
+
+  .tile {
+    position: absolute;
+    width: calc((100% - 2 * var(--tile-gap)) / 3);
+  }
+
+  .tile--brand   { left: 0; top: 0; }
+  .tile--concept { left: calc(2 * ((100% - 2 * var(--tile-gap)) / 3 + var(--tile-gap))); top: 0; }
+  .tile--usage   { left: calc((100% - 2 * var(--tile-gap)) / 3 + var(--tile-gap)); top: var(--tile-stagger); }
+  .tile--social  { left: 0; top: calc(var(--tile-h) + var(--tile-gap)); }
+  .tile--cx      { left: calc(2 * ((100% - 2 * var(--tile-gap)) / 3 + var(--tile-gap))); top: calc(var(--tile-h) + var(--tile-gap)); }
+  .tile--pricing { left: calc((100% - 2 * var(--tile-gap)) / 3 + var(--tile-gap)); top: calc(var(--tile-stagger) + var(--tile-h) + var(--tile-gap)); }
+}
+
+.tile__num {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: var(--fs-num-badge);
+  line-height: 24px;
+}
+
+.tile__title { font-family: var(--font-serif); font-weight: 500; font-size: var(--fs-h2); line-height: var(--lh-h2); }
+.tile__body { font-family: var(--font-body); font-weight: 300; font-size: var(--fs-body); line-height: var(--lh-body); }
+
+.tile__graphic { position: absolute; opacity: 0.3; pointer-events: none; }
+
+/* Brand & Advertising (Card 1): each ring is a div sized exactly one
+   radius wide / one diameter tall, with a true semicircular border on its
+   right side (top/bottom-right-radius: 100% 50% — 100% of the box's own
+   width and 50% of its own height both equal the radius, which is what
+   keeps the arc circular rather than elliptical) and a plain straight
+   border on its flat left (diameter) side — matching the reference SVG,
+   whose stroked path closes with a straight line back down that same
+   edge rather than leaving it open. (Drawing the flat edge as the box's
+   own border — square corners on the left, radiused on the right — is
+   what keeps that line clean; the earlier version that got a full circle
+   only 50% of the way there via clip/overflow instead flared into a
+   visible blob right at the tangent point where the clip cut across the
+   curve, which is what actually needed fixing, not the line's presence.)
+   Percentages for left/top/width/height (set inline per ring) are that
+   ring's pivot-x, center-y, and radius from the reference SVG, divided by
+   the 404x229 viewBox — safe to do independently (not aspect-ratio-locked
+   to each other) because the wrapper itself is pinned to
+   aspect-ratio:404/229, so a % of its width and a % of its height always
+   scale by the same factor. */
+.ring-arc {
+  position: absolute;
+  box-sizing: border-box;
+  border: 2px solid var(--color-salmon);
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-top-right-radius: 100% 50%;
+  border-bottom-right-radius: 100% 50%;
+}
+
+/* Ripple-in reveal: rings scale up from their own pivot edge (transform-
+   origin: 0% — the flat side, so each ring grows outward from the corner
+   like an actual ripple, not from its own center) in smallest-to-largest
+   order, matching the markup's DOM order. Triggered by the same
+   .tile.is-visible as its own card (tile--brand is nth-child(1) of row 1,
+   delay 0 — see .tile:nth-child(1) above — so these start exactly when
+   its card starts fading in, not before). */
+.ring-arc {
+  opacity: 0;
+  transform: scale(0.4);
+  transform-origin: 0% 50%;
+  transition: opacity 3s ease, transform 3s ease;
+}
+.tile.is-visible .ring-arc { opacity: 1; transform: scale(1); }
+.ring-arc:nth-child(1) { transition-delay: 0s; }
+.ring-arc:nth-child(2) { transition-delay: 0.08s; }
+.ring-arc:nth-child(3) { transition-delay: 0.16s; }
+.ring-arc:nth-child(4) { transition-delay: 0.24s; }
+.ring-arc:nth-child(5) { transition-delay: 0.32s; }
+.ring-arc:nth-child(6) { transition-delay: 0.4s; }
+.ring-arc:nth-child(7) { transition-delay: 0.48s; }
+.ring-arc:nth-child(8) { transition-delay: 0.56s; }
+.ring-arc:nth-child(9) { transition-delay: 0.64s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ring-arc { transition: none; }
+}
+
+/* Concept Testing (Card 3): each ring is a single div filled solid,
+   clipped to a hollow diamond by an SVG <clipPath> (defs live inline in
+   index.html, right before .tile__graphic--diamonds — CSS clip-path:
+   polygon() can't do a true two-loop ring, only <clipPath>'s
+   multi-subpath <path> can; see the HTML comment there for why).
+
+   Each ring's inner subpath is its outer diamond's vertices offset a
+   uniform 2pt *perpendicular to the edge* toward the center — for a
+   rhombus with half-width HW, half-height HH and edge length
+   L=√(HW²+HH²), offsetting every edge inward by distance d moves the
+   x-axis vertex to HW−d·L/HH and the y-axis vertex to HH−d·L/HW
+   (derived by shifting each edge's line equation HH·x+HW·y=HW·HH inward
+   along its own normal and re-intersecting with the axes). A naive
+   "nudge every vertex by the same d on its own axis" — i.e. HW−d,
+   HH−d — under-insets the tips relative to the edges on a shape this
+   elongated (HW ≫ HH here), which is what read as visibly
+   thicker/darker strokes along the edges than at the tips. */
+.diamond-ring { position: absolute; inset: 0; background: var(--color-maroon); }
+
+/* Grow-in reveal, smallest to largest (DOM order) — same mechanics as
+   .ring-arc above, scaling from center since a diamond (unlike Card 1's
+   arcs) has no single pivot edge to grow from. tile--concept is
+   nth-child(3) of row 1, whose own card-level delay is 0.8s (see
+   .tile:nth-child(3) above); these delays start at that same 0.8s
+   baseline so the rings only begin revealing once their card has
+   actually started fading in, not while it's still fully transparent. */
+.diamond-ring {
+  opacity: 0;
+  transform: scale(0.4);
+  transition: opacity 3s ease, transform 3s ease;
+}
+.tile.is-visible .diamond-ring { opacity: 1; transform: scale(1); }
+.diamond-ring:nth-child(1) { transition-delay: 0.8s; }
+.diamond-ring:nth-child(2) { transition-delay: 0.88s; }
+.diamond-ring:nth-child(3) { transition-delay: 0.96s; }
+.diamond-ring:nth-child(4) { transition-delay: 1.04s; }
+.diamond-ring:nth-child(5) { transition-delay: 1.12s; }
+.diamond-ring:nth-child(6) { transition-delay: 1.2s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .diamond-ring { transition: none; }
+}
+
+/* Pricing & Value (Card 5): 6 identical bordered ellipses (inset:0;
+   margin:auto centers each — simpler than the earlier cards' left/top
+   math since this wrapper is square, aspect-ratio:1, so width- and
+   height-based percentages are already equal), each just rotated to a
+   different angle inline (see index.html) — rotating the whole
+   .tile__graphic--atom wrapper then spins every ellipse together as one
+   rigid pattern, which is what "the graphic rotating along its center"
+   means here (as opposed to each ellipse spinning independently).
+   Static until tile--pricing (nth-child(5) of row 2, delay 0.4s — see
+   .tile:nth-child(5) above) reveals, then spins once (fill:forwards
+   holds it at the end state, which — since rotate(360°) looks identical
+   to rotate(0°) — is indistinguishable from its original static pose).
+
+   cubic-bezier(0.16,1,0.3,1) ("ease-out-expo") instead of linear: the
+   spin now visibly decelerates into that final resting pose rather than
+   stopping abruptly at a constant speed. */
+.tile.is-visible .tile__graphic--atom {
+  animation: atom-spin 3s cubic-bezier(0.16, 1, 0.3, 1) 1 forwards;
+  animation-delay: 0.4s;
+}
+.atom-ring {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 19.56%;
+  height: 99.42%;
+  box-sizing: border-box;
+  border: 2pt solid var(--color-light-teal);
+  border-radius: 50%;
+}
+
+@keyframes atom-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile__graphic--atom { animation: none; }
+}
+
+/* Usage & Attitudes (Card 2): 6 static horizontal lines; 5 balls, each
+   wrapped in a .usage-ball-clip sized to the small window it's allowed
+   to show through (from the reference SVG's per-ball clip rect) — the
+   .usage-ball inside starts pushed down by its own full height
+   (translateY(100%), i.e. entirely below the clip window and therefore
+   invisible) and springs up to rest, "emerging from hiding behind the
+   line." Ball height (set inline per ball) is expressed as a % of its
+   OWN clip parent, not the graphic wrapper, since each clip window is a
+   different height but every ball is the same true size. */
+.balls-line { position: absolute; left: 0; right: 0; height: 0; border-top: 2px solid var(--color-burnt-orange); }
+.usage-ball-clip { position: absolute; overflow: hidden; }
+.usage-ball {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  border-radius: 50%;
+  background: var(--color-burnt-orange);
+  box-sizing: border-box;
+  transform: translateY(100%);
+  transition: transform 3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.tile.is-visible .usage-ball { transform: translateY(0); }
+
+@media (prefers-reduced-motion: reduce) {
+  .usage-ball { transition: none; }
+}
+
+/* Social Diligence (Card 4): 12 real SVG <ellipse> elements sharing a
+   center (see index.html for the cx/cy/rx/ry values — same geometry the
+   old left%/width%/height% divs resolved to, just expressed as real SVG
+   coordinates instead). Static here: the actual draw-in
+   (stroke-dasharray/stroke-dashoffset via Element.animate(), staggered
+   outer-ellipse-first) is entirely JS-driven, the same technique as
+   Card 6's cube lines, since it needs each ellipse's real measured
+   perimeter (getTotalLength()) — see the "Card 4: ellipse draw-in"
+   block in js/main.js. */
+.orb-ellipse { fill: none; stroke: var(--color-aegean-blue); stroke-width: 2; }
+
+.tile--brand { background: var(--color-burnt-orange); }
+.tile--usage { background: var(--color-peach); color: var(--color-burnt-orange); }
+.tile--concept { background: var(--color-salmon); color: var(--color-maroon); }
+.tile--social { background: var(--color-light-teal); color: var(--color-aegean-blue); }
+.tile--pricing { background: var(--color-aegean-blue); }
+.tile--cx { background: var(--color-teal); }
+
+/* ---------------------------------------------------------------------- */
+/* Offerings list                                                          */
+/* ---------------------------------------------------------------------- */
+.offerings {
+  margin-top: var(--caps-to-offerings-gap);
+}
+
+.offerings__intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--offerings-intro-gap);
+  text-align: center;
+  max-width: 795px;
+  margin-inline: auto;
+}
+
+.offerings__list {
+  margin-top: var(--offerings-to-list-gap);
+  display: flex;
+  flex-direction: column;
+}
+
+.offering-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--gap-md);
+  padding-block: var(--card-pad-y);
+  border-top: 0.5px solid var(--color-maroon);
+  color: var(--color-maroon);
+}
+
+.offerings__list .offering-row:last-child { border-bottom: 0.5px solid var(--color-maroon); }
+
+.offering-row__left { display: flex; align-items: center; gap: var(--gap-sm); }
+
+.offering-row__index {
+  font-family: var(--font-mono);
+  font-size: var(--fs-offering-index);
+  line-height: 25.6px;
+}
+
+.offering-row__title {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: var(--fs-h2);
+  line-height: var(--lh-h2);
+  opacity: 0.96;
+}
+
+.offering-row__body {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  max-width: 483px;
+}
+
+@media (max-width: 767px) {
+  .offering-row { flex-direction: column; gap: var(--gap-xxs); }
+}
+
+/* ---------------------------------------------------------------------- */
+/* Stats band v2 — maroon w/ angular badges (Figma node 26:3212)           */
+/* Desktop-sourced exactly; no Figma mobile frame exists yet for this      */
+/* redesign, so the mobile layout (stacked badges, fluid sizing) is an     */
+/* extrapolation of the same system rather than a 1:1 Figma match.         */
+/* ---------------------------------------------------------------------- */
+.stats {
+  position: relative;
+  background: var(--color-maroon);
+  color: var(--color-white);
+  padding-block: var(--gap-xxl);
+  overflow: clip;
+  box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  .stats { min-height: var(--stats-h); display: flex; align-items: center; padding-block: 0; }
+}
+
+.stats__lede {
+  max-width: 825px;
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: var(--fs-h2);
+  line-height: var(--lh-h2);
+}
+
+.stats__row {
+  margin-top: var(--stats-lede-gap);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-xxl);
+}
+
+.stat { display: flex; flex-direction: column; gap: var(--gap-sm); flex: none; }
+
+.stat__badge {
+  position: relative;
+  width: 100%;
+  aspect-ratio: var(--stat-badge-ratio);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  clip-path: polygon(68.58% 0%, 0% 0%, 0% 70.08%, 30.54% 100%, 100% 100%, 100% 30.68%);
+}
+.stat__badge--salmon { background: var(--color-salmon); }
+.stat__badge--peach { background: var(--color-peach); }
+.stat__badge--white { background: var(--color-white); }
+
+.stat__value {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: var(--stat-badge-fs);
+  line-height: 1.27;
+  color: var(--color-maroon);
+}
+
+.stat__copy { display: flex; flex-direction: column; gap: var(--gap-xs); }
+.stat__label { font-family: var(--font-mono); font-weight: 500; font-size: var(--fs-stat-label); line-height: var(--lh-stat-label); text-transform: uppercase; }
+.stat__body { font-family: var(--font-body); font-weight: 300; font-size: var(--fs-body); line-height: var(--lh-body); color: var(--color-white); }
+
+@media (min-width: 768px) {
+  .stats__row { flex-direction: row; align-items: flex-end; justify-content: space-between; gap: 0; }
+  .stat { width: var(--stat-badge-w); }
+  .stat__badge { width: var(--stat-badge-w); }
+}
+
+/* ---------------------------------------------------------------------- */
+/* Built by experts + quality-checks ticker (Figma node 65:6641)           */
+/* ---------------------------------------------------------------------- */
+.expertise {
+  background: var(--color-white);
+  padding-top: var(--expertise-top);
+  padding-bottom: var(--expertise-top);
+}
+
+.expertise__grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--expertise-gap);
+  align-items: center;
+}
+
+.expertise__copy { display: flex; flex-direction: column; gap: var(--gap-md); max-width: 402px; }
+.expertise__copy .h2 { color: var(--color-maroon); }
+.expertise__copy .body-text { color: var(--color-black); }
+
+/* Ticker box: 8 rows of horizontally scrolling checklist terms, each row
+   looping seamlessly via a translateX(-50%) animation over a doubled
+   track (see setupQualityTicker in js/main.js). */
+.expertise__showcase {
+  position: relative;
+  width: 100%;
+  background: var(--color-salmon);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--gap-xs);
+  padding-block: var(--gap-lg);
+  box-sizing: border-box;
+  height: clamp(380px, 270px + 22vw, 476px);
+}
+
+/* Mobile (6-col grid): heading centered while the body copy stays
+   left-aligned. Must come after the base rules above so these overrides
+   win the cascade.
+
+   The showcase's padding-block is a flat 64px top+bottom at every
+   breakpoint (var(--gap-lg) doesn't scale down), which leaves only
+   ~252px of the 380px mobile floor for the 8 rows of ticker text —
+   less than the ~317px they actually need (8 × 25.6px line-height + 7
+   × 16px row gap), so rows were getting sliced off top/bottom by the
+   showcase's own overflow:hidden. Cut the vertical padding down on
+   mobile so all 8 rows fit without clipping. */
+@media (max-width: 767px) {
+  .expertise__copy { text-align: left; }
+  .expertise__copy .h2 { text-align: center; }
+  .expertise__showcase { padding-block: var(--gap-xs); }
+}
+
+/* Desktop: explicit 12-column sub-grid (max-width 1200px content, 16px
+   gutter) — text spans columns 1–4 (left), a one-column gap, the ticker
+   spans 6–12 (7 cols). Must come after all the base rules above so these
+   overrides win the cascade. */
+@media (min-width: 768px) {
+  .expertise__copy { grid-column: 1 / 5; max-width: none; }
+  .expertise__grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    column-gap: 16px;
+    align-items: start;
+  }
+  .expertise__showcase { grid-column: 6 / 13; height: 476px; }
+}
+
+.qc-row { overflow: hidden; }
+.qc-track {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gap-tiny);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: max-content;
+  animation: qc-scroll-left 100s linear infinite;
+}
+.qc-row--right .qc-track { animation-name: qc-scroll-right; }
+[data-paused="true"] .qc-track { animation-play-state: paused; }
+
+@keyframes qc-scroll-left {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes qc-scroll-right {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+
+.qc-check {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gap-tiny);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: var(--fs-caption);
+  line-height: 25.6px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-white);
+  transition: color 0.4s ease;
+}
+.qc-check__icon { width: 17px; height: 11px; flex: none; stroke: currentColor; }
+.qc-check.is-active { color: var(--color-maroon); }
+
+/* --fs-caption already floors at 14px, but pin an explicit, larger floor
+   on mobile — plus the heavier weight/letter-spacing/text-shadow above —
+   so the ticker text is unambiguously legible against the salmon panel
+   at small sizes. */
+@media (max-width: 767px) {
+  .qc-check { font-size: 16px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .qc-track { animation: none; }
+}
+
+.qc-pause {
+  position: absolute;
+  top: var(--gap-xs);
+  right: var(--gap-xs);
+  z-index: 2;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: var(--color-white);
+  color: var(--color-maroon);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+  transition: box-shadow 0.15s ease;
+}
+.qc-pause:hover { box-shadow: inset 0 0 0 999px rgba(85, 0, 0, 0.1); }
+
+.pre-reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.pre-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .pre-reveal { opacity: 1; transform: none; transition: none; }
+}
+
+/* ---------------------------------------------------------------------- */
+/* Industry veterans                                                       */
+/* ---------------------------------------------------------------------- */
+.veterans {
+  background: var(--color-maroon);
+  color: var(--color-bone);
+  min-height: var(--veterans-h);
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.veterans__grid {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: var(--gap-md);
+  align-items: center;
+}
+
+.veterans__photo { width: 100%; aspect-ratio: 591 / 443; overflow: hidden; position: relative; }
+.veterans__photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.veterans__photo::after { content: ""; position: absolute; inset: 0; background: rgba(85,0,0,0.1); }
+
+/* justify-content:space-between splits .veterans__copy into two groups —
+   .veterans__copy-top (header/subtext/logos) and .veterans__actions —
+   pinned to the top and bottom of the column respectively. On desktop
+   that column is stretched (align-items:stretch on .veterans__grid) to
+   the photo's own height, so this is what puts the header's top edge
+   level with the photo's top edge and the actions row's bottom edge
+   level with the photo's bottom edge. gap is a floor, not the driver of
+   that split — on mobile, where .veterans__copy isn't height-stretched
+   to anything, space-between has no extra room to distribute, so gap is
+   what actually provides the spacing there. */
+.veterans__copy { display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; gap: var(--gap-md); max-width: 490px; width: 100%; }
+.veterans__copy-top { display: flex; flex-direction: column; align-items: flex-start; gap: var(--gap-sm); }
+.veterans__actions { display: flex; align-items: center; gap: var(--gap-md); }
+
+/* Desktop: explicit 12-col grid — photo spans 1–6, copy spans 8–12, col 7
+   left empty as a deliberate gap between them (photo/copy previously sat
+   flush against each other with no breathing room). Must come after the
+   base rules above so these overrides win the cascade. */
+@media (min-width: 768px) {
+  .veterans__grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    column-gap: 16px;
+    align-items: stretch;
+  }
+  .veterans__photo { grid-column: 1 / 7; width: auto; }
+  .veterans__copy { grid-column: 8 / 13; max-width: none; width: auto; }
+}
+
+/* justify-content:flex-start (not space-between) so gap is the actual
+   spacing between logos, not a minimum that space-between then stretches
+   to fill the row — space-between was spreading them across the full
+   row width regardless of the gap value. */
+.veterans__logos { display: flex; align-items: center; justify-content: flex-start; gap: var(--gap-md); height: 24px; }
+/* height:100% (not max-height) forces every logo to the same rendered
+   height regardless of its source file's own canvas size — the source
+   PNGs aren't cropped tight to their marks (e.g. Google's has taller
+   built-in padding than Meta/Uber/BCG's), so max-height:100%;height:auto
+   only capped the tallest logos while leaving shorter-canvas ones at
+   their own smaller native size instead of matching. width:auto
+   preserves each logo's own aspect ratio since only height is fixed;
+   max-width is a safety net for very narrow viewports + a wide wordmark
+   (Uber, Google), not the normal constraint. */
+.veterans__logos img { height: 100%; width: auto; max-width: 100%; object-fit: contain; }
+
+/* At the base 24px height + 36px gaps, the 4 logos' combined width (each
+   scales with height since width is auto) comfortably exceeds a phone's
+   content width. Scaling both down for mobile keeps all 4 on one row
+   within the viewport instead of overflowing or wrapping. */
+@media (max-width: 767px) {
+  .veterans__logos { gap: var(--gap-xs); height: 18px; }
+}
+
+/* ---------------------------------------------------------------------- */
+/* Articles                                                                 */
+/* ---------------------------------------------------------------------- */
+.articles {
+  background: var(--color-white);
+  padding-top: var(--articles-top);
+  padding-bottom: var(--card-pad-y);
+}
+
+.articles__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--gap-md);
+  color: var(--color-maroon);
+}
+
+.articles__head .caption { max-width: 483px; }
+
+.articles__divider { margin-top: var(--gap-sm); height: 1px; background: var(--color-maroon); opacity: 0.4; }
+
+.articles__list {
+  margin-top: var(--gap-sm);
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 768px) {
+  .articles__list { flex-direction: row; align-items: stretch; }
+}
+
+.article-card {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--gap-sm);
+  padding-block: var(--card-pad-y);
+  border-top: 1px solid rgba(85,0,0,0.15);
+}
+
+.article-card__content { display: flex; flex-direction: column; gap: 24px; }
+
+@media (min-width: 768px) {
+  .article-card { border-top: none; padding-inline: var(--gap-md); }
+  .article-card:first-child { padding-inline-start: 0; }
+  .article-card:last-child { padding-inline-end: 0; }
+  .article-card + .article-card { border-left: 1px solid rgba(85,0,0,0.15); }
+}
+
+.article-card__eyebrow { color: var(--color-salmon); }
+.article-card__title { color: var(--color-maroon); opacity: 0.96; }
+.article-card__body { color: var(--color-maroon); }
+
+/* ---------------------------------------------------------------------- */
+/* Closing CTA + footer group                                              */
+/* Sized together (not the CTA alone) to exactly one viewport height, so   */
+/* the footer always sits flush with the bottom of the screen rather than  */
+/* the pair adding up to more than 100vh. The CTA is the flexible one —    */
+/* it grows or gives back space to make up the difference; the footer     */
+/* keeps its natural content height.                                      */
+/* ---------------------------------------------------------------------- */
+.closing-group {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.closing-cta {
+  flex: 1 1 auto;
+  background: var(--color-peach);
+  color: var(--color-maroon);
+  box-sizing: border-box;
+  padding-inline: var(--container-pad);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--gap-md);
+}
+
+.closing-cta__title { opacity: 0.96; max-width: 850px; }
+.closing-cta__body { max-width: 592px; }
+
+/* This CTA gets the brand's maroon-fill treatment instead of .btn-cta's
+   default bone fill — scoped here rather than on .btn-cta itself, since
+   the contact-form submit button also uses .btn-cta and stays as-is.
+   filter:brightness for hover/active (not .btn-cta's inset overlay,
+   which assumes a light background) matches the same maroon-button
+   pattern already used for .contact-form__submit. */
+.closing-cta .btn-cta {
+  background: var(--color-maroon);
+  color: var(--color-bone);
+  border-color: var(--color-maroon);
+}
+.closing-cta .btn-cta:hover { filter: brightness(1.18); box-shadow: none; }
+.closing-cta .btn-cta:active { filter: brightness(1.32); box-shadow: none; }
+
+/* ---------------------------------------------------------------------- */
+/* Footer                                                                   */
+/* Not part of the Figma file (the design ends at the closing CTA) — built */
+/* to match the site's existing design system (colors, type, spacing).     */
+/* ---------------------------------------------------------------------- */
+.site-footer {
+  flex: none;
+  background: var(--color-peach);
+  color: var(--color-maroon);
+}
+
+/* Brand mark reuses the same bone-filled SVG as the header; the footer's
+   peach background needs it in maroon instead. Italic accents (e.g. an
+   italicized word inside footer copy) are untouched and stay salmon via
+   the shared .italic-accent rule. */
+.site-footer .brand__logo circle { fill: var(--color-maroon); }
+.site-footer .brand__name { color: var(--color-maroon); }
+
+.site-footer__top {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--gap-md);
+  padding-block: var(--gap-lg) var(--gap-md);
+  border-bottom: 0.5px solid rgba(85, 0, 0, 0.3);
+}
+
+@media (min-width: 768px) {
+  .site-footer__top { flex-direction: row; align-items: center; justify-content: space-between; }
+}
+
+.site-footer__nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--gap-sm);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+@media (min-width: 768px) {
+  .site-footer__nav ul { gap: var(--nav-links-gap); }
+}
+
+.site-footer__nav a {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: var(--fs-caption);
+  color: var(--color-maroon);
+  text-transform: uppercase;
+}
+
+.site-footer__social {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-sm);
+}
+
+.site-footer__social a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(85, 0, 0, 0.4);
+  border-radius: 50%;
+  color: var(--color-maroon);
+}
+
+.site-footer__social svg { width: 18px; height: 18px; }
+
+.site-footer__bottom {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-sm);
+  padding-block: var(--gap-md);
+}
+
+@media (min-width: 768px) {
+  .site-footer__bottom { flex-direction: row; align-items: center; justify-content: space-between; }
+}
+
+.site-footer__copyright {
+  font-family: var(--font-mono);
+  font-size: var(--fs-caption);
+  color: rgba(85, 0, 0, 0.7);
+}
+
+.site-footer__legal {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-sm);
+}
+
+.site-footer__legal a {
+  font-family: var(--font-mono);
+  font-size: var(--fs-caption);
+  color: rgba(85, 0, 0, 0.7);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.site-footer__legal a:hover { color: var(--color-maroon); }
+
+/* ---------------------------------------------------------------------- */
+/* Contact modal                                                           */
+/* Opened by any .js-open-contact button (see js/main.js) — hidden via the */
+/* [hidden] attribute rather than a CSS class alone, so a no-JS visitor    */
+/* never sees an unstyled dialog sitting inline in the page; JS clears     */
+/* [hidden] on open and restores it after the close transition ends.      */
+/* body.has-modal-open locks page scroll while it's open.                  */
+/* ---------------------------------------------------------------------- */
+body.has-modal-open { overflow: hidden; }
+
+.contact-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--gap-md);
+  overflow-y: auto;
+}
+.contact-modal[hidden] { display: none; }
+
+/* A soft frosted-glass scrim (same backdrop-filter:blur pattern as the
+   site header/hero quicklinks) rather than a dark tint — a heavy dark
+   overlay read as too stark/harsh behind the light modal dialog. */
+.contact-modal__backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(248, 247, 245, 0.55);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.contact-modal.is-open .contact-modal__backdrop { opacity: 1; }
+
+.contact-modal__dialog {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 640px;
+  max-height: 90vh;
+  overflow-y: auto;
+  margin: auto;
+  box-sizing: border-box;
+  background: var(--color-bone);
+  color: var(--color-black);
+  border-radius: 16px;
+  padding: var(--gap-lg) var(--gap-md);
+  opacity: 0;
+  transform: translateY(24px) scale(0.98);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.contact-modal.is-open .contact-modal__dialog {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.contact-modal__close {
+  position: absolute;
+  top: var(--gap-sm);
+  right: var(--gap-sm);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  color: var(--color-maroon);
+  transition: background-color 0.15s ease;
+}
+.contact-modal__close:hover,
+.contact-modal__close:focus-visible { background: rgba(85, 0, 0, 0.08); }
+.contact-modal__close svg { width: 18px; height: 18px; }
+
+/* The shared .brand__logo/.brand__name are bone-colored by default (built
+   for the maroon header) — the modal has a bone background, so recolor
+   them maroon here, the same way .site-header--solid already does. */
+.contact-modal__brand { margin-bottom: var(--gap-md); }
+.contact-modal__brand .brand__logo circle { fill: var(--color-maroon); }
+.contact-modal__brand .brand__name { color: var(--color-maroon); }
+
+.contact-modal__heading { color: var(--color-maroon); margin-bottom: var(--gap-xs); }
+.contact-modal__subtext { color: var(--color-black); margin-bottom: var(--gap-md); }
+
+.contact-form { display: flex; flex-direction: column; }
+.contact-form__fields { display: flex; flex-direction: column; gap: var(--gap-sm); }
+
+.contact-form__row { display: flex; gap: var(--gap-sm); }
+.contact-form__row .contact-form__field { flex: 1 1 0; min-width: 0; }
+
+.contact-form__field { display: flex; flex-direction: column; gap: var(--gap-tiny); }
+
+.contact-form__label {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: var(--fs-caption);
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: var(--color-maroon);
+}
+.contact-form__required {
+  color: var(--color-salmon);
+  margin-left: 2px;
+}
+
+.contact-form__input {
+  width: 100%;
+  box-sizing: border-box;
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  color: var(--color-black);
+  background: var(--color-white);
+  border: 1px solid rgba(85, 0, 0, 0.25);
+  border-radius: 6px;
+  padding: 12px 14px;
+}
+.contact-form__input:focus-visible {
+  outline: 2px solid var(--color-bright-blue);
+  outline-offset: 1px;
+}
+.contact-form__select { appearance: auto; }
+.contact-form__textarea { resize: vertical; min-height: 96px; }
+
+.contact-form__submit { margin-top: var(--gap-xs); width: 100%; }
+/* The submit CTA reads as the primary action, so it gets the site's dark
+   (maroon-fill) button treatment instead of .btn-cta's default bone fill —
+   overridden here rather than on .btn-cta itself, since every other
+   "Get in touch" trigger on the page should keep the light/outline style. */
+.contact-form__submit {
+  background: var(--color-maroon);
+  color: var(--color-bone);
+  border-color: var(--color-maroon);
+}
+.contact-form__submit:hover { filter: brightness(1.18); box-shadow: none; }
+.contact-form__submit:active { filter: brightness(1.32); box-shadow: none; }
+
+.contact-form__success {
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  color: var(--color-teal);
+  text-align: center;
+}
+
+@media (max-width: 767px) {
+  .contact-modal { padding: 0; }
+  .contact-modal__dialog {
+    max-width: none;
+    max-height: none;
+    min-height: 100%;
+    border-radius: 0;
+  }
+  .contact-form__row { flex-direction: column; }
+}
+
+/* Desktop (>=768px): a wide, two-column dialog instead of a tall single
+   card — .contact-modal__header (logo, heading, subtext) and .contact-form
+   are already direct siblings inside .contact-modal__dialog (see
+   index.html), so making the dialog itself the grid is all that's
+   needed; nothing in the markup has to change to go from stacked to
+   side-by-side. align-items defaults to stretch here, so both columns
+   share the taller one's height, and justify-content:center on each
+   (now display:flex) vertically centers its own content within that
+   shared height. Padding moves from the dialog onto each column
+   individually so the left column's maroon background can run flush to
+   the dialog's own edges/corners instead of leaving a bone-colored
+   margin around it. */
+@media (min-width: 768px) {
+  .contact-modal__dialog {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    max-width: 1040px;
+    /* No fixed height here — the row sizes to the form column's natural
+       content height (the taller side), and the shorter header column
+       gets stretched to match. The gap/padding/input-size reductions
+       below keep that natural height inside the base rule's max-height:
+       90vh, so every field and the submit CTA are visible without
+       scrolling on ordinary desktop viewports. */
+    padding: 0;
+  }
+
+  .contact-modal__header {
+    background: var(--color-maroon);
+    padding: var(--gap-md) var(--gap-md);
+    border-radius: 16px 0 0 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  /* Shared .brand__logo/.brand__name default to bone (built for the
+     maroon header) — the mobile single-column layout above recolors them
+     maroon for its bone background, but this left column IS maroon, so
+     the shared bone default is exactly right again; only the two
+     mobile-only overrides need cancelling. */
+  .contact-modal__brand .brand__logo circle { fill: var(--color-bone); }
+  .contact-modal__brand .brand__name { color: var(--color-bone); }
+  .contact-modal__heading { color: var(--color-bone); }
+  .contact-modal__subtext { color: var(--color-bone); opacity: 0.85; }
+
+  .contact-form {
+    /* Extra top padding clears the dialog's close button, which is
+       absolutely positioned in the dialog's own top-right corner and
+       would otherwise sit on top of the first field row. */
+    padding: 64px var(--gap-md) var(--gap-xs) var(--gap-md);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  /* Tighter vertical rhythm than the mobile form uses — with 8 fields
+     to show at once, the mobile spacing/input sizing would push the
+     submit CTA below the fold. */
+  .contact-form__fields { gap: 12px; }
+  .contact-form__input { padding: 9px 14px; }
+  .contact-form__textarea { min-height: 44px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact-modal__backdrop,
+  .contact-modal__dialog { transition: none; }
+}

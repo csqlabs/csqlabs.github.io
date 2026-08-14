@@ -1,0 +1,324 @@
+/* ==========================================================================
+   Serifo — Article + Careers page styles
+   Source: Figma nodes 58:5905/62:6350 (Article), 58:5824/62:6473 (Careers).
+   Loaded alongside tokens.css/base.css/main.css — reuses the same design
+   tokens and shared components (header, closing CTA, footer) rather than
+   redefining them.
+   ========================================================================== */
+
+/* These pages have no hero video/photo for the header to float
+   transparently over (article = plain white top, careers = flat maroon
+   color, not a photo) — .site-header--solid is applied directly in the
+   HTML rather than toggled by scroll, and stays that way permanently. */
+.site-header--static-solid {
+  position: sticky;
+  background: var(--color-white);
+  border-bottom-color: rgba(85, 0, 0, 0.15);
+}
+.site-header--static-solid .brand__logo circle { fill: var(--color-maroon); }
+.site-header--static-solid .brand__name { color: var(--color-maroon); }
+.site-header--static-solid .site-nav__links a:not(.btn) { color: var(--color-maroon); }
+.site-header--static-solid .site-nav__links-cta .btn--light { background: var(--color-maroon); color: var(--color-bone); }
+
+/* A page that opens with .site-header--static-solid has no fixed-header
+   overlay to compensate for, so its first section can sit in normal flow
+   right below the sticky bar instead of needing top padding. */
+
+/* ---- Shared "measure" — the readable-width column inside the wider
+   1200px .container, used by the article body and centered heads. Below
+   the point where 794px would exceed the fluid .container width, it
+   simply stops being the binding constraint (mobile reads it at full
+   container width, matching Figma's own single-column mobile layout). ---- */
+.measure { max-width: 794px; margin-inline: auto; }
+
+/* ---------------------------------------------------------------------- */
+/* Article page                                                            */
+/* ---------------------------------------------------------------------- */
+.article { background: var(--color-white); padding-top: var(--article-top-gap); }
+
+.article__head { text-align: center; display: flex; flex-direction: column; align-items: center; gap: var(--gap-xs); }
+
+.article__badge {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-xxs);
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: var(--fs-caption);
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: var(--color-salmon);
+}
+.article__badge-sep { color: var(--color-salmon); font-family: var(--font-serif); }
+
+.article__title { color: var(--color-maroon); opacity: 0.96; text-align: center; }
+
+.article__byline {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: var(--fs-caption);
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: var(--color-salmon);
+}
+
+.article__meta-row {
+  margin-top: var(--article-block-gap);
+  display: flex;
+  flex-direction: column;
+  border-top: 0.5px solid rgba(85, 0, 0, 0.3);
+  border-bottom: 0.5px solid rgba(85, 0, 0, 0.3);
+}
+.article__meta-row > .measure { display: flex; flex-direction: column; gap: var(--gap-xs); padding-block: var(--gap-xxs); width: 100%; }
+
+.article__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-xxs);
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: var(--fs-caption);
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: var(--color-black);
+}
+.article__meta-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--color-light-teal); flex: none; }
+
+.article__share {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-sm);
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: var(--fs-caption);
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: var(--color-black);
+}
+.article__share-icons { display: flex; align-items: center; gap: var(--gap-tiny); }
+.article__share-icons a {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 10px;
+  box-sizing: border-box;
+  background: var(--color-light-teal);
+  color: var(--color-maroon);
+  transition: box-shadow 0.15s ease;
+}
+/* Same inset-overlay darkening pattern as .btn--light/.btn-cta — a flat
+   color swap would fight the light-teal background, this just tints it
+   darker on top. */
+.article__share-icons a:hover { box-shadow: inset 0 0 0 999px rgba(85, 0, 0, 0.12); }
+.article__share-icons a:active { box-shadow: inset 0 0 0 999px rgba(85, 0, 0, 0.22); }
+.article__share-icons svg { width: 16px; height: 16px; }
+
+/* "Link Copied" confirmation — anchored to .js-copy-link (position:relative
+   from the shared .article__share-icons a rule above), shown/hidden by
+   toggling .is-visible from js/main.js on click. Hidden via opacity+a
+   small downward offset (not display:none) so the 0.2s transition has
+   something to animate between the two states. */
+.copy-tooltip {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  background: var(--color-maroon);
+  color: var(--color-bone);
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: var(--fs-caption);
+  text-transform: uppercase;
+  letter-spacing: 0;
+  white-space: nowrap;
+  padding: 6px 10px;
+  border-radius: 4px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.copy-tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--color-maroon);
+}
+.copy-tooltip.is-visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+@media (prefers-reduced-motion: reduce) {
+  .copy-tooltip { transition: none; }
+}
+
+@media (min-width: 768px) {
+  .article__meta-row > .measure { flex-direction: row; align-items: center; justify-content: space-between; }
+}
+
+.article__body { margin-top: var(--article-block-gap); display: flex; flex-direction: column; gap: var(--article-section-gap); }
+.article__body h2 { color: var(--color-black); }
+.article__body p { color: var(--color-black); margin-top: var(--gap-sm); line-height: calc(var(--lh-body) * 1.5); }
+
+/* .measure is combined directly on this same <details> element (not a
+   nested child — see article.html), so padding-top/bottom belong on
+   .article__sources itself; a child-combinator selector here would never
+   match anything. Lines above and below (border-top/bottom) bracket the
+   whole block, each held 36px off the "Sources" heading/content by the
+   matching padding. */
+.article__sources {
+  margin-top: var(--article-block-gap);
+  border-top: 0.5px solid rgba(85, 0, 0, 0.3);
+  border-bottom: 0.5px solid rgba(85, 0, 0, 0.3);
+  padding-top: var(--gap-md);
+  padding-bottom: var(--gap-md);
+}
+.article__sources summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  list-style: none;
+  color: var(--color-maroon);
+}
+.article__sources summary::-webkit-details-marker { display: none; }
+.article__sources summary .chevron { transition: transform 0.2s ease; flex: none; }
+.article__sources[open] summary .chevron { transform: rotate(180deg); }
+.article__sources ol { list-style: none; margin: var(--gap-sm) 0 0; padding: 0; display: flex; flex-direction: column; gap: var(--gap-sm); }
+.article__sources li { display: flex; gap: var(--gap-xs); }
+.article__sources li .num { font-family: var(--font-mono); font-weight: 500; font-size: var(--fs-caption); color: var(--color-black); flex: none; }
+.article__sources li p { font-family: var(--font-body); font-weight: 300; font-size: var(--fs-body); line-height: var(--lh-body); color: var(--color-black); }
+/* font-weight:500 isn't an actually-loaded Geist weight (only 300/600
+   are — see the Google Fonts <link> in <head>), so the browser was
+   matching it to the nearest loaded weight rather than rendering true
+   medium/bold. 600 is the real bold variant. */
+.article__sources li p strong { font-weight: 600; color: var(--color-maroon); }
+
+/* ---- Related articles (reuses the .articles/.article-card component
+   from the landing page's Articles section, just retitled) ---- */
+.related-articles { background: var(--color-white); padding-block: var(--article-block-gap); }
+.related-articles__head { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--gap-md); color: var(--color-maroon); }
+.related-articles__divider { margin-top: var(--gap-sm); height: 1px; background: var(--color-maroon); opacity: 0.4; }
+.related-articles__list { margin-top: var(--gap-sm); display: flex; flex-direction: column; }
+@media (min-width: 768px) { .related-articles__list { flex-direction: row; align-items: stretch; } }
+
+/* ---------------------------------------------------------------------- */
+/* Careers page                                                            */
+/* ---------------------------------------------------------------------- */
+.careers-hero {
+  background: var(--color-maroon);
+  color: var(--color-white);
+  min-height: 600px;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  text-align: center;
+  padding-block: var(--gap-xxl);
+}
+.careers-hero__inner { display: flex; flex-direction: column; align-items: center; gap: var(--gap-md); max-width: 613px; margin-inline: auto; }
+.careers-hero__title { opacity: 0.96; }
+
+.culture { background: var(--color-white); }
+.culture__inner { padding-top: var(--careers-hero-culture-gap); }
+.culture__heading { text-align: center; color: var(--color-maroon); }
+.culture__grid { margin-top: var(--careers-culture-heading-gap); display: flex; flex-direction: column; }
+@media (min-width: 768px) { .culture__grid { flex-direction: row; } }
+
+.culture-card { flex: 1 1 0; display: flex; flex-direction: column; gap: var(--gap-sm); padding-block: var(--card-pad-y); border-top: 1px solid rgba(85, 0, 0, 0.15); }
+@media (min-width: 768px) {
+  .culture-card { border-top: none; padding-inline: var(--gap-md); }
+  .culture-card:first-child { padding-inline-start: 0; }
+  .culture-card:last-child { padding-inline-end: 0; }
+  .culture-card + .culture-card { border-left: 1px solid rgba(85, 0, 0, 0.15); }
+}
+.culture-card__num { font-family: var(--font-mono); font-weight: 500; font-size: 36px; letter-spacing: 0; text-transform: uppercase; color: var(--color-salmon); }
+.culture-card__title { color: var(--color-maroon); opacity: 0.96; }
+.culture-card__body { color: var(--color-maroon); }
+
+.open-roles { background: var(--color-white); padding-top: var(--careers-culture-roles-gap); padding-bottom: var(--article-block-gap); }
+.open-roles__heading { text-align: center; color: var(--color-maroon); }
+.open-roles__list { margin-top: var(--gap-lg); border-top: 0.5px solid rgba(85, 0, 0, 0.3); }
+
+/* Caps the role list/table content to a readable measure on desktop —
+   .container's own max-width (--page-max) is meant for wider layouts
+   elsewhere on the site and left this section's long role descriptions
+   and tables sprawling edge-to-edge. Scoped to desktop since .container
+   is already narrower than 800px on mobile anyway. */
+@media (min-width: 768px) {
+  .open-roles .container { max-width: 800px; }
+}
+
+.role { border-bottom: 0.5px solid rgba(85, 0, 0, 0.3); }
+.role summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap-md);
+  padding-block: var(--role-row-pad);
+  color: var(--color-maroon);
+}
+.role summary::-webkit-details-marker { display: none; }
+.role summary .role__toggle {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  position: relative;
+}
+.role summary .role__toggle::before,
+.role summary .role__toggle::after {
+  content: "";
+  position: absolute;
+  background: var(--color-maroon);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.role summary .role__toggle::before { width: 14px; height: 1.5px; }
+.role summary .role__toggle::after { width: 1.5px; height: 14px; transition: transform 0.2s ease, opacity 0.2s ease; }
+.role[open] summary .role__toggle::after { opacity: 0; transform: translate(-50%, -50%) rotate(90deg); }
+
+.role__body { padding-bottom: var(--role-row-pad); display: flex; flex-direction: column; gap: var(--gap-md); }
+.role__body h3,
+.role__body h4 { color: var(--color-maroon); margin-top: var(--gap-sm); }
+.role__body p,
+.role__body li { color: var(--color-black); }
+.role__body ul { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: var(--gap-xxs); }
+.role__body a { color: var(--color-maroon); text-decoration: underline; }
+/* <strong>'s UA-default font-weight:bolder is relative to the inherited
+   300 (.body-text) — browsers resolve "bolder" from 300 to 400, which
+   isn't visibly bold. Only 300/600 are actually loaded for this font
+   family (see the Google Fonts link in <head>), so 600 is the real bold
+   variant, not a synthesized 700. */
+.role__body p strong { font-weight: 600; }
+
+.role__table { width: 100%; border-collapse: collapse; margin-top: var(--gap-sm); }
+.role__table th,
+.role__table td {
+  border: 1px solid var(--color-black);
+  padding: var(--gap-tiny);
+  text-align: left;
+  vertical-align: top;
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: var(--fs-body);
+  color: var(--color-black);
+}
+.role__table th { font-weight: 500; color: var(--color-black); }
+
+/* Careers-page-only modifier on the shared .closing-cta__title (also used
+   by index.html/article.html with longer copy, which still needs to wrap
+   — this class only exists in careers.html's markup, so it can't affect
+   those). "Define the frontier with us" is short enough to fit on one
+   line at desktop widths without shrinking the display font; below that,
+   the font itself is already scaling down with the viewport, so forcing
+   nowrap there would just push it wider than the screen instead. */
+@media (min-width: 768px) {
+  .closing-cta__title--single-line { white-space: nowrap; max-width: none; }
+}

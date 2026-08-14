@@ -1,0 +1,129 @@
+<!--
+  Motion type: LOOP (continuous)
+  Description: Vertical marquee of the "30+ quality control checks" list.
+  The track scrolls upward continuously and wraps seamlessly (item list is
+  duplicated once, then translateY(-50%) loops back to translateY(0)).
+  Used in: index.html "Built by market research experts" section.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Line graphic — checklist marquee (loop)</title>
+<style>
+  body { margin: 0; padding: 40px; background: #fff; font-family: "DM Mono", monospace; }
+
+  #checklist-marquee {
+    position: relative;
+    width: 320px;
+    height: 400px;
+    overflow: hidden;
+    background: #fff;
+    mask-image: linear-gradient(to bottom, transparent 0, black 10%, black 90%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, black 10%, black 90%, transparent 100%);
+  }
+
+  #checklist-marquee .track {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    animation: marquee-scroll 32s linear infinite;
+  }
+
+  #checklist-marquee[data-paused="true"] .track { animation-play-state: paused; }
+
+  @keyframes marquee-scroll {
+    from { transform: translateY(0); }
+    to { transform: translateY(-50%); }
+  }
+
+  #checklist-marquee .item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    color: rgba(9, 38, 77, 0.6);
+  }
+  #checklist-marquee .item .check {
+    width: 17px; height: 10px; flex: none;
+  }
+  #checklist-marquee .item--active { color: #0069bc; font-size: 18px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    #checklist-marquee .track { animation: none; }
+  }
+
+  .marquee-toggle {
+    position: absolute; top: 8px; right: 8px; z-index: 2;
+    width: 28px; height: 28px; border-radius: 50%;
+    border: 1px solid rgba(9,38,77,0.3); background: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; color: #09264d; cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<div id="checklist-marquee" data-paused="false">
+  <button class="marquee-toggle" type="button" data-marquee-toggle aria-pressed="false" aria-label="Pause scrolling checklist">&#10073;&#10073;</button>
+  <ul class="track" id="checklist-marquee-track">
+    <li class="item">Sample construction</li>
+    <li class="item">Geographic nuance</li>
+    <li class="item">Match objectives to deliverables</li>
+    <li class="item">Flow of the research phases</li>
+    <li class="item">Methodology match</li>
+    <li class="item">Screener Precision</li>
+    <li class="item">Programming notes</li>
+    <li class="item">Logic &amp; routing</li>
+    <li class="item">MECE</li>
+    <li class="item">Assessing respondent fatigue</li>
+    <li class="item">Avoiding leading language</li>
+    <li class="item">Survey linting</li>
+    <li class="item">Double barreled question check</li>
+    <li class="item">Scale consistency</li>
+    <li class="item item--active">Fatigue checks</li>
+    <li class="item">Order bias</li>
+    <li class="item">Data QC and cleaning</li>
+    <li class="item">Removing anomalies</li>
+    <li class="item">Right analytical method selection</li>
+    <li class="item">Clustering</li>
+    <li class="item">Triangulating</li>
+    <li class="item">Significance testing</li>
+    <li class="item">Narrative integrity</li>
+    <li class="item">Right visualisation choices</li>
+    <li class="item">Color schemes</li>
+    <li class="item">Footnotes for reference</li>
+    <li class="item">Labels &amp; legends</li>
+    <li class="item">Decimal consistency</li>
+    <li class="item">Axis truncation</li>
+    <li class="item">Base mentions</li>
+    <li class="item">Axis scale consistency</li>
+  </ul>
+</div>
+
+<script>
+  var frame = document.getElementById("checklist-marquee");
+  var track = document.getElementById("checklist-marquee-track");
+  var btn = frame.querySelector("[data-marquee-toggle]");
+  track.innerHTML += track.innerHTML; /* duplicate once for a seamless 50% loop */
+
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduceMotion) frame.setAttribute("data-paused", "true");
+  btn.setAttribute("aria-pressed", reduceMotion ? "true" : "false");
+
+  btn.addEventListener("click", function () {
+    var paused = frame.getAttribute("data-paused") === "true";
+    frame.setAttribute("data-paused", String(!paused));
+    btn.setAttribute("aria-pressed", String(!paused));
+    btn.setAttribute("aria-label", !paused ? "Play scrolling checklist" : "Pause scrolling checklist");
+  });
+</script>
+
+</body>
+</html>

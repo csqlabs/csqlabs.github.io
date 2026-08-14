@@ -1,0 +1,30 @@
+<!--
+  Motion type: STATIC (interactive toggle, but no continuous/scroll motion
+  of its own — swap to an open/close icon-morph if desired later)
+  Description: Three-bar mobile menu icon shown in the header below the
+  767px structural breakpoint.
+  Used in: index.html .nav-toggle button.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Line graphic — hamburger menu (static)</title>
+<style>
+  body { margin: 0; padding: 40px; background: #550000; }
+  #hamburger-menu {
+    background: #f8f7f5;
+    width: 38px; height: 38px;
+    display: flex; align-items: center; justify-content: center;
+    border: none;
+  }
+  #hamburger-menu .bars { display: flex; flex-direction: column; gap: 6px; }
+  #hamburger-menu .bars span { width: 18px; height: 2px; background: #000; display: block; }
+</style>
+</head>
+<body>
+  <button id="hamburger-menu" type="button" aria-label="Open menu">
+    <span class="bars"><span></span><span></span><span></span></span>
+  </button>
+</body>
+</html>

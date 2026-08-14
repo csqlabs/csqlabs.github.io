@@ -1,0 +1,42 @@
+<svg viewBox="0 0 389 177" xmlns="http://www.w3.org/2000/svg" >
+<g transform="translate(0,0) scale(1)" ><g id="Frame 777">
+<g clip-path="url(#clip0_0_730)">
+<mask id="path-1-inside-1_0_730" fill="white">
+<path d="M0 0H389V59H0V0Z"/>
+</mask>
+<path d="M0 0H389V59H0V0Z" fill="#FFD4B4"/>
+<circle id="Ellipse 218" cx="83" cy="30" r="11" fill="#C44A00"/>
+<circle id="Ellipse 219" cx="250" cy="1" r="11" fill="#C44A00"/>
+</g>
+<path d="M0 0V2H389V0V-2H0V0Z" fill="#C44A00" mask="url(#path-1-inside-1_0_730)"/>
+</g>
+<defs>
+<clipPath id="clip0_0_730">
+<path d="M0 0H389V59H0V0Z" fill="white"/>
+</clipPath>
+</defs></g>
+<g transform="translate(0,59) scale(1)" ><g id="Frame 779">
+<mask id="path-1-inside-1_0_724" fill="white">
+<path d="M0 0H389V59H0V0Z"/>
+</mask>
+<path d="M0 0H389V59H0V0Z" fill="#FFD4B4"/>
+<path d="M0 0V2H389V0V-2H0V0Z" fill="#C44A00" mask="url(#path-1-inside-1_0_724)"/>
+<circle id="Ellipse 218" cx="213" cy="24" r="11" fill="#C44A00"/>
+</g></g>
+<g transform="translate(0,118) scale(1)" ><g id="Frame 780">
+<g clip-path="url(#clip0_0_702)">
+<mask id="path-1-inside-1_0_702" fill="white">
+<path d="M0 0H389V59H0V0Z"/>
+</mask>
+<path d="M0 0H389V59H0V0Z" fill="#FFD4B4"/>
+<circle id="Ellipse 218" cx="418" cy="24" r="11" fill="#C44A00"/>
+</g>
+<path d="M0 0V2H389V0V-2H0V0Z" fill="#C44A00" mask="url(#path-1-inside-1_0_702)"/>
+</g>
+<defs>
+<clipPath id="clip0_0_702">
+<path d="M0 0H389V59H0V0Z" fill="white"/>
+</clipPath>
+</defs></g>
+<g transform="translate(349,71) scale(1)" ><circle id="Ellipse 218" cx="11" cy="11" r="11" fill="#C44A00"/></g>
+</svg>

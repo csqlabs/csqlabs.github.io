@@ -1,0 +1,141 @@
+/* ==========================================================================
+   Serifo — Design Tokens
+   Source: Figma "Serifo Website" — Desktop (1440) & Mobile (430) frames.
+   Fluid scaling: all tokens below use clamp() to interpolate linearly
+   between the Mobile (430px) and Desktop (1440px) values. Below 430px,
+   the clamp() continues the same linear ramp (does not floor early).
+   Above 1440px, values lock at the Desktop value.
+   ========================================================================== */
+
+:root {
+  /* ---- Palette (from Figma "palette/*" variables — identical at both
+     breakpoints) ---- */
+  --color-black: #000000;
+  --color-bone: #f8f7f5;
+  --color-salmon: #ff8f8a;
+  --color-maroon: #550000;
+  --color-white: #ffffff;
+  --color-burnt-orange: #c44a00;
+  --color-peach: #ffd4b4;
+  --color-light-teal: #aae9e5;
+  --color-aegean-blue: #09264d;
+  --color-teal: #00aca3;
+  --color-bright-blue: #0069bc;
+
+  /* ---- Font families (guessed weights map to closest system/CDN name —
+     see README note on fonts) ---- */
+  --font-serif: "EB Garamond", "Times New Roman", serif;
+  --font-body: "Geist", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "DM Mono", "Courier New", monospace;
+  --font-display: "Space Grotesk", "Helvetica Neue", Arial, sans-serif;
+
+  /* ---- Type scale — fluid between 430px and 1440px ---- */
+  --fs-display: clamp(62px, 47.5248px + 3.3663vw, 96px);   /* display-hero */
+  --lh-display: clamp(62px, 39.3505px + 5.2673vw, 115.2px);
+  --ls-display: -2px;
+
+  --fs-h1: clamp(48px, 42.0396px + 1.3861vw, 62px);
+  --lh-h1: clamp(57.6px, 50.4475px + 1.6634vw, 74.4px);
+  --ls-h1: -2px;
+
+  --fs-h2: clamp(30px, 26.5941px + 0.7921vw, 38px);
+  --lh-h2: clamp(36px, 31.9129px + 0.9505vw, 45.6px);
+  --ls-h2: 0px;
+
+  --fs-h3: clamp(22px, 21.1485px + 0.198vw, 24px);
+  --lh-h3: clamp(33px, 31.7228px + 0.297vw, 36px);
+  --ls-h3: 0px;
+
+  --fs-body: clamp(18px, 17.1485px + 0.198vw, 20px);
+  --lh-body: clamp(27px, 25.7228px + 0.297vw, 30px);
+  --ls-body: 0px;
+
+  --fs-cta: clamp(16px, 15.1485px + 0.198vw, 18px);
+  --lh-cta: clamp(26px, 24.297px + 0.396vw, 30px);
+  --ls-cta: 0px;
+
+  --fs-caption: clamp(14px, 13.1485px + 0.198vw, 16px);
+  --hero-pill-fs: clamp(12px, 10.297px + 0.396vw, 16px); /* hero "Backed by..." pill */
+  --lh-caption: 25.6px;
+  --ls-caption: 0px;
+
+  --fs-metrics: clamp(56px, 52.5941px + 0.7921vw, 64px);
+  --lh-metrics: clamp(56px, 52.5941px + 0.7921vw, 64px);
+  --ls-metrics: 0px;
+
+  --fs-num-badge: clamp(20px, 18.297px + 0.396vw, 24px); /* "01/02/03" tile badges */
+  --fs-offering-index: clamp(24px, 20.5941px + 0.7921vw, 32px); /* "01 02 03" list */
+  --fs-stat-label: clamp(22px, 21.1485px + 0.198vw, 24px);
+  --lh-stat-label: 32px;
+
+  /* ---- Layout ---- */
+  --page-max: 1200px;                 /* content container, fixed above 1440 viewport */
+  --container-pad: clamp(24px, -16.8713px + 9.505vw, 120px); /* outer gutter */
+
+  --header-h: clamp(62px, 52.6337px + 2.1782vw, 84px);
+
+  /* ---- Per-component gaps/paddings — each pulled from its own Figma
+     "gap-X" / "top-X" value at both breakpoints, not a shared bucket.
+     See ASSETS.md / build notes for which sections use true vertical
+     centering (veterans, stats, closing CTA) instead of padding. ---- */
+  --caps-top: clamp(78px, 66.0792px + 2.7723vw, 106px);           /* capabilities: section top → intro */
+  --caps-intro-gap: clamp(64px, 57.1881px + 1.5842vw, 80px);      /* capabilities: intro → tiles grid */
+  --caps-to-offerings-gap: clamp(96px, 37.6733px + 13.5644vw, 233px); /* tiles grid → offerings heading */
+  --offerings-intro-gap: clamp(24px, 18.8911px + 1.1881vw, 36px); /* offerings: heading → button */
+  --offerings-to-list-gap: 64px;                                   /* offerings: intro block → row list */
+  --expertise-top: clamp(82px, 32.1881px + 11.5842vw, 199px);      /* expertise: section top → copy */
+  --expertise-gap: clamp(72px, 51.9901px + 4.6535vw, 119px);       /* expertise: copy → checklist/chart */
+  --stats-lede-gap: clamp(64px, 52.9307px + 2.5743vw, 90px);       /* stats v2: lede → badge row (mobile extrapolated — no Figma mobile source yet, see note) */
+  --articles-top: clamp(64px, 52.505px + 2.6733vw, 91px);          /* articles: section top → heading (mobile approx — see note) */
+  --nav-links-gap: 40px;                                           /* desktop nav link row gap */
+  --veterans-h: clamp(662px, 833.0891px - 11.8812vw, 782px);       /* veterans: true section height (centered content) */
+  --stats-h: 931px;                                                 /* stats v2: true desktop section height (centered content); mobile uses padding instead — see note */
+
+  /* Stats v2 badge (26:3212, Aug 2026 redesign) — desktop-sourced;
+     mobile values are a fluid extrapolation, not from a Figma mobile
+     frame (none exists yet for this node). */
+  --stat-badge-fs: clamp(52px, 40.0792px + 2.7723vw, 80px);
+  --stat-badge-w: 360px;   /* fixed desktop badge width; mobile is 100% of its column */
+  --stat-badge-ratio: 360 / 211.982;
+
+  /* ---- Article + Careers pages (nodes 58:5905/62:6350, 58:5824/62:6473) ---- */
+  --article-top-gap: clamp(68px, 49.6931px + 4.2574vw, 111px);      /* header → article content */
+  --article-block-gap: 80px;                                        /* header block / body / sources — flat both bp */
+  --article-section-gap: 72px;                                      /* between article body sections — flat both bp */
+  --careers-hero-culture-gap: clamp(74px, 50.5842px + 5.4455vw, 129px);
+  --careers-culture-heading-gap: clamp(36px, 25.7822px + 2.3762vw, 60px);
+  --careers-culture-roles-gap: clamp(53px, -12.5644px + 15.2475vw, 207px);
+  --role-row-pad: 36px;                                             /* accordion row vertical padding — flat both bp */
+
+  --gap-xxl: clamp(96px, 73.0099px + 5.3465vw, 150px);
+  --gap-xl: clamp(72px, 68.5941px + 0.7921vw, 80px);
+  --gap-lg: 64px;
+  --gap-md: 36px;
+  --gap-sm: 24px;
+  --gap-xs: 16px;
+  --gap-xxs: 12px;
+  --gap-tiny: 8px;
+
+  /* ---- Components ---- */
+  --btn-pad-x: 24px;
+  --btn-pad-y: 12px;
+  --btn-cta-pad-x: clamp(24px, 35.4059px - 0.7921vw, 32px);
+  --btn-cta-pad-y: clamp(12px, 17.703px - 0.396vw, 16px);
+
+  --logo-w: clamp(27px, 25.1127px + 0.4389vw, 31.433px);
+  --logo-h: clamp(31px, 28.8713px + 0.495vw, 36px);
+
+  --tile-pad: 36px;
+  --tile-h: clamp(300px, 261.6832px + 8.9109vw, 390px); /* single-column tile height on mobile */
+  --tile-gap: 16px;                                      /* gutter between tiles, desktop grid */
+  --tile-stagger: clamp(0px, -48.1089px + 11.1881vw, 113px); /* desktop-only: middle column offset down */
+
+  /* ---- Section 5 "Quality" 12-column sub-grid (max-width 1200px,
+     16px gutter): text 1–4 (left), gap col 5, checklist 6–8 (3 cols),
+     chart 9–12 (4 cols, flush right). Desktop only — mobile stacks. */
+  --grid-12-col-w: calc((100% - 11 * 16px) / 12);
+
+  --card-pad-y: clamp(24px, 18.8911px + 1.1881vw, 36px);
+
+  --radius-pill: 8px;
+}
