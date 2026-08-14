@@ -86,12 +86,14 @@
         <div class="article__share">
           Share
           <div class="article__share-icons">
-            <a href="#" aria-label="Share on LinkedIn">
+            <!-- Hardcoded to the production URL rather than window.location so
+                 sharing from a local preview still posts the public link. -->
+            <a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fserifo.ai%2Farticle.html" target="_blank" rel="noopener noreferrer" aria-label="Share on LinkedIn">
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M6.94 8.5H3.56V20.5H6.94V8.5Z" fill="currentColor"/><path d="M5.25 7C6.35 7 7.25 6.1 7.25 5C7.25 3.9 6.35 3 5.25 3C4.15 3 3.25 3.9 3.25 5C3.25 6.1 4.15 7 5.25 7Z" fill="currentColor"/><path d="M13.16 8.5H9.94V20.5H13.16V14.3C13.16 12.6 13.9 11.6 15.36 11.6C16.7 11.6 17.31 12.53 17.31 14.3V20.5H20.53V13.66C20.53 10.36 18.77 8.24 15.98 8.24C14.34 8.24 13.53 9.03 13.16 9.62V8.5Z" fill="currentColor"/></svg>
             </a>
-            <a href="#" aria-label="Share on X (Twitter)">
+            <!-- <a href="#" aria-label="Share on X (Twitter)">
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M13.66 10.36L20.5 3h-2.2l-5.6 6.42L8.05 3H3l7.17 10.02L3 21h2.2l6.03-6.9L16.95 21H22l-8.34-10.64Zm-2.13 2.44-.7-.96L5.9 4.62h2.02l4.47 6.16.7.96 5.8 8.01h-2.02l-4.34-5.95Z" fill="currentColor"/></svg>
-            </a>
+            </a> -->
             <a href="#" aria-label="Copy link" class="js-copy-link">
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="8" y="2" width="13" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 8H4C2.89543 8 2 8.89543 2 10V20C2 21.1046 2.89543 22 4 22H14C15.1046 22 16 21.1046 16 20V19.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
               <span class="copy-tooltip" role="status" aria-live="polite">Link Copied</span>
