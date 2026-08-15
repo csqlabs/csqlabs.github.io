@@ -1385,6 +1385,11 @@ body.has-nav-open { overflow: hidden; }
 
 .contact-form { display: flex; flex-direction: column; }
 .contact-form__fields { display: flex; flex-direction: column; gap: var(--gap-sm); }
+/* Explicit, because the display:flex above outranks the browser's own
+   [hidden] { display: none } — without this the fields stay on screen when
+   js/main.js hides them after a successful submit, leaving a filled-in form
+   sitting next to the "Thanks" message. Same guard as .contact-modal[hidden]. */
+.contact-form__fields[hidden] { display: none; }
 
 .contact-form__row { display: flex; gap: var(--gap-sm); }
 .contact-form__row .contact-form__field { flex: 1 1 0; min-width: 0; }

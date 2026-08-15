@@ -181,13 +181,37 @@
       el.addEventListener("click", closeContactModal);
     });
 
-    /* GitHub Pages can't run server-side code, so the form posts to
-       Web3Forms (https://web3forms.com) and they relay it to the address the
-       access_key is registered to. The key lives in a hidden input in the
-       markup — it is a public, submit-only token by design, so shipping it in
-       the page is expected and can't be used to read past submissions.
+    /* GitHub Pages can't run server-side code, so submissions go to a Google
+       Apps Script Web App, whose doPost() appends a row to the enquiries
+       spreadsheet and emails the team. Paste the /exec URL here (Deploy >
+       New deployment > Web app, "Execute as: Me", "Who has access:
+       Anyone" — /exec, not the /dev one, which only the signed-in author
+       can reach).
+
        Posting via fetch rather than a plain form submit keeps the visitor in
-       the modal instead of bouncing them to a Web3Forms thank-you page. */
+       the modal instead of bouncing them to the script's own response page. */
+    var CONTACT_ENDPOINT = "https://script.google.com/macros/s/AKfycbxIXHJkjisCmO6sDXro_ynowCs3e9zHjpYYKGgQ8Y9gppWdg8laLocGcAY0qcIymCdf-A/exec";
+
+    /* Which site a submission came from, so test entries are distinguishable
+       from real enquiries in the sheet. Derived from the hostname rather
+       than a build flag: this is a static site with no build step, so the
+       identical main.js is served everywhere and the host is the only thing
+       that actually differs between them. */
+    var currentEnvironment = function () {
+      var host = window.location.hostname;
+      /* Empty hostname means the file:// protocol — the page was opened
+         straight off disk rather than through a server. */
+      if (!host || host === "localhost" || host === "127.0.0.1" || host === "::1" || /\.local$/.test(host)) {
+        return "local";
+      }
+      if (host === "serifo.ai" || host === "www.serifo.ai") return "production";
+      /* Anything else — the raw github.io host, a branch preview, a domain
+         that shouldn't be serving this — is reported by name instead of
+         being guessed at, so the sheet records what it actually was rather
+         than mislabelling it as production. */
+      return host;
+    };
+
     contactForm.addEventListener("submit", function (e) {
       e.preventDefault();
       if (!contactForm.checkValidity()) {
@@ -206,27 +230,65 @@
         payload[key] = value;
       });
 
-      fetch("https://api.web3forms.com/submit", {
+      var showSuccess = function () {
+        /* resetContactSubmit even though the fields (and the button with
+           them) are about to be hidden — closing the modal un-hides them
+           again. */
+        resetContactSubmit();
+        /* Clear the answers as well as hiding them. closeContactModal()
+           already resets on the way out, but that only runs if the visitor
+           actually closes the dialog — this way the submitted values are
+           gone the moment the send succeeds, rather than sitting in a
+           hidden container waiting to be re-submitted. */
+        contactForm.reset();
+        contactFields.hidden = true;
+        contactSuccess.hidden = false;
+      };
+
+      /* Honeypot: a filled botcheck means something invisible to people was
+         completed, so the submission is dropped without being sent. The bot
+         is shown the ordinary success state rather than an error, which
+         gives it nothing to adapt to. */
+      if (payload.botcheck) {
+        showSuccess();
+        return;
+      }
+
+      fetch(CONTACT_ENDPOINT, {
         method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify(payload)
+        /* Required, not stylistic. Apps Script answers a POST with a
+           redirect to script.googleusercontent.com, and that hop sends no
+           CORS headers, so an ordinary cross-origin request fails there.
+
+           The consequence is an opaque response: this resolves the same way
+           whether doPost() wrote the row or threw, so a genuine server-side
+           failure can't be told apart from a success. .catch below still
+           fires for network-level failures (offline, DNS, a blocked
+           request), which is the case worth reporting to the visitor
+           anyway; anything past that is a silent trust in the script. Watch
+           the deployment's executions log for the rest.
+
+           No Content-Type header for the same reason: no-cors permits only
+           a handful of values and application/json isn't among them, so the
+           browser would drop it. Apps Script reads the raw body through
+           e.postData.contents regardless. */
+        mode: "no-cors",
+        /* Keys are the form's own field names; doPost() maps them onto the
+           sheet's column order. botcheck is left out — it's the honeypot,
+           handled above — and so are the old Web3Forms hidden fields, which
+           no longer exist in the markup. */
+        body: JSON.stringify({
+          firstName: payload.firstName,
+          lastName: payload.lastName,
+          companyEmail: payload.companyEmail,
+          companyName: payload.companyName,
+          jobTitle: payload.jobTitle,
+          engagementType: payload.engagementType,
+          message: payload.message,
+          environment: currentEnvironment()
+        })
       })
-        .then(function (res) {
-          /* Web3Forms reports failures in the JSON body as well as the status
-             code, so both have to be checked before claiming success. */
-          return res.json().then(function (data) {
-            if (!res.ok || !data.success) {
-              throw new Error(data && data.message ? data.message : "Submission failed");
-            }
-          });
-        })
-        .then(function () {
-          /* Restored even though the fields (and the button with them) are
-             about to be hidden — closing the modal un-hides them again. */
-          resetContactSubmit();
-          contactFields.hidden = true;
-          contactSuccess.hidden = false;
-        })
+        .then(showSuccess)
         .catch(function () {
           resetContactSubmit();
           if (!contactError) return;
