@@ -445,6 +445,26 @@
 .tile__title { font-family: var(--font-serif); font-weight: 500; font-size: var(--fs-h2); line-height: var(--lh-h2); }
 .tile__body { font-family: var(--font-body); font-weight: 300; font-size: var(--fs-body); line-height: var(--lh-body); }
 
+/* Mobile: step the tile's type and padding down a scale.
+   The shared --fs-* tokens are already fluid, but they're floored for
+   desktop reading, and the card they sit in is not: --tile-h bottoms out
+   at 300px. At phone widths that combination left the copy ending at
+   76–88% of the card, so there was no band for the graphic to occupy —
+   it either sat behind the text or had to be pushed off the edge and
+   cropped to nothing.
+
+   Smaller type is what makes both fit. Text now ends at 57–65%, which
+   frees 104–128px at the bottom for the graphics anchored there below.
+   Trimming the padding to --gap-sm widens the column to 294px too, so
+   the longest body (Card 4's) wraps to three lines instead of four —
+   part of the saving comes from that rather than from size alone. */
+@media (max-width: 767px) {
+  .tile { padding: var(--gap-sm); }
+  .tile__num { font-size: 18px; line-height: 22px; }
+  .tile__title { font-size: 24px; line-height: 30px; }
+  .tile__body { font-size: 16px; line-height: 24px; }
+}
+
 .tile__graphic { position: absolute; opacity: 0.3; pointer-events: none; }
 
 /* Brand & Advertising (Card 1): each ring is a div sized exactly one
@@ -634,10 +654,9 @@
 .tile--cx { background: var(--color-teal); }
 
 /* Mobile: the tiles stack single-column and stay short (--tile-h bottoms
-   out at 300px) while the body copy wraps to 3–4 lines, so text fills
-   roughly the top 70–80% of every card. The per-graphic positions (inline
-   in index.html, lifted from each source SVG) are tuned for the desktop
-   card proportions and ride up through the title and body at this size.
+   out at 300px), so the per-graphic positions (inline in index.html,
+   lifted from each source SVG) — which are tuned for the desktop card
+   proportions — ride up through the title and body at this size.
 
    Fix is to re-anchor each graphic by its TOP edge (top:…; bottom:auto)
    rather than its bottom: the top edge is the one that has to clear the
@@ -649,23 +668,31 @@
    "cropped by the card edge" treatment the desktop composition already
    relies on for cards 3 and 4.
 
+   The anchors sit just under where the copy ends — 57–65% of the card,
+   once the type step-down above has applied — rather than near the bottom
+   edge. An earlier pass put them at 68–78%, which cleared the full-size
+   text but left so little of each graphic showing that they read as
+   cropped fragments; these values roughly double the visible area of
+   every one of them.
+
    !important is unavoidable here: the properties being overridden are
    inline styles, which outrank any stylesheet rule without it. */
 @media (max-width: 767px) {
-  .tile__graphic--rings    { top: 70% !important; bottom: auto !important; }
-  .tile__graphic--diamonds { top: 68% !important; bottom: auto !important; }
-  /* Card 4's copy is the longest of the six (4 lines), so its arcs start
-     lower than the rest — only the ellipse tips clear the text, which is
-     the same read the desktop version's bottom:-62% crop was after. */
-  .tile__graphic--orbs     { top: 78% !important; bottom: auto !important; }
-  .tile__graphic--atom     { top: 72% !important; left: 50% !important; }
-  .hex-draw                { top: 72% !important; }
+  .tile__graphic--rings    { top: 62% !important; bottom: auto !important; }
+  .tile__graphic--diamonds { top: 58% !important; bottom: auto !important; }
+  /* Card 4's copy is still the longest of the six, so its arcs start
+     lowest. The graphic is also by far the tallest (399px against a 300px
+     card), so this is the one that stays substantially cropped — which is
+     the read the desktop version's bottom:-62% was after anyway. */
+  .tile__graphic--orbs     { top: 62% !important; bottom: auto !important; }
+  .tile__graphic--atom     { top: 60% !important; left: 50% !important; }
+  .hex-draw                { top: 62% !important; }
   /* Card 2 is the exception: six 2px rules are far less intrusive behind
      text than the other cards' large curves, and top-anchoring them would
      push two of the six lines (plus a ball) off the bottom edge entirely.
-     A small nudge down clears the last line of copy while costing only the
-     bottom-most rule, which slides under the card edge. */
-  .tile__graphic--balls    { bottom: -8% !important; }
+     With the shorter copy there is now room to restore the original
+     bottom:0, so all six lines and all five balls are on the card. */
+  .tile__graphic--balls    { bottom: 0 !important; }
 }
 
 /* ---------------------------------------------------------------------- */
@@ -1146,24 +1173,39 @@
 
 /* ---------------------------------------------------------------------- */
 /* Closing CTA + footer group                                              */
-/* Sized together (not the CTA alone) to exactly one viewport height, so   */
-/* the footer always sits flush with the bottom of the screen rather than  */
-/* the pair adding up to more than 100vh. The CTA is the flexible one —    */
-/* it grows or gives back space to make up the difference; the footer     */
-/* keeps its natural content height.                                      */
+/* Sized together (not the CTA alone) to one viewport height, so the       */
+/* footer sits flush with the bottom of the screen rather than the pair    */
+/* adding up to more than 100vh. The CTA is the flexible one — it grows to */
+/* make up the difference; the footer keeps its natural content height.    */
+/*                                                                         */
+/* min-height, not height: on a phone the CTA's own content (a display-    */
+/* size heading wrapping to three lines, plus body and button) can need    */
+/* more room than a viewport leaves once the footer has taken its share.   */
+/* A hard height forced the overflow back onto the content, and since the  */
+/* CTA centres its children that spilled off both ends at once — which is  */
+/* what pushed the heading against the section's top edge. Growing past    */
+/* 100vh in that case is the correct behaviour; it costs nothing, as this  */
+/* is the bottom of the page.                                              */
 /* ---------------------------------------------------------------------- */
 .closing-group {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  min-height: 100vh;
 }
 
 .closing-cta {
-  flex: 1 1 auto;
+  /* 1 0 auto: still grows to absorb slack on tall screens, but never
+     shrinks below its own content + padding, which is the other half of
+     what let the heading get squeezed against the top edge. */
+  flex: 1 0 auto;
   background: var(--color-peach);
   color: var(--color-maroon);
   box-sizing: border-box;
   padding-inline: var(--container-pad);
+  /* Real block padding, so the space above the heading and below the
+     button is a guaranteed minimum rather than whatever justify-content
+     happens to have left over — on mobile that leftover was nothing. */
+  padding-block: var(--gap-xl);
   display: flex;
   flex-direction: column;
   align-items: center;
