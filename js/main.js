@@ -39,6 +39,28 @@
     footerIo.observe(footer);
   }
 
+  /* Hero line animation runs only while the hero is actually on screen.
+     Two reasons: it restarts from the beginning when the visitor scrolls
+     back up, rather than having looped unwatched the whole time they were
+     down the page; and an infinite animation over 68 stroked paths costs
+     nothing while parked.
+
+     Removing the class strips the animation and drops each element to its
+     resting state (fully drawn — see .hero-line in main.css), so a hero
+     that's off screen is never blank. Re-adding it starts a fresh run,
+     because the animation was genuinely absent in between. */
+  if (hero && "IntersectionObserver" in window) {
+    var heroIo = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          hero.classList.toggle("is-replaying", entry.isIntersecting);
+        });
+      },
+      { threshold: 0 }
+    );
+    heroIo.observe(hero);
+  }
+
   /* Mobile nav toggle */
   var toggle = document.querySelector(".nav-toggle");
   var links = document.querySelector(".site-nav__links");
@@ -346,8 +368,10 @@
      between any two chosen rows (e.g. rows 1/3/5, never 1/2/anything),
      then pick one visible check within each chosen row. Exactly 3 are
      lit at a time — the previous set is cleared before the new one is
-     chosen. A pause button freezes both the scroll and the highlight
-     cycling. */
+     chosen.
+
+     Autoplays with no control of its own. prefers-reduced-motion is the
+     only thing that holds it still, checked once at init. */
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   (function setupQualityTicker() {
     var wrap = document.getElementById("quality-ticker");
@@ -358,7 +382,9 @@
       if (track) track.innerHTML += track.innerHTML;
     });
 
-    var pauseBtn = wrap.querySelector("[data-quality-pause]");
+    /* Set once at init and never toggled: the ticker autoplays, and the
+       only thing that stops it is the visitor's own reduced-motion setting.
+       data-paused on the wrapper is what the CSS animations key off. */
     var paused = reduceMotion;
     var intervalId = null;
     var highlightCount = 3;
@@ -423,27 +449,7 @@
       tick();
       intervalId = setInterval(tick, cycleMs);
     }
-    function stop() {
-      if (intervalId) { clearInterval(intervalId); intervalId = null; }
-      wrap.querySelectorAll(".qc-check.is-active").forEach(function (el) {
-        el.classList.remove("is-active");
-      });
-    }
-
     if (!paused) start();
-
-    if (pauseBtn) {
-      pauseBtn.setAttribute("aria-pressed", paused ? "true" : "false");
-      pauseBtn.innerHTML = paused ? "&#9654;" : "&#10074;&#10074;";
-      pauseBtn.addEventListener("click", function () {
-        paused = !paused;
-        wrap.setAttribute("data-paused", String(paused));
-        pauseBtn.setAttribute("aria-pressed", String(paused));
-        pauseBtn.setAttribute("aria-label", paused ? "Play ticker" : "Pause ticker");
-        pauseBtn.innerHTML = paused ? "&#9654;" : "&#10074;&#10074;";
-        if (paused) stop(); else start();
-      });
-    }
   })();
 
   /* Parallax drift for the stats section's decorative illustration: as

@@ -64,24 +64,256 @@
 </header>
 
 <!-- ============================== HERO ============================== -->
-<section class="section hero" data-name="Desktop - 14 / iPhone 14 & 15 Pro Max - 3">
-  <video class="hero__video" autoplay muted loop playsinline poster="images/hero-background-poster.jpg">
-    <source src="videos/hero-background-loop.mp4" type="video/mp4" />
-  </video>
-  <div class="hero__scrim" aria-hidden="true"></div>
+<!-- Background is two mirrored fans of lines converging on a single point,
+     drawn in once on load, with a glow blooming where they meet. Replaces
+     the previous background video + scrim.
 
+     Two SVGs, desktop and mobile, swapped by breakpoint in main.css —
+     they are different compositions, not one scaled: the desktop fans
+     sweep in from left and right, the mobile ones from much further off
+     canvas so the convergence still reads on a narrow screen.
+
+     Every path carries pathLength="1" with stroke-dasharray="1 1". That
+     normalises each curve to a length of 1 regardless of its real
+     geometry, so one shared stroke-dashoffset animation (1 -> 0) draws
+     all of them at the same rate. Each path is authored starting at its
+     outer end, so that single direction reads as "merging inward" with
+     no per-path tuning. --i is the line's position within its own fan and
+     drives the stagger; see .hero-line in main.css.
+
+     The glow lives inside each SVG rather than in the DOM. The graphic is
+     preserveAspectRatio="slice", so it is cropped differently at every
+     viewport ratio — a DOM element could not stay pinned to the meeting
+     point through that, but an SVG circle at those coordinates is carried
+     by the same transform for free. -->
+<section class="section hero" data-name="Desktop - 14 / iPhone 14 & 15 Pro Max - 3">
+  <div class="hero__lines" aria-hidden="true">
+    <svg class="hero__lines-svg hero__lines-svg--desktop" viewBox="0 0 1440 931" preserveAspectRatio="xMidYMid slice" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Fan spread. Scaling x about 720 — the convergence point — pushes
+           neighbouring lines apart without moving where they meet or
+           altering the vertical composition. Raise the 1.28 to open the fan
+           further; the outermost curves simply leave the frame, which they
+           already do. Doing this in the geometry rather than by enlarging
+           the <svg> matters: enlarging it crops the widest lines away (see
+           .hero__lines-svg in main.css). -->
+      <g opacity="0.5" transform="translate(720 0) scale(1.28 1) translate(-720 0)">
+        <g>
+          <path class="hero-line" style="--i:7" d="M666 -38C697.204 33.7944 720 198.191 720 376" pathLength="1" stroke="url(#hd0)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:6" d="M592 -38C665.966 33.7944 720 198.191 720 376" pathLength="1" stroke="url(#hd1)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:5" d="M517 -38C634.305 33.7944 720 198.191 720 376" pathLength="1" stroke="url(#hd2)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:4" d="M433 -38C598.845 33.7944 720 198.191 720 376" pathLength="1" stroke="url(#hd3)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:3" d="M334 -38C557.054 33.7944 720 198.191 720 376" pathLength="1" stroke="url(#hd4)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:2" d="M202 -38C501.331 33.7944 720 198.191 720 376" pathLength="1" stroke="url(#hd5)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:1" d="M34 -38C430.411 33.7944 720 198.191 720 376" pathLength="1" stroke="url(#hd6)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:0" d="M1 5.00001C416.481 69.3375 720 216.659 720 376" pathLength="1" stroke="url(#hd7)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+        </g>
+        <g>
+          <path class="hero-line" style="--i:7" d="M774 -38.0001C742.796 33.7943 720 198.191 720 376" pathLength="1" stroke="url(#hd8)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:6" d="M848 -38.0001C774.034 33.7943 720 198.191 720 376" pathLength="1" stroke="url(#hd9)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:5" d="M923 -38.0001C805.695 33.7943 720 198.191 720 376" pathLength="1" stroke="url(#hd10)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:4" d="M1007 -38C841.154 33.7943 720 198.191 720 376" pathLength="1" stroke="url(#hd11)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:3" d="M1105 -38.0001C882.524 33.7943 720 198.191 720 376" pathLength="1" stroke="url(#hd12)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:2" d="M1237 -38.0001C938.247 33.7943 720 198.191 720 376" pathLength="1" stroke="url(#hd13)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:1" d="M1405 -38.0001C1009.17 33.7943 720 198.191 720 376" pathLength="1" stroke="url(#hd14)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:0" d="M1438 4.99993C1023.1 69.3374 720 216.659 720 376" pathLength="1" stroke="url(#hd15)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+        </g>
+      </g>
+      <g opacity="0.5" transform="translate(720 9) scale(1.28 1) translate(-720 0)">
+        <g>
+          <path class="hero-line" style="--i:7" d="M666 931C697.204 833.193 720 609.233 720 367" pathLength="1" stroke="url(#hd16)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:6" d="M592 931C665.966 833.193 720 609.233 720 367" pathLength="1" stroke="url(#hd17)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:5" d="M516 931C633.883 833.193 720 609.233 720 367" pathLength="1" stroke="url(#hd18)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:4" d="M432 931C598.423 833.193 720 609.233 720 367" pathLength="1" stroke="url(#hd19)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:3" d="M333 931C556.631 833.193 720 609.233 720 367" pathLength="1" stroke="url(#hd20)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:2" d="M201 931C500.909 833.193 720 609.233 720 367" pathLength="1" stroke="url(#hd21)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:1" d="M33 931C429.989 833.193 720 609.233 720 367" pathLength="1" stroke="url(#hd22)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:0" d="M0 873C416.058 785.251 720 584.323 720 367" pathLength="1" stroke="url(#hd23)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+        </g>
+        <g>
+          <path class="hero-line" style="--i:7" d="M774 929C742.796 831.54 720 608.374 720 367" pathLength="1" stroke="url(#hd24)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:6" d="M848 929C774.034 831.54 720 608.374 720 367" pathLength="1" stroke="url(#hd25)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:5" d="M923 929C805.695 831.54 720 608.374 720 367" pathLength="1" stroke="url(#hd26)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:4" d="M1007 929C841.155 831.54 720 608.374 720 367" pathLength="1" stroke="url(#hd27)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:3" d="M1106 929C882.946 831.54 720 608.374 720 367" pathLength="1" stroke="url(#hd28)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:2" d="M1238 929C938.669 831.54 720 608.374 720 367" pathLength="1" stroke="url(#hd29)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:1" d="M1406 929C1009.59 831.54 720 608.374 720 367" pathLength="1" stroke="url(#hd30)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:0" d="M1439 871C1023.52 783.598 720 583.463 720 367" pathLength="1" stroke="url(#hd31)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+        </g>
+      </g>
+
+      <!-- Bloom at the meeting point. Two fans converge a few units apart
+           (376 and 367), so this sits between them at 371. -->
+      <circle class="hero-glow-aura" cx="720" cy="376" r="330" fill="url(#hero-glow-d)" />
+      <circle class="hero-glow-dot" cx="720" cy="376" r="8" fill="#FFFFFF" />
+
+      <defs>
+        <radialGradient id="hero-glow-d" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0" stop-color="#FFB48E" stop-opacity="0.72"/>
+          <stop offset="0.3" stop-color="#DF800C" stop-opacity="0.34"/>
+          <stop offset="1" stop-color="#550000" stop-opacity="0"/>
+        </radialGradient>
+        <linearGradient id="hd0" x1="693" y1="-38" x2="693" y2="376" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hd1" x1="656" y1="-38" x2="656" y2="376" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hd2" x1="618.5" y1="-38" x2="618.5" y2="376" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hd3" x1="576.5" y1="-38" x2="576.5" y2="376" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hd4" x1="527" y1="-38" x2="527" y2="376" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hd5" x1="461" y1="-38" x2="461" y2="376" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hd6" x1="377" y1="-38" x2="377" y2="376" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hd7" x1="360.5" y1="5" x2="360.5" y2="376" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hd8" x1="747" y1="-38.0001" x2="747" y2="376" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hd9" x1="784" y1="-38.0001" x2="784" y2="376" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hd10" x1="821.5" y1="-38.0001" x2="821.5" y2="376" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hd11" x1="863.5" y1="-38" x2="863.5" y2="376" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hd12" x1="912.5" y1="-38" x2="912.5" y2="376" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hd13" x1="978.5" y1="-38.0001" x2="978.5" y2="376" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hd14" x1="1062.5" y1="-38.0001" x2="1062.5" y2="376" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hd15" x1="1079" y1="4.99994" x2="1079" y2="376" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hd16" x1="693" y1="931" x2="693" y2="367" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hd17" x1="656" y1="931" x2="656" y2="367" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hd18" x1="618" y1="931" x2="618" y2="367" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hd19" x1="576" y1="931" x2="576" y2="367" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hd20" x1="526.5" y1="931" x2="526.5" y2="367" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hd21" x1="460.5" y1="931" x2="460.5" y2="367" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hd22" x1="376.5" y1="931" x2="376.5" y2="367" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hd23" x1="360" y1="873" x2="360" y2="367" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hd24" x1="747" y1="929" x2="747" y2="367" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hd25" x1="784" y1="929" x2="784" y2="367" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hd26" x1="821.5" y1="929" x2="821.5" y2="367" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hd27" x1="863.5" y1="929" x2="863.5" y2="367" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hd28" x1="913" y1="929" x2="913" y2="367" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hd29" x1="979" y1="929" x2="979" y2="367" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hd30" x1="1063" y1="929" x2="1063" y2="367" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hd31" x1="1079.5" y1="871" x2="1079.5" y2="367" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+      </defs>
+    </svg>
+
+    <svg class="hero__lines-svg hero__lines-svg--mobile" viewBox="0 0 430 932" preserveAspectRatio="xMidYMid slice" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g opacity="0.5">
+        <g>
+          <path class="hero-line" style="--i:8" d="M174.5 -182C199.926 -108.645 218.5 59.3252 218.5 241" pathLength="1" stroke="url(#hm0)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:7" d="M114.5 -182C174.597 -108.645 218.5 59.3252 218.5 241" pathLength="1" stroke="url(#hm1)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:6" d="M53.5 -182C148.847 -108.645 218.5 59.3252 218.5 241" pathLength="1" stroke="url(#hm2)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:5" d="M-14.5 -182C120.141 -108.645 218.5 59.3253 218.5 241" pathLength="1" stroke="url(#hm3)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:4" d="M-94.5 -182C86.3698 -108.645 218.5 59.3253 218.5 241" pathLength="1" stroke="url(#hm4)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:3" d="M-145.5 -156C64.8406 -87.1537 218.5 70.492 218.5 241" pathLength="1" stroke="url(#hm5)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:2" d="M-145.5 -111C64.8406 -49.9574 218.5 89.8191 218.5 241" pathLength="1" stroke="url(#hm6)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:1" d="M-145.5 -67C64.8406 -13.5877 218.5 108.717 218.5 241" pathLength="1" stroke="url(#hm7)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:0" d="M-145.5 -20C64.8406 25.2617 218.5 128.903 218.5 241" pathLength="1" stroke="url(#hm8)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+        </g>
+        <g>
+          <path class="hero-line" style="--i:8" d="M262.5 -156C237.074 -87.1537 218.5 70.492 218.5 241" pathLength="1" stroke="url(#hm9)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:7" d="M322.5 -156C262.403 -87.1537 218.5 70.492 218.5 241" pathLength="1" stroke="url(#hm10)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:6" d="M383.5 -156C288.153 -87.1537 218.5 70.492 218.5 241" pathLength="1" stroke="url(#hm11)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:5" d="M451.5 -156C316.859 -87.1537 218.5 70.492 218.5 241" pathLength="1" stroke="url(#hm12)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:4" d="M531.5 -156C350.63 -87.1537 218.5 70.492 218.5 241" pathLength="1" stroke="url(#hm13)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:3" d="M582.5 -132C372.159 -67.3157 218.5 80.7998 218.5 241" pathLength="1" stroke="url(#hm14)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:2" d="M582.5 -89C372.159 -31.7726 218.5 99.2679 218.5 241" pathLength="1" stroke="url(#hm15)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:1" d="M582.5 -48C372.159 2.11735 218.5 116.877 218.5 241" pathLength="1" stroke="url(#hm16)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          <path class="hero-line" style="--i:0" d="M582.5 -4C372.159 38.487 218.5 135.775 218.5 241" pathLength="1" stroke="url(#hm17)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+        </g>
+      </g>
+      <g transform="translate(0 241)">
+        <g opacity="0.5">
+          <g>
+            <path class="hero-line" style="--i:8" d="M175 597C200.426 493.47 219 256.406 219 3.42276e-05" pathLength="1" stroke="url(#hm18)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+            <path class="hero-line" style="--i:7" d="M115 597C175.097 493.47 219 256.406 219 3.05261e-05" pathLength="1" stroke="url(#hm19)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+            <path class="hero-line" style="--i:6" d="M54 597C149.347 493.47 219 256.406 219 2.67629e-05" pathLength="1" stroke="url(#hm20)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+            <path class="hero-line" style="--i:5" d="M-14 597C120.641 493.47 219 256.406 219 2.25678e-05" pathLength="1" stroke="url(#hm21)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+            <path class="hero-line" style="--i:4" d="M-94 597C86.8698 493.47 219 256.406 219 1.76325e-05" pathLength="1" stroke="url(#hm22)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+            <path class="hero-line" style="--i:3" d="M-145 560C65.3406 462.887 219 240.515 219 6.31256e-06" pathLength="1" stroke="url(#hm23)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+            <path class="hero-line" style="--i:2" d="M-145 497C65.3406 410.812 219 213.457 219 5.69082e-05" pathLength="1" stroke="url(#hm24)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+            <path class="hero-line" style="--i:1" d="M-145 435C65.3406 359.564 219 186.829 219 4.88709e-05" pathLength="1" stroke="url(#hm25)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+            <path class="hero-line" style="--i:0" d="M-145 368C65.3406 304.183 219 158.053 219 4.08609e-05" pathLength="1" stroke="url(#hm26)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          </g>
+          <g>
+            <path class="hero-line" style="--i:8" d="M263 597C237.574 493.47 219 256.406 219 3.98343e-05" pathLength="1" stroke="url(#hm27)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+            <path class="hero-line" style="--i:7" d="M323 597C262.903 493.47 219 256.406 219 4.37782e-05" pathLength="1" stroke="url(#hm28)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+            <path class="hero-line" style="--i:6" d="M384 597C288.653 493.47 219 256.406 219 4.77879e-05" pathLength="1" stroke="url(#hm29)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+            <path class="hero-line" style="--i:5" d="M452 597C317.359 493.47 219 256.406 219 5.22576e-05" pathLength="1" stroke="url(#hm30)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+            <path class="hero-line" style="--i:4" d="M532 597C351.13 493.47 219 256.406 219 5.75162e-05" pathLength="1" stroke="url(#hm31)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+            <path class="hero-line" style="--i:3" d="M583 561C372.659 463.713 219 240.945 219 3.59388e-05" pathLength="1" stroke="url(#hm32)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+            <path class="hero-line" style="--i:2" d="M583 496C372.659 409.986 219 213.028 219 3.62932e-05" pathLength="1" stroke="url(#hm33)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+            <path class="hero-line" style="--i:1" d="M583 435C372.659 359.564 219 186.829 219 1.14998e-05" pathLength="1" stroke="url(#hm34)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+            <path class="hero-line" style="--i:0" d="M583 368C372.659 304.183 219 158.053 219 4.53665e-05" pathLength="1" stroke="url(#hm35)" stroke-width="1.79589" stroke-dasharray="1 1"/>
+          </g>
+        </g>
+      </g>
+
+      <!-- Both mobile fans meet at x=218.5/219, y=241 (the lower group is
+           the same geometry translated down 248, so its own 0 lands there). -->
+      <circle class="hero-glow-aura" cx="218.5" cy="241" r="230" fill="url(#hero-glow-m)" />
+      <circle class="hero-glow-dot" cx="218.5" cy="241" r="6" fill="#FFFFFF" />
+
+      <defs>
+        <radialGradient id="hero-glow-m" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0" stop-color="#FFB48E" stop-opacity="0.72"/>
+          <stop offset="0.3" stop-color="#DF800C" stop-opacity="0.34"/>
+          <stop offset="1" stop-color="#550000" stop-opacity="0"/>
+        </radialGradient>
+        <linearGradient id="hm0" x1="196.5" y1="-182" x2="196.5" y2="241" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hm1" x1="166.5" y1="-182" x2="166.5" y2="241" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hm2" x1="136" y1="-182" x2="136" y2="241" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hm3" x1="102" y1="-182" x2="102" y2="241" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hm4" x1="62" y1="-182" x2="62" y2="241" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hm5" x1="36.5" y1="-156" x2="36.5" y2="241" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hm6" x1="36.5" y1="-111" x2="36.5" y2="241" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hm7" x1="36.5" y1="-67" x2="36.5" y2="241" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hm8" x1="36.5" y1="-20" x2="36.5" y2="241" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hm9" x1="240.5" y1="-156" x2="240.5" y2="241" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hm10" x1="270.5" y1="-156" x2="270.5" y2="241" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hm11" x1="301" y1="-156" x2="301" y2="241" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hm12" x1="335" y1="-156" x2="335" y2="241" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hm13" x1="375" y1="-156" x2="375" y2="241" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hm14" x1="400.5" y1="-132" x2="400.5" y2="241" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hm15" x1="400.5" y1="-89" x2="400.5" y2="241" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hm16" x1="400.5" y1="-48" x2="400.5" y2="241" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hm17" x1="400.5" y1="-3.99999" x2="400.5" y2="241" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hm18" x1="197" y1="597" x2="197" y2="3.04647e-05" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hm19" x1="167" y1="597" x2="167" y2="2.86139e-05" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hm20" x1="136.5" y1="597" x2="136.5" y2="2.67323e-05" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hm21" x1="102.5" y1="597" x2="102.5" y2="2.46348e-05" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hm22" x1="62.5" y1="597" x2="62.5" y2="2.21671e-05" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hm23" x1="37" y1="560" x2="37" y2="2.0594e-05" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hm24" x1="37" y1="497" x2="37" y2="5.11115e-05" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hm25" x1="37" y1="435" x2="37" y2="5.11115e-05" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hm26" x1="37" y1="368" x2="37" y2="5.11115e-05" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hm27" x1="241" y1="597" x2="241" y2="3.3268e-05" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hm28" x1="271" y1="597" x2="271" y2="3.524e-05" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hm29" x1="301.5" y1="597" x2="301.5" y2="3.72448e-05" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hm30" x1="335.5" y1="597" x2="335.5" y2="3.94797e-05" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hm31" x1="375.5" y1="597" x2="375.5" y2="4.2109e-05" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hm32" x1="401" y1="561" x2="401" y2="4.37852e-05" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hm33" x1="401" y1="496" x2="401" y2="1.32676e-05" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hm34" x1="401" y1="435" x2="401" y2="1.32676e-05" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+        <linearGradient id="hm35" x1="401" y1="368" x2="401" y2="1.32676e-05" gradientUnits="userSpaceOnUse"><stop stop-color="#550000"/><stop offset="0.25" stop-color="#DF800C"/><stop offset="1" stop-color="#FF938E"/></linearGradient>
+      </defs>
+    </svg>
+  </div>
+
+  <!-- Darkens the outer edges so the copy keeps its contrast over whatever
+       part of the fan the crop happens to put behind it. -->
+  <div class="hero__wash" aria-hidden="true"></div>
+
+  <!-- Headline, CTA and the supporting line are one block: on mobile
+       .hero__inner is the full viewport, so everything in here is what the
+       visitor sees before scrolling, and only the quicklinks below sit past
+       the fold. The body copy is pinned to the bottom of this block rather
+       than following the CTA — see .hero__body in main.css. -->
   <div class="hero__inner">
     <div class="container">
       <div class="hero__content">
-        <p class="hero__pill"><span class="hero__pill-dot" aria-hidden="true"></span>Backed by Mayfield Ventures and Village Global<span class="hero__pill-dot" aria-hidden="true"></span></p>
         <h1 class="h1 hero__title">
-          <span class="italic-accent">Precise</span> customer insights for your next strategic move.
+          <span class="italic-accent">Precise</span> customer insights<br class="hero__title-break" />
+          for your next strategic move.
         </h1>
-        <p class="body-text hero__body">
-          Serifo delivers top-tier consultancy-level expertise at 1/10th the cost and 1/100th the time, powered by our numerous expert-automata.
-        </p>
-        <a class="btn btn--light js-open-contact" href="#contact">Get in touch</a>
+        <a class="btn btn--light hero__cta js-open-contact" href="#contact">Get in touch</a>
       </div>
+    </div>
+
+    <div class="container">
+      <p class="body-text hero__body">
+        Serifo delivers top-tier consultancy-level expertise at 1/10th the cost and 1/100th the time, powered by our numerous expert-automata.
+      </p>
     </div>
   </div>
 
@@ -460,7 +692,6 @@
            while fully in view, matching the animated behavior spec'd
            against Figma node 65:6641. -->
       <div class="expertise__showcase" id="quality-ticker" data-component="quality-ticker">
-        <button class="qc-pause" type="button" data-quality-pause aria-pressed="false" aria-label="Pause ticker">&#10074;&#10074;</button>
         <div class="qc-row qc-row--left" data-row="0">
           <ul class="qc-track">
           <li class="qc-check"><span class="qc-check__label">Avoiding leading language</span><svg class="qc-check__icon" width="17" height="11" viewBox="0 0 19 13" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M0.75257 4.52967L6.207 10.7632L18.0249 0.763386" stroke="currentColor" stroke-width="2"/></svg></li>

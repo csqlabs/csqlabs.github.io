@@ -87,6 +87,14 @@
   --expertise-gap: clamp(72px, 51.9901px + 4.6535vw, 119px);       /* expertise: copy → checklist/chart */
   --stats-lede-gap: clamp(64px, 52.9307px + 2.5743vw, 90px);       /* stats v2: lede → badge row (mobile extrapolated — no Figma mobile source yet, see note) */
   --articles-top: clamp(64px, 52.505px + 2.6733vw, 91px);          /* articles: section top → heading (mobile approx — see note) */
+  /* One rhythm for every section's top and bottom on mobile. The per-section
+     tokens above are Figma-derived for desktop and each scales on its own
+     curve, so at phone widths they landed between 36px and 96px — six
+     sections, six different insets, which read as sloppy rather than as
+     deliberate variation. Those values keep their desktop behaviour; this
+     replaces them below 768px only. See the mobile rhythm block at the end
+     of main.css. */
+  --section-pad-mobile: clamp(56px, -17.1px + 22.86vw, 72px);      /* 56px at 320w, 72px from 390w up */
   --nav-links-gap: 40px;                                           /* desktop nav link row gap */
   --veterans-h: clamp(662px, 833.0891px - 11.8812vw, 782px);       /* veterans: true section height (centered content) */
   --stats-h: 931px;                                                 /* stats v2: true desktop section height (centered content); mobile uses padding instead — see note */

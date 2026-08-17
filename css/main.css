@@ -12,22 +12,27 @@
 /* ---------------------------------------------------------------------- */
 /* Header / Nav                                                            */
 /* Sticky/fixed to the viewport at all times (not just over the hero).     */
-/* Starts transparent over the hero video, then transitions to a solid    */
-/* white bar once scrolled past the hero — toggled via .site-header--solid */
-/* (added by js/main.js on scroll). Falls back to plain white if JS is     */
-/* unavailable, since a transparent bar over body content is unreadable.   */
+/* Starts transparent over the hero, then transitions to a solid white bar */
+/* once scrolled past it — toggled via .site-header--solid (added by       */
+/* js/main.js on scroll). Falls back to plain white if JS is unavailable,   */
+/* since a transparent bar over body content is unreadable.                */
 /* ---------------------------------------------------------------------- */
 .site-header {
   position: fixed;
   inset: 0 0 auto 0;
   z-index: 50;
   width: 100%;
-  /* A black 10%-opacity fill on top of the blur — the blur alone still let
-     busy hero footage show enough contrast variation to hurt legibility of
-     the nav text sitting over it. */
+  /* No backdrop-filter. It existed to settle busy hero video footage
+     behind the nav text, and there is no video any more — over the line
+     graphic it only smeared the curves into a visibly blurred band across
+     the top of the section. The 10% black fill stays: it still separates
+     the bar from the hero, and being a flat tint it leaves the lines
+     crisp. */
   background: rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(5.2px);
   border-bottom: 0.5px solid var(--color-bone);
+  /* backdrop-filter is back in the transition list only because the mobile
+     nav frosts the bar while its panel is open (see body.has-nav-open
+     below); the property is otherwise unset and never animates. */
   transition: background-color 0.25s ease, backdrop-filter 0.25s ease, border-color 0.25s ease, transform 0.25s ease, opacity 0.25s ease;
 }
 
@@ -43,7 +48,6 @@
 .no-js .site-header,
 .site-header--solid {
   background: var(--color-white);
-  backdrop-filter: none;
   border-bottom-color: rgba(85, 0, 0, 0.15);
 }
 
@@ -189,6 +193,21 @@
     background: var(--color-bone);
     color: var(--color-maroon);
   }
+
+  /* Frost the bar while the panel is open. In its transparent state the bar
+     is only a 10%-black tint, so over the hero the line graphic reads
+     straight through it — against the solid panel hanging directly below,
+     those curves crossing the top strip look like a rendering glitch rather
+     than a design. A maroon veil plus blur ties the bar to the panel and
+     settles the lines behind it.
+
+     Scoped to the transparent state on purpose: the solid-white pages
+     (careers, the articles, the policies) already read as one piece with
+     the panel and should keep their white bar. */
+  body.has-nav-open .site-header:not(.site-header--solid):not(.site-header--static-solid) {
+    background: rgba(85, 0, 0, 0.82);
+    backdrop-filter: blur(12px);
+  }
 }
 
 /* ---------------------------------------------------------------------- */
@@ -200,20 +219,187 @@
   background: var(--color-maroon);
   color: var(--color-bone);
   overflow: clip;
+  /* Column so the quicklinks bar can sit at the bottom as a real sibling
+     and .hero__inner simply take what's left. The bar used to be absolutely
+     positioned, which meant .hero__inner needed a bottom padding
+     hand-matched to its height — a number that went stale the moment the
+     copy rewrapped. The line background and wash are absolute, so they sit
+     outside this flow and still cover the section. */
+  display: flex;
+  flex-direction: column;
 }
 
-.hero__video {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+/* ---- Converging line background (replaces the old video + scrim) ------
+   Two fans of curves meeting at one point, drawn in once on load with a
+   glow blooming where they meet. Desktop and mobile are separate
+   compositions swapped here, not one scaled — see the markup note in
+   index.html. Both are preserveAspectRatio="slice", so they cover the
+   section and crop at whichever axis has spare. */
+.hero__lines { position: absolute; inset: 0; pointer-events: none; }
+
+/* Exactly the section's width. Drawing it wider does NOT spread the fan:
+   preserveAspectRatio="slice" scales to cover, so a wider box just scales
+   everything up, and since the box is centred over a fixed-width section
+   the visible window then falls on the middle of the viewBox — cropping
+   off the outermost, widest lines and leaving the dense bundle near the
+   axis magnified. It reads as less spread, not more. How far the fan opens
+   is set in the geometry instead; see the scale transform on the fan
+   groups in index.html. */
+.hero__lines-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.hero__lines-svg--mobile { display: none; }
+@media (max-width: 767px) {
+  .hero__lines-svg--desktop { display: none; }
+  .hero__lines-svg--mobile { display: block; }
 }
 
-.hero__scrim {
+/* The draw-in. Every path is pathLength="1" with stroke-dasharray="1 1",
+   i.e. normalised so one dash plus one gap spans the whole curve whatever
+   its true length. Offsetting by a full 1 therefore parks the gap over the
+   line (invisible) and animating to 0 slides the dash across it, drawing
+   it on. Because pathLength normalises them, every line draws in the same
+   time regardless of how long it actually is — the short inner curves and
+   the long outer sweeps arrive together, which is what makes it read as
+   converging rather than as separate strokes racing.
+
+   --i is the line's index within its own fan, set inline in the markup,
+   available to stagger them; see --hero-line-stagger below for why it is
+   currently 0.
+
+   The whole thing loops on a --hero-cycle timeline, with the wait built
+   into the keyframes rather than added around them — CSS has no
+   between-iteration delay (animation-delay applies to the first run only),
+   so it has to be a stretch of the cycle where nothing changes:
+
+     0-30%    draw in            1.5s
+     30-88%   hold, fully drawn  2.9s   <- the gap between draws
+     88-92%   fade out (ease-in) 0.2s
+     92-100%  empty              0.4s
+
+   The fade only dims; it never moves anything. An earlier version cleared
+   by animating stroke-dashoffset back, which unwound each curve toward the
+   centre and read as the fan collapsing. Holding the offset and dropping
+   opacity instead means the picture disappears exactly where it stands.
+
+   The wait is the HOLD, not an empty stretch: the finished fan is on screen
+   2.9s of every 5, and blank for 0.6s. An early version had that backwards
+   and left the hero bare maroon for 1.4s a cycle, which read as broken.
+
+   Change --hero-cycle to retime the whole sequence proportionally; the
+   percentages keep their relationship to each other. */
+.hero {
+  --hero-cycle: 20s;
+}
+
+/* Resting state: fully drawn. This is what shows before JS starts the loop,
+   what no-JS visitors get, and what reduced motion falls back to — never a
+   blank hero. */
+.hero-line { stroke-dashoffset: 0; }
+.hero-glow-aura,
+.hero-glow-dot {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* .is-replaying is added by js/main.js whenever the hero is on screen and
+   removed when it scrolls away, so the sequence restarts on return rather
+   than looping unseen. */
+
+.hero.is-replaying .hero-line {
+  animation: hero-line-cycle var(--hero-cycle) linear infinite;
+  /* Stagger is off (0s), and that is what makes the clear instant.
+     animation-delay shifts a line's WHOLE timeline, not just its start, so
+     any stagger also staggers the cut at 88% — and since --i:0 is the
+     outermost line, the fan cleared from the outside in and read as
+     collapsing toward the centre rather than disappearing. At 0s every
+     line shares one timeline: they draw together and vanish on the same
+     frame.
+
+     --i is still set per line in the markup, so raising this brings the
+     edge-inward sweep back on the draw — at the cost of the same spread on
+     the clear. */
+  animation-delay: calc(var(--i, 0) * var(--hero-line-stagger, 0s));
+}
+
+@keyframes hero-line-cycle {
+  0%   { stroke-dashoffset: 1; opacity: 1; animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
+  30%  { stroke-dashoffset: 0; opacity: 1; }
+  /* Fades out over 88-92% (0.2s) with the offset held at 0, so the line
+     dims where it stands instead of unwinding — the collapse came from
+     animating the offset itself.
+
+     ease-in, not linear: a linear fade sits at half opacity for half the
+     window, and that washed-out ghost of the whole fan is the most visible
+     part of the exit. Easing in holds the line near full strength and then
+     drops it away quickly, so it reads as softened rather than as a
+     separate faded picture. */
+  88%  { stroke-dashoffset: 0; opacity: 1; animation-timing-function: ease-in; }
+  /* Only once fully transparent does steps(1, start) snap the offset back
+     to 1 for the next draw, in a single frame nobody can see. */
+  92%  { stroke-dashoffset: 0; opacity: 0; animation-timing-function: steps(1, start); }
+  100% { stroke-dashoffset: 1; opacity: 0; }
+}
+
+/* Both keyed to the FIRST line arriving (30% of the cycle), not the last.
+   Lines land between 30% and roughly 40% once the --i stagger is counted,
+   so the light has to come up as the merge starts, not after it finishes.
+
+   The dot is much faster than the haze on purpose: it snaps on as contact
+   is made, and the glow swells around it a beat later.
+
+   Two elements only. An intermediate "hot core" circle was tried between
+   them and removed: its gradient ran out at its own radius while the aura
+   was still going, so the edge showed as a distinct inner blob rather than
+   reading as one light source. */
+.hero.is-replaying .hero-glow-dot {
+  animation: hero-glow-dot-cycle var(--hero-cycle) linear infinite;
+}
+.hero.is-replaying .hero-glow-aura {
+  animation: hero-glow-aura-cycle var(--hero-cycle) linear infinite;
+}
+
+/* Both fade over the same eased 88-92% window as the lines, so the light
+   goes out with the fan rather than lingering over an empty centre. */
+/* The dot is full at exactly 30% — the frame the lines reach the centre —
+   not after it. It ramps over the 0.1s immediately before, so the light is
+   already there the instant contact is made rather than catching up. The
+   old 28-35% ramp left it a quarter-second late, sized back when the
+   per-line stagger meant lines arrived across a window instead of together. */
+@keyframes hero-glow-dot-cycle {
+  0%, 28%   { opacity: 0; transform: scale(0.6); animation-timing-function: ease-out; }
+  30%       { opacity: 1; transform: scale(1); }
+  88%       { opacity: 1; transform: scale(1); animation-timing-function: ease-in; }
+  92%, 100% { opacity: 0; transform: scale(1); }
+}
+
+/* The haze still swells a beat behind the dot — the dot is the contact, the
+   glow is what spreads from it — but from 30% rather than 28%, so it starts
+   at the merge instead of before it. */
+@keyframes hero-glow-aura-cycle {
+  0%, 30%   { opacity: 0; transform: scale(0.6); animation-timing-function: ease-out; }
+  42%       { opacity: 1; transform: scale(1); }
+  88%       { opacity: 1; transform: scale(1); animation-timing-function: ease-in; }
+  92%, 100% { opacity: 0; transform: scale(1); }
+}
+
+/* Reduced motion: the resting state above already is the finished picture,
+   so this only has to stop the loop being applied. */
+@media (prefers-reduced-motion: reduce) {
+  .hero.is-replaying .hero-line,
+  .hero.is-replaying .hero-glow-aura,
+  .hero.is-replaying .hero-glow-dot { animation: none; }
+}
+
+/* A vignette centred on the convergence point, not a corner scrim. It has
+   to sit above the lines to hold contrast for the copy, which means
+   anything it paints over the meeting point comes straight off the glow —
+   the first version was darkest at the bottom left and still had ~0.3
+   opacity over the centre, which is what left the dot looking grey. Fully
+   transparent at the centre, darkening only toward the edges where the
+   body copy and quicklinks sit. */
+.hero__wash {
   position: absolute;
   inset: 0;
-  background: radial-gradient(120% 90% at 20% 85%, rgba(0,0,0,0.85) 0%, rgba(21,0,0,0.75) 25%, rgba(43,0,0,0.5) 50%, rgba(85,0,0,0) 100%);
+  background: radial-gradient(78% 62% at 50% 40%, rgba(85,0,0,0) 0%, rgba(43,0,0,0.28) 58%, rgba(15,0,0,0.72) 100%);
   pointer-events: none;
 }
 
@@ -238,9 +424,19 @@
      exceeded its maximum, and an inverted clamp() returns the minimum, so
      it resolved to a flat 186px at every width and the vw term never
      applied.) */
-  justify-content: center;
-  height: 100%;
-  padding-top: var(--header-h);
+  /* flex-start with a vh top padding, not centring. The copy has to hang
+     just below the point where the lines meet, and that point is a fixed
+     fraction of the viewport: the graphic is preserveAspectRatio="slice",
+     so on a typical desktop window the convergence at y=371 of the 931-unit
+     viewBox lands around 40vh. Centring instead places the block by how
+     much space happens to be left over, which put the headline above the
+     glow rather than under it. 42vh starts the copy just past the meeting
+     point — that value is the knob if the gap wants to be tighter or
+     looser. */
+  justify-content: flex-start;
+  flex: 1 1 auto;
+  min-height: 0;
+  padding-top: 42vh;
   padding-bottom: var(--header-h);
 }
 
@@ -256,46 +452,63 @@
   .hero__inner {
     height: 100vh;
     height: 100dvh;
-    /* Centring and the top floor come from the base rule. Only the bottom
-       differs: there is no quicklinks bar overlaying the banner here (they
-       sit in flow below it), so this just needs a closing gutter rather
-       than the height of a bar. */
+    /* The mobile fan meets higher up its own viewBox (y=244 of 932, ~25vh
+       once cropped) than the desktop one does, so the copy starts higher to
+       match — same relationship, different number. */
+    padding-top: 30dvh;
+    /* No quicklinks bar overlaying the banner here (they sit in flow below
+       it), so the bottom just needs a closing gutter, not a bar's height. */
     padding-bottom: var(--gap-lg);
   }
 }
 
+/* Centred, and centred on the convergence point specifically — the whole
+   composition reads as the lines meeting and the headline hanging directly
+   beneath that meeting. Left-aligned copy puts the glow off to one side of
+   the text and the relationship disappears. */
 .hero__content {
-  max-width: 709px;
+  max-width: 820px;
+  margin-inline: auto;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  text-align: center;
   gap: var(--gap-md);
 }
 
-.hero__pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  width: max-content;
-  max-width: 100%;
-  color: var(--color-white);
-  font-family: var(--font-mono);
-  font-weight: 500;
-  font-size: var(--hero-pill-fs);
-  line-height: 1.6;
-  letter-spacing: 0;
-  text-transform: uppercase;
-}
-.hero__pill-dot { flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--color-white); }
-
 .hero__title { opacity: 0.96; }
-.hero__body { max-width: 708px; }
+.hero__cta { align-self: center; }
 
+/* Hard break in the headline, desktop only — it balances the two lines at
+   the width the copy was written for. Below that the line can't hold
+   anyway and the break would only force an odd rag, so it collapses. */
+.hero__title-break { display: none; }
+@media (min-width: 1024px) {
+  .hero__title-break { display: inline; }
+}
+
+/* margin-top:auto pins the supporting line to the bottom of .hero__inner
+   instead of letting it trail the CTA. That single rule covers both
+   breakpoints: on desktop .hero__inner fills the space above the quicklinks
+   bar, so the copy lands in the lower band the design wants; on mobile
+   .hero__inner is the whole viewport, so it lands just above the fold.
+
+   It used to live in a .hero__foot alongside the quicklinks, which put it
+   after the full-height block on mobile and pushed it out of the first
+   screen — it belongs to the banner, so it has to be inside it. */
+.hero__body {
+  max-width: 708px;
+  margin-top: auto;
+  margin-inline: auto;
+  text-align: center;
+}
+
+/* relative + z-index, because .hero__lines and .hero__wash are positioned
+   and would otherwise paint over an unpositioned sibling. */
 .hero__quicklinks {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  position: relative;
   z-index: 6;
+  flex: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -310,13 +523,10 @@
 .hero__quicklinks img { width: 16px; }
 
 @media (max-width: 767px) {
+  /* The bar follows the full-height banner in flow, so the first viewport
+     holds the headline, CTA and supporting copy, and only these links sit
+     past the fold. */
   .hero__quicklinks {
-    /* relative, not absolute: they follow the full-height banner in flow so
-       the first viewport is the banner only (see .hero__inner above).
-       Relative rather than static because .hero__video and .hero__scrim are
-       positioned and would otherwise paint over an unpositioned sibling —
-       this keeps the z-index: 6 below doing its job. */
-    position: relative;
     flex-direction: column;
     align-items: stretch;
     height: auto;
@@ -966,27 +1176,6 @@
   .qc-track { animation: none; }
 }
 
-.qc-pause {
-  position: absolute;
-  top: var(--gap-xs);
-  right: var(--gap-xs);
-  z-index: 2;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: none;
-  background: var(--color-white);
-  color: var(--color-maroon);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  cursor: pointer;
-  transition: box-shadow 0.15s ease;
-}
-.qc-pause:hover { box-shadow: inset 0 0 0 999px rgba(85, 0, 0, 0.1); }
-
 .pre-reveal {
   opacity: 0;
   transform: translateY(24px);
@@ -1136,7 +1325,15 @@
 
 .articles__head .caption { max-width: 483px; }
 
-.articles__divider { margin-top: var(--gap-sm); height: 1px; background: var(--color-maroon); opacity: 0.4; }
+/* Desktop only. The cards carry border-top on mobile (they stack there;
+   above 768px that swaps to a left border between them — see .article-card),
+   so on a phone this rule and the first card's own border draw two parallel
+   lines a few px apart under the heading. On desktop the cards have no top
+   border and this is the only line, which is the intent. */
+.articles__divider { display: none; }
+@media (min-width: 768px) {
+  .articles__divider { display: block; margin-top: var(--gap-sm); height: 1px; background: var(--color-maroon); opacity: 0.4; }
+}
 
 .articles__list {
   margin-top: var(--gap-sm);
@@ -1585,4 +1782,36 @@ body.has-nav-open { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
   .contact-modal__backdrop,
   .contact-modal__dialog { transition: none; }
+}
+
+/* ---------------------------------------------------------------------- */
+/* Mobile section rhythm                                                   */
+/* ---------------------------------------------------------------------- */
+/* Every section gets the same top and bottom inset below 768px. Each one   */
+/* otherwise carries its own Figma-derived token — --caps-top,             */
+/* --expertise-top, --articles-top, --gap-xxl, --gap-xl — and because      */
+/* those clamps scale on different curves they diverged at phone widths:   */
+/* veterans ended up at 36px against stats at 96px, and articles was       */
+/* asymmetric (64px top, 24px bottom). Desktop keeps the per-section        */
+/* values, which are deliberate there.                                     */
+/*                                                                         */
+/* Last in the file on purpose: these have the same specificity as the     */
+/* rules they replace, so source order is what settles it.                 */
+/* ---------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  .capabilities-offerings,
+  .stats,
+  .expertise,
+  .articles,
+  .closing-cta {
+    padding-block: var(--section-pad-mobile);
+  }
+
+  /* Veterans puts its inset on the row rather than the section, so the
+     maroon block always keeps a margin around its contents — see the note
+     above .veterans__grid. */
+  .veterans__grid {
+    padding-top: var(--section-pad-mobile);
+    padding-bottom: var(--section-pad-mobile);
+  }
 }

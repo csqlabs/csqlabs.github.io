@@ -291,7 +291,13 @@
    from the landing page's Articles section, just retitled) ---- */
 .related-articles { background: var(--color-white); padding-block: var(--article-block-gap); }
 .related-articles__head { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--gap-md); color: var(--color-maroon); }
-.related-articles__divider { margin-top: var(--gap-sm); height: 1px; background: var(--color-maroon); opacity: 0.4; }
+/* Desktop only, for the same reason as .articles__divider in main.css: this
+   block reuses .article-card, which is top-bordered while stacked, so on a
+   phone the two lines double up under the heading. */
+.related-articles__divider { display: none; }
+@media (min-width: 768px) {
+  .related-articles__divider { display: block; margin-top: var(--gap-sm); height: 1px; background: var(--color-maroon); opacity: 0.4; }
+}
 .related-articles__list { margin-top: var(--gap-sm); display: flex; flex-direction: column; }
 @media (min-width: 768px) { .related-articles__list { flex-direction: row; align-items: stretch; } }
 
