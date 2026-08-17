@@ -452,10 +452,12 @@
   .hero__inner {
     height: 100vh;
     height: 100dvh;
-    /* The mobile fan meets higher up its own viewBox (y=244 of 932, ~25vh
-       once cropped) than the desktop one does, so the copy starts higher to
-       match — same relationship, different number. */
-    padding-top: 30dvh;
+    /* The mobile fan meets higher up its own viewBox than the desktop one
+       does, so the copy starts higher to match — same relationship,
+       different number. 38, not the earlier 30: at 30 the headline's first
+       line began level with the meeting point and the dot landed on top of
+       the type instead of sitting clear above it. */
+    padding-top: 38dvh;
     /* No quicklinks bar overlaying the banner here (they sit in flow below
        it), so the bottom just needs a closing gutter, not a bar's height. */
     padding-bottom: var(--gap-lg);
@@ -493,12 +495,14 @@
    bar, so the copy lands in the lower band the design wants; on mobile
    .hero__inner is the whole viewport, so it lands just above the fold.
 
-   It used to live in a .hero__foot alongside the quicklinks, which put it
-   after the full-height block on mobile and pushed it out of the first
-   screen — it belongs to the banner, so it has to be inside it. */
+   It has to sit on the .container wrapper, not on the <p> inside it: the
+   container is what .hero__inner lays out as a flex item, and an auto
+   margin only absorbs free space on the flex item itself. On the <p> it
+   silently did nothing, which is why the copy sat directly under the CTA
+   with the rest of the viewport empty below it. */
+.hero__body-row { margin-top: auto; }
 .hero__body {
   max-width: 708px;
-  margin-top: auto;
   margin-inline: auto;
   text-align: center;
 }

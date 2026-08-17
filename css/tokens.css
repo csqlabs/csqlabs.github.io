@@ -147,3 +147,44 @@
 
   --radius-pill: 8px;
 }
+
+/* ==========================================================================
+   Mobile type scale
+   ==========================================================================
+   Every font-size and line-height token above interpolates between Figma's
+   430px frame and its 1440px one, so each clamp hits its floor at ~430px
+   and is then
+   FLAT all the way down. A 320px phone was rendering exactly the same type
+   as a 430px one inside a container 110px narrower — that is why the hero
+   headline ran to five lines on a small handset and three on a large one.
+
+   These re-anchor the scale between 320px and 767px so it keeps shrinking on
+   small screens. Desktop is untouched: the media query stops at 767px, and
+   from 768px up the tokens above still describe Figma's own curve.
+
+   Headings and display numbers only. Body, CTA and caption keep their
+   existing floors (18/16/14px) — they are already at comfortable reading
+   sizes and shrinking them would cost legibility rather than fix crowding.
+   ========================================================================== */
+@media (max-width: 767px) {
+  :root {
+    --fs-display: clamp(38px, 19.39px + 5.817vw, 64px);
+    --lh-display: clamp(45.6px, 23.26px + 6.98vw, 76.8px);
+
+    --fs-h1: clamp(32px, 21.98px + 3.132vw, 46px);
+    --lh-h1: clamp(38.4px, 26.37px + 3.758vw, 55.2px);
+
+    --fs-h2: clamp(24px, 18.27px + 1.79vw, 32px);
+    --lh-h2: clamp(28.8px, 21.93px + 2.148vw, 38.4px);
+
+    --fs-h3: clamp(19px, 16.14px + 0.895vw, 23px);
+    --lh-h3: clamp(28.5px, 24.2px + 1.342vw, 34.5px);
+
+    --fs-metrics: clamp(38px, 25.11px + 4.027vw, 56px);
+    --lh-metrics: clamp(38px, 25.11px + 4.027vw, 56px);
+
+    --fs-offering-index: clamp(20px, 15.7px + 1.342vw, 26px);
+    --fs-num-badge: clamp(17px, 14.14px + 0.895vw, 21px);
+    --fs-stat-label: clamp(18px, 15.14px + 0.895vw, 22px);
+  }
+}
