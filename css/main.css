@@ -248,17 +248,17 @@
    Without containment the browser has to treat that as potentially
    invalidating a wider area of the page each time.
 
-   will-change gives it its own compositing layer, so those repaints stay
-   off whatever else is on screen. Neither changes a pixel; both exist to
-   stop dropped frames, which in a dash animation don't read as slowness
-   but as the line jumping — the flicker seen on Android Chrome, whose
-   GPUs are less forgiving of per-frame SVG raster than iOS's. */
+   No will-change here on purpose. It was tried and removed: promoting this
+   to its own compositing layer means a full-screen texture that has to be
+   re-uploaded to the GPU every frame its paint changes, which for
+   paint-animated content costs more than it saves. Containment is the part
+   that actually helps. The per-frame cost itself is dealt with by not
+   repainting forever — see the one-shot block for touch devices below. */
 .hero__lines {
   position: absolute;
   inset: 0;
   pointer-events: none;
   contain: paint;
-  will-change: transform;
 }
 
 /* Exactly the section's width. Drawing it wider does NOT spread the fan:
@@ -419,6 +419,49 @@
   .hero.is-replaying .hero-line,
   .hero.is-replaying .hero-glow-aura,
   .hero.is-replaying .hero-glow-dot { animation: none; }
+}
+
+/* Touch devices draw the fan ONCE and keep it, instead of looping.
+
+   stroke-dashoffset is a paint property, so it can never reach the
+   compositor: every frame of the loop re-rasterizes 68 stroked paths and
+   their gradient paint servers. Desktop GPUs absorb that indefinitely;
+   phone GPUs drop frames, and a dropped frame in a dash animation does not
+   read as slowness but as the line jumping — the flicker reported on
+   Android Chrome. contain:paint bounds the work but cannot make it cheap,
+   and a compositing layer made it worse rather than better.
+
+   So the animation stops being perpetual. The visitor still gets the
+   draw-in, once, when the hero comes into view; after 1.2s the paths hold
+   their finished state and nothing repaints again. That removes the cause
+   outright rather than trying to afford it, and it is easier on battery
+   too. The looping version stays on pointer devices, where it is free.
+
+   Separate keyframes because the cycle ones end at opacity 0 — running
+   those with fill:forwards would hold the fan invisible. These end on the
+   drawn state, which is also .hero-line's resting state, so the handoff
+   when the animation finishes is seamless. */
+@media (hover: none) {
+  .hero.is-replaying .hero-line {
+    animation: hero-line-draw-once 1.2s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+  }
+  /* Dot lands as the lines meet; the haze swells just behind it. */
+  .hero.is-replaying .hero-glow-dot {
+    animation: hero-glow-in-once 0.3s ease-out 1s forwards;
+  }
+  .hero.is-replaying .hero-glow-aura {
+    animation: hero-glow-in-once 0.8s ease-out 1.1s forwards;
+  }
+}
+
+@keyframes hero-line-draw-once {
+  from { stroke-dashoffset: 1; }
+  to   { stroke-dashoffset: 0; }
+}
+
+@keyframes hero-glow-in-once {
+  from { opacity: 0; transform: scale(0.6); }
+  to   { opacity: 1; transform: scale(1); }
 }
 
 /* A vignette centred on the convergence point, not a corner scrim. It has
