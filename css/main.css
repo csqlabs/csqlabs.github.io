@@ -216,7 +216,12 @@
 /* ---------------------------------------------------------------------- */
 .hero {
   position: relative;
-  height: 100vh;
+  /* min-height, not height: on a viewport too short for the composition the
+     section grows rather than forcing its contents to overlap. Belt and
+     braces with the padding ceiling on .hero__inner — that keeps the copy
+     inside one screen at any realistic height, this guarantees no collision
+     even if the copy itself grows. */
+  min-height: 100vh;
   background: var(--color-maroon);
   color: var(--color-bone);
   overflow: clip;
@@ -435,9 +440,20 @@
      point — that value is the knob if the gap wants to be tighter or
      looser. */
   justify-content: flex-start;
-  flex: 1 1 auto;
-  min-height: 0;
-  padding-top: 42vh;
+  /* 1 0 auto, and no min-height:0 — this must never be squeezed below its
+     own content, or the copy spills over the quicklinks bar beneath it. */
+  flex: 1 0 auto;
+  /* 42vh places the copy just under the meeting point, but as a pure
+     fraction it stops working on a short window: the padding shrinks more
+     slowly than the room the copy needs, and below ~810px of viewport
+     height the two collided. Common on Windows, where 125-150% display
+     scaling leaves a 1080p screen reporting only ~600px of CSS height.
+
+     The second term is the ceiling: whatever is left after reserving 30rem
+     for the copy, the bottom padding and the quicklinks bar. Above ~810px
+     the 42vh is smaller and still governs, so the intended composition is
+     untouched on a normal window. */
+  padding-top: min(42vh, calc(100vh - 30rem));
   padding-bottom: var(--header-h);
 }
 
