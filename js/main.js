@@ -707,42 +707,26 @@
     };
   }
 
-  /* Row-based reveal for the tile grid: unlike the generic .pre-reveal
-     mechanism below (fires as soon as ANY part of an element is visible),
-     each row of 3 cards only reveals once it's actually CENTERED in the
-     viewport. That's done by shrinking the observer's effective root to
-     a thin horizontal band through the middle of the viewport
-     (rootMargin "-40% 0px -40% 0px" trims 40% off the top and bottom,
-     leaving only the middle 20%) — a tile only counts as "intersecting"
-     once it overlaps that middle band, not merely on-screen. Each row is
-     watched independently, so row 1 (cards 1–3) and row 2 (cards 4–6)
-     reveal at their own, unrelated scroll positions. .is-visible lands
-     directly on each tile in the row — .tile.is-visible in main.css then
-     drives both that card's own fade/slide-in and its internal graphic's
-     animation (rings, balls, diamonds, orbs, atom spin, or line
-     draw-in).
+  /* Per-tile reveal. Each card is observed on its own and reveals when it
+     personally scrolls into view, which is what makes this follow the
+     layout for free: stacked, cards arrive one at a time; two-up, the pair
+     sharing a row crosses the threshold together; three-up, the three do.
+
+     It used to observe hardcoded rows of three and reveal all of them the
+     moment any one intersected. That was written when the grid was always
+     3-across, and stopped being true once it became 1 / 2 / 3 columns by
+     breakpoint — at 768px, two cards were on screen and a third revealed
+     with them, off-screen.
 
      Repeatable, not one-shot: the observer is never unobserved, and
-     .is-visible is removed again once the row leaves the centered band
-     (tracked per-tile in intersectingState rather than trusted from the
-     current callback's entries alone — IntersectionObserver only reports
-     elements whose state actually changed, so a batch can contain just
-     one of the row's three tiles; recomputing "is any tile in the row
-     currently intersecting" from the full tracked state, not just
-     entries.some() on that partial batch, avoids wrongly resetting the
-     row while a tile outside this particular batch is still centered).
-     Removing .is-visible alone is enough to reset the CSS-driven cards
-     (Cards 1, 2, 3, 5, and the tile's own fade/slide) since their
-     "revealed" look only exists via a `.tile.is-visible …` rule with no
-     other state left behind — but Cards 4 and 6 draw in via
-     Element.animate() outside of CSS entirely, so their finished,
+     .is-visible is removed again once a card leaves. Removing that class
+     is enough to reset the CSS-driven cards (1, 2, 3, 5, and the tile's
+     own fade/slide) since their revealed look exists only via a
+     `.tile.is-visible …` rule — but Cards 4 and 6 draw in via
+     Element.animate() outside CSS entirely, so their finished
      fill:forwards animations need an explicit reset (see
      resetHexDrawIn/resetOrbDrawIn above) or a later re-entry would find
-     them already fully drawn instead of hidden. */
-  var tileRows = [
-    [".tile--brand", ".tile--usage", ".tile--concept"],
-    [".tile--social", ".tile--pricing", ".tile--cx"]
-  ];
+     them already drawn instead of hidden. */
   var playTileDrawIn = function (tile) {
     if (tile.classList.contains("tile--cx")) revealHexDrawIn();
     if (tile.classList.contains("tile--social")) revealOrbDrawIn();
@@ -751,40 +735,39 @@
     if (tile.classList.contains("tile--cx")) resetHexDrawIn();
     if (tile.classList.contains("tile--social")) resetOrbDrawIn();
   };
-  tileRows.forEach(function (selectors) {
-    var tilesInRow = selectors
-      .map(function (sel) { return document.querySelector(sel); })
-      .filter(Boolean);
-    if (!tilesInRow.length) return;
+  var allTiles = Array.prototype.slice.call(document.querySelectorAll(".tile"));
+  if (allTiles.length) {
     if ("IntersectionObserver" in window) {
-      var intersectingState = tilesInRow.map(function () { return false; });
-      var rowIo = new IntersectionObserver(
+      var tileIo = new IntersectionObserver(
         function (entries) {
           entries.forEach(function (entry) {
-            var idx = tilesInRow.indexOf(entry.target);
-            if (idx !== -1) intersectingState[idx] = entry.isIntersecting;
-          });
-          var rowIsCentered = intersectingState.some(Boolean);
-          tilesInRow.forEach(function (tile) {
-            if (rowIsCentered && !tile.classList.contains("is-visible")) {
+            var tile = entry.target;
+            if (entry.isIntersecting && !tile.classList.contains("is-visible")) {
               tile.classList.add("is-visible");
               playTileDrawIn(tile);
-            } else if (!rowIsCentered && tile.classList.contains("is-visible")) {
+            } else if (!entry.isIntersecting && tile.classList.contains("is-visible")) {
               tile.classList.remove("is-visible");
               resetTileDrawIn(tile);
             }
           });
         },
-        { rootMargin: "-40% 0px -40% 0px", threshold: 0 }
+        /* Trim 12% off the bottom, so a card triggers as its top edge
+           clears the lower eighth of the viewport — essentially as it
+           scrolls in. This was "-40% 0px -40% 0px", shrinking the root to
+           the middle 20%, which meant a card had to travel almost to the
+           centre of the screen first: at any normal scroll speed it was on
+           screen and still blank for most of a second. Nothing off the top,
+           so a card stays revealed until it has fully left upward. */
+        { rootMargin: "0px 0px -12% 0px", threshold: 0 }
       );
-      tilesInRow.forEach(function (tile) { rowIo.observe(tile); });
+      allTiles.forEach(function (tile) { tileIo.observe(tile); });
     } else {
-      tilesInRow.forEach(function (tile) {
+      allTiles.forEach(function (tile) {
         tile.classList.add("is-visible");
         playTileDrawIn(tile);
       });
     }
-  });
+  }
 
   /* Scroll reveal for .pre-reveal elements — fires as soon as any part of
      the element is visible (unlike the row-centered reveal above), and
