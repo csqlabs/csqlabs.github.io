@@ -518,12 +518,24 @@
      height the two collided. Common on Windows, where 125-150% display
      scaling leaves a 1080p screen reporting only ~600px of CSS height.
 
-     The second term is the ceiling: whatever is left after reserving 30rem
-     for the copy, the bottom padding and the quicklinks bar. Above ~810px
+     The second term is the ceiling: whatever is left after reserving 32rem
+     for the copy, the bottom padding and the quicklinks bar. Above ~880px
      the 42vh is smaller and still governs, so the intended composition is
-     untouched on a normal window. */
-  padding-top: min(42vh, calc(100vh - 30rem));
-  padding-bottom: var(--header-h);
+     untouched on a normal window.
+
+     32rem, not the earlier 30rem. The reserve has to cover the tallest the
+     copy ever gets, and that is a wide-but-short window: above 1440 the type
+     ramp grows the headline while the reserve is a flat rem value, so at
+     1920 the block needed 481px against a 480px reserve and the supporting
+     line landed on the quicklinks. 32rem (512px) leaves ~30px of real slack
+     across 1280-1920 instead of rounding-error slack. */
+  padding-top: min(42vh, calc(100vh - 32rem));
+  /* This is the gap between the supporting line and the quicklinks bar,
+     since .hero__body-row is pinned to the bottom of this block. It was
+     --header-h (84px), matching the bar's own height, which held the copy
+     noticeably higher than the design — that wants it sitting close to the
+     bar, about 40px off. --gap-md is 36px. */
+  padding-bottom: var(--gap-md);
 }
 
 /* Mobile: the banner alone owns the first viewport, and the quicklinks drop
