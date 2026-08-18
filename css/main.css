@@ -241,7 +241,25 @@
    compositions swapped here, not one scaled — see the markup note in
    index.html. Both are preserveAspectRatio="slice", so they cover the
    section and crop at whichever axis has spare. */
-.hero__lines { position: absolute; inset: 0; pointer-events: none; }
+/* contain:paint bounds the animation's repaints to this box. The loop
+   animates stroke-dashoffset, which is a PAINT property — it cannot be
+   handed to the compositor the way transform/opacity can, so every frame
+   re-rasterizes all 68 stroked paths and their gradient paint servers.
+   Without containment the browser has to treat that as potentially
+   invalidating a wider area of the page each time.
+
+   will-change gives it its own compositing layer, so those repaints stay
+   off whatever else is on screen. Neither changes a pixel; both exist to
+   stop dropped frames, which in a dash animation don't read as slowness
+   but as the line jumping — the flicker seen on Android Chrome, whose
+   GPUs are less forgiving of per-frame SVG raster than iOS's. */
+.hero__lines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  contain: paint;
+  will-change: transform;
+}
 
 /* Exactly the section's width. Drawing it wider does NOT spread the fan:
    preserveAspectRatio="slice" scales to cover, so a wider box just scales
@@ -276,10 +294,10 @@
    between-iteration delay (animation-delay applies to the first run only),
    so it has to be a stretch of the cycle where nothing changes:
 
-     0-30%    draw in            1.5s
-     30-88%   hold, fully drawn  2.9s   <- the gap between draws
-     88-92%   fade out (ease-in) 0.2s
-     92-100%  empty              0.4s
+     0-24%    draw in            1.2s
+     24-96%   hold, fully drawn  3.6s   <- the gap between draws
+     96-100%  fade out (ease-in) 0.2s
+                                        <- no blank phase at all
 
    The fade only dims; it never moves anything. An earlier version cleared
    by animating stroke-dashoffset back, which unwound each curve toward the
@@ -327,9 +345,15 @@
 }
 
 @keyframes hero-line-cycle {
-  0%   { stroke-dashoffset: 1; opacity: 1; animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
-  30%  { stroke-dashoffset: 0; opacity: 1; }
-  /* Fades out over 88-92% (0.2s) with the offset held at 0, so the line
+  /* cubic-bezier(0.65, 0, 0.35, 1) — ease-in-out, not the ease-out-quint
+     this used to carry. That curve reached 96% of the distance in the
+     first half of the draw and then crept the last 4% for the remaining
+     0.75s, so the fans hung visibly close but not touching for half the
+     animation and read as failing to merge. This one holds a steadier
+     pace and closes the final 5% in 0.32s, so contact actually lands. */
+  0%   { stroke-dashoffset: 1; opacity: 1; animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1); }
+  24%  { stroke-dashoffset: 0; opacity: 1; }
+  /* Fades out over 96-100% (0.2s) with the offset held at 0, so the line
      dims where it stands instead of unwinding — the collapse came from
      animating the offset itself.
 
@@ -338,11 +362,13 @@
      part of the exit. Easing in holds the line near full strength and then
      drops it away quickly, so it reads as softened rather than as a
      separate faded picture. */
-  88%  { stroke-dashoffset: 0; opacity: 1; animation-timing-function: ease-in; }
-  /* Only once fully transparent does steps(1, start) snap the offset back
-     to 1 for the next draw, in a single frame nobody can see. */
-  92%  { stroke-dashoffset: 0; opacity: 0; animation-timing-function: steps(1, start); }
-  100% { stroke-dashoffset: 1; opacity: 0; }
+  96%  { stroke-dashoffset: 0; opacity: 1; animation-timing-function: ease-in; }
+  /* Fade lands exactly on 100%, so there is no blank tail. The offset
+     resets across the loop boundary instead of inside the timeline: at
+     100% the line is transparent, and at 0% it is offset by a full length
+     — hidden either way, so the jump between them cannot be seen and the
+     next draw starts on the very next frame. */
+  100% { stroke-dashoffset: 0; opacity: 0; }
 }
 
 /* Both keyed to the FIRST line arriving (30% of the cycle), not the last.
@@ -371,20 +397,20 @@
    old 28-35% ramp left it a quarter-second late, sized back when the
    per-line stagger meant lines arrived across a window instead of together. */
 @keyframes hero-glow-dot-cycle {
-  0%, 28%   { opacity: 0; transform: scale(0.6); animation-timing-function: ease-out; }
-  30%       { opacity: 1; transform: scale(1); }
-  88%       { opacity: 1; transform: scale(1); animation-timing-function: ease-in; }
-  92%, 100% { opacity: 0; transform: scale(1); }
+  0%, 22% { opacity: 0; transform: scale(0.6); animation-timing-function: ease-out; }
+  24%     { opacity: 1; transform: scale(1); }
+  96%     { opacity: 1; transform: scale(1); animation-timing-function: ease-in; }
+  100%    { opacity: 0; transform: scale(1); }
 }
 
 /* The haze still swells a beat behind the dot — the dot is the contact, the
    glow is what spreads from it — but from 30% rather than 28%, so it starts
    at the merge instead of before it. */
 @keyframes hero-glow-aura-cycle {
-  0%, 30%   { opacity: 0; transform: scale(0.6); animation-timing-function: ease-out; }
-  42%       { opacity: 1; transform: scale(1); }
-  88%       { opacity: 1; transform: scale(1); animation-timing-function: ease-in; }
-  92%, 100% { opacity: 0; transform: scale(1); }
+  0%, 24% { opacity: 0; transform: scale(0.6); animation-timing-function: ease-out; }
+  36%     { opacity: 1; transform: scale(1); }
+  96%     { opacity: 1; transform: scale(1); animation-timing-function: ease-in; }
+  100%    { opacity: 0; transform: scale(1); }
 }
 
 /* Reduced motion: the resting state above already is the finished picture,
