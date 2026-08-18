@@ -7,7 +7,11 @@
      would permanently block every future update. A classList.toggle plus
      two offsetHeight reads is cheap enough to run on every scroll tick. */
   var header = document.querySelector(".site-header");
-  var hero = document.querySelector(".hero");
+  /* Any dark full-bleed opening section the header is meant to float over —
+     the home page's line-graphic banner, or the careers page's maroon
+     block. Pages that open on white (articles, the policies) have none of
+     these and carry .site-header--static-solid in the markup instead. */
+  var hero = document.querySelector(".hero, .careers-hero");
   if (header && hero) {
     var applyHeaderState = function () {
       var threshold = hero.offsetHeight - header.offsetHeight;
@@ -212,7 +216,7 @@
 
        Posting via fetch rather than a plain form submit keeps the visitor in
        the modal instead of bouncing them to the script's own response page. */
-    var CONTACT_ENDPOINT = "https://script.google.com/macros/s/AKfycbxIXHJkjisCmO6sDXro_ynowCs3e9zHjpYYKGgQ8Y9gppWdg8laLocGcAY0qcIymCdf-A/exec";
+    var CONTACT_ENDPOINT = "https://script.google.com/macros/s/AKfycbz8d4ph2hDD5kAxK5cgaIAU2esIs6CCnmE0NpG8iQD7sc3Tt1AxlCv2YjO23pL6TQg34A/exec";
 
     /* Which site a submission came from, so test entries are distinguishable
        from real enquiries in the sheet. Derived from the hostname rather

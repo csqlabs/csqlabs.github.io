@@ -21,10 +21,12 @@
 <div id="top"></div>
 
 <!-- ============================== HEADER ============================== -->
-<!-- Permanently solid (no hero video on this page for it to float
-     transparently over — the hero below is a flat color block, not a
-     photo) — see .site-header--static-solid in pages.css. -->
-<header class="site-header site-header--static-solid" data-name="Frame 484">
+<!-- Transparent over the maroon hero, then solid white once scrolled past
+     it — the same behaviour as the home page, toggled by js/main.js, which
+     treats .careers-hero as the section to float over. Not
+     .site-header--static-solid: that is for pages opening on white
+     (articles, the policies), where a transparent bar would be unreadable. -->
+<header class="site-header" data-name="Frame 484">
   <div class="container site-header__bar">
     <a class="brand" href="index.html#top" aria-label="Serifo home">
       <svg class="brand__logo" viewBox="0 0 31.4329 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -57,7 +59,7 @@
         <li><a href="index.html#offerings">Solutions</a></li>
         <li><a href="index.html#engineered-by-veterans">Team</a></li>
         <li><a href="careers.html">Careers</a></li>
-        <li class="site-nav__links-cta"><a class="btn btn--light" href="mailto:hello@csqlabs.com">Contact us</a></li>
+        <li class="site-nav__links-cta"><a class="btn btn--light" href="mailto:hello@csqlabs.com">Get in touch</a></li>
       </ul>
     </nav>
 

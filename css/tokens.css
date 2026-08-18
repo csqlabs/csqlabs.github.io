@@ -2,9 +2,17 @@
    Serifo — Design Tokens
    Source: Figma "Serifo Website" — Desktop (1440) & Mobile (430) frames.
    Fluid scaling: all tokens below use clamp() to interpolate linearly
-   between the Mobile (430px) and Desktop (1440px) values. Below 430px,
-   the clamp() continues the same linear ramp (does not floor early).
-   Above 1440px, values lock at the Desktop value.
+   between two viewport anchors, locking at the Desktop value above 1440px.
+
+   The TYPE tokens are anchored 320px -> 1440px; every other token is still
+   anchored 430px -> 1440px as Figma authored it. That difference matters:
+   anchored at 430, a clamp reaches its floor there and is FLAT below, so
+   phones between 320 and 430 all rendered identical type in containers up
+   to 110px apart. It also left a step at 768px, where the layout switches
+   to three columns — type jumped back up to near-desktop size exactly
+   where the columns became narrowest, and the tile copy overflowed its
+   card by ~48px. One continuous ramp per token removes both problems.
+   The 1440px values are unchanged, so the desktop design is as drawn.
    ========================================================================== */
 
 :root {
@@ -30,43 +38,43 @@
   --font-display: "Space Grotesk", "Helvetica Neue", Arial, sans-serif;
 
   /* ---- Type scale — fluid between 430px and 1440px ---- */
-  --fs-display: clamp(62px, 47.5248px + 3.3663vw, 96px);   /* display-hero */
-  --lh-display: clamp(62px, 39.3505px + 5.2673vw, 115.2px);
+  --fs-display: clamp(3.875rem, 2.9703rem + 3.3663vw, 6rem);   /* display-hero */
+  --lh-display: clamp(3.875rem, 2.4594rem + 5.2673vw, 7.2rem);
   --ls-display: -2px;
 
-  --fs-h1: clamp(48px, 42.0396px + 1.3861vw, 62px);
-  --lh-h1: clamp(57.6px, 50.4475px + 1.6634vw, 74.4px);
+  --fs-h1: clamp(3rem, 2.6275rem + 1.3861vw, 3.875rem);
+  --lh-h1: clamp(3.6rem, 3.153rem + 1.6634vw, 4.65rem);
   --ls-h1: -2px;
 
-  --fs-h2: clamp(30px, 26.5941px + 0.7921vw, 38px);
-  --lh-h2: clamp(36px, 31.9129px + 0.9505vw, 45.6px);
+  --fs-h2: clamp(1.875rem, 1.6621rem + 0.7921vw, 2.375rem);
+  --lh-h2: clamp(2.25rem, 1.9946rem + 0.9505vw, 2.85rem);
   --ls-h2: 0px;
 
-  --fs-h3: clamp(22px, 21.1485px + 0.198vw, 24px);
-  --lh-h3: clamp(33px, 31.7228px + 0.297vw, 36px);
+  --fs-h3: clamp(1.375rem, 1.3218rem + 0.198vw, 1.5rem);
+  --lh-h3: clamp(2.0625rem, 1.9827rem + 0.297vw, 2.25rem);
   --ls-h3: 0px;
 
-  --fs-body: clamp(18px, 17.1485px + 0.198vw, 20px);
-  --lh-body: clamp(27px, 25.7228px + 0.297vw, 30px);
+  --fs-body: clamp(1.125rem, 1.0718rem + 0.198vw, 1.25rem);
+  --lh-body: clamp(1.6875rem, 1.6077rem + 0.297vw, 1.875rem);
   --ls-body: 0px;
 
-  --fs-cta: clamp(16px, 15.1485px + 0.198vw, 18px);
-  --lh-cta: clamp(26px, 24.297px + 0.396vw, 30px);
+  --fs-cta: clamp(1rem, 0.9468rem + 0.198vw, 1.125rem);
+  --lh-cta: clamp(1.625rem, 1.5186rem + 0.396vw, 1.875rem);
   --ls-cta: 0px;
 
-  --fs-caption: clamp(14px, 13.1485px + 0.198vw, 16px);
-  --hero-pill-fs: clamp(12px, 10.297px + 0.396vw, 16px); /* hero "Backed by..." pill */
-  --lh-caption: 25.6px;
+  --fs-caption: clamp(0.875rem, 0.8218rem + 0.198vw, 1rem);
+  --hero-pill-fs: clamp(0.75rem, 0.6436rem + 0.396vw, 1rem); /* hero "Backed by..." pill */
+  --lh-caption: 1.6rem;
   --ls-caption: 0px;
 
-  --fs-metrics: clamp(56px, 52.5941px + 0.7921vw, 64px);
-  --lh-metrics: clamp(56px, 52.5941px + 0.7921vw, 64px);
+  --fs-metrics: clamp(3.5rem, 3.2871rem + 0.7921vw, 4rem);
+  --lh-metrics: clamp(3.5rem, 3.2871rem + 0.7921vw, 4rem);
   --ls-metrics: 0px;
 
-  --fs-num-badge: clamp(20px, 18.297px + 0.396vw, 24px); /* "01/02/03" tile badges */
-  --fs-offering-index: clamp(24px, 20.5941px + 0.7921vw, 32px); /* "01 02 03" list */
-  --fs-stat-label: clamp(22px, 21.1485px + 0.198vw, 24px);
-  --lh-stat-label: 32px;
+  --fs-num-badge: clamp(1.25rem, 1.1436rem + 0.396vw, 1.5rem); /* "01/02/03" tile badges */
+  --fs-offering-index: clamp(1.5rem, 1.2871rem + 0.7921vw, 2rem); /* "01 02 03" list */
+  --fs-stat-label: clamp(1.375rem, 1.3218rem + 0.198vw, 1.5rem);
+  --lh-stat-label: 2rem;
 
   /* ---- Layout ---- */
   --page-max: 1200px;                 /* content container, fixed above 1440 viewport */
@@ -102,7 +110,7 @@
   /* Stats v2 badge (26:3212, Aug 2026 redesign) — desktop-sourced;
      mobile values are a fluid extrapolation, not from a Figma mobile
      frame (none exists yet for this node). */
-  --stat-badge-fs: clamp(52px, 40.0792px + 2.7723vw, 80px);
+  --stat-badge-fs: clamp(3.25rem, 2.505rem + 2.7723vw, 5rem);
   --stat-badge-w: 360px;   /* fixed desktop badge width; mobile is 100% of its column */
   --stat-badge-ratio: 360 / 211.982;
 
@@ -149,42 +157,99 @@
 }
 
 /* ==========================================================================
-   Mobile type scale
+   Large screens (above the 1440px Figma frame)
    ==========================================================================
-   Every font-size and line-height token above interpolates between Figma's
-   430px frame and its 1440px one, so each clamp hits its floor at ~430px
-   and is then
-   FLAT all the way down. A 320px phone was rendering exactly the same type
-   as a 430px one inside a container 110px narrower — that is why the hero
-   headline ran to five lines on a small handset and three on a large one.
+   The ramps above stop at 1440 and lock there, so a 2560px display rendered
+   type at exactly the same size as a 1440px one — correct as a floor, but on
+   a 4K screen the page reads as a small island of text in the middle of a
+   very large canvas.
 
-   These re-anchor the scale between 320px and 767px so it keeps shrinking on
-   small screens. Desktop is untouched: the media query stops at 767px, and
-   from 768px up the tokens above still describe Figma's own curve.
+   This continues each token from its 1440 value up to a 2560 one, at roughly
+   1.2x. --page-max rides along, widening the content column from 1200px to
+   1460px: without it the bigger type would simply cut the words per line,
+   which is the opposite of the intent. Together they hold the measure at
+   ~120 characters throughout.
 
-   Headings and display numbers only. Body, CTA and caption keep their
-   existing floors (18/16/14px) — they are already at comfortable reading
-   sizes and shrinking them would cost legibility rather than fix crowding.
+   Above 2560 everything locks again, which is the right behaviour — past
+   that point the viewport is a wall, not a reading distance.
    ========================================================================== */
-@media (max-width: 767px) {
+@media (min-width: 1441px) {
   :root {
-    --fs-display: clamp(38px, 19.39px + 5.817vw, 64px);
-    --lh-display: clamp(45.6px, 23.26px + 6.98vw, 76.8px);
+    --fs-display: clamp(6rem, 4.0714rem + 2.1429vw, 7.5rem);
+    --lh-display: clamp(7.2rem, 4.8857rem + 2.5714vw, 9rem);
 
-    --fs-h1: clamp(32px, 21.98px + 3.132vw, 46px);
-    --lh-h1: clamp(38.4px, 26.37px + 3.758vw, 55.2px);
+    --fs-h1: clamp(3.875rem, 2.5893rem + 1.4286vw, 4.875rem);
+    --lh-h1: clamp(4.65rem, 3.1071rem + 1.7143vw, 5.85rem);
 
-    --fs-h2: clamp(24px, 18.27px + 1.79vw, 32px);
-    --lh-h2: clamp(28.8px, 21.93px + 2.148vw, 38.4px);
+    --fs-h2: clamp(2.375rem, 1.6518rem + 0.8036vw, 2.9375rem);
+    --lh-h2: clamp(2.85rem, 1.9821rem + 0.9643vw, 3.525rem);
 
-    --fs-h3: clamp(19px, 16.14px + 0.895vw, 23px);
-    --lh-h3: clamp(28.5px, 24.2px + 1.342vw, 34.5px);
+    --fs-h3: clamp(1.5rem, 1.0982rem + 0.4464vw, 1.8125rem);
+    --lh-h3: clamp(2.25rem, 1.6473rem + 0.6696vw, 2.7188rem);
 
-    --fs-metrics: clamp(38px, 25.11px + 4.027vw, 56px);
-    --lh-metrics: clamp(38px, 25.11px + 4.027vw, 56px);
+    --fs-body: clamp(1.25rem, 0.9286rem + 0.3571vw, 1.5rem);
+    --lh-body: clamp(1.875rem, 1.3929rem + 0.5357vw, 2.25rem);
 
-    --fs-offering-index: clamp(20px, 15.7px + 1.342vw, 26px);
-    --fs-num-badge: clamp(17px, 14.14px + 0.895vw, 21px);
-    --fs-stat-label: clamp(18px, 15.14px + 0.895vw, 22px);
+    --fs-cta: clamp(1.125rem, 0.8839rem + 0.2679vw, 1.3125rem);
+    --lh-cta: clamp(1.875rem, 1.4732rem + 0.4464vw, 2.1875rem);
+
+    --fs-caption: clamp(1rem, 0.7589rem + 0.2679vw, 1.1875rem);
+    --lh-caption: clamp(1.6rem, 1.2464rem + 0.3929vw, 1.875rem);
+    --hero-pill-fs: clamp(1rem, 0.7589rem + 0.2679vw, 1.1875rem);
+
+    --fs-metrics: clamp(4rem, 2.7143rem + 1.4286vw, 5rem);
+    --lh-metrics: clamp(4rem, 2.7143rem + 1.4286vw, 5rem);
+
+    --fs-num-badge: clamp(1.5rem, 1.0982rem + 0.4464vw, 1.8125rem);
+    --fs-offering-index: clamp(2rem, 1.4375rem + 0.625vw, 2.4375rem);
+    --fs-stat-label: clamp(1.5rem, 1.0982rem + 0.4464vw, 1.8125rem);
+    --lh-stat-label: clamp(2rem, 1.5179rem + 0.5357vw, 2.375rem);
+
+    --stat-badge-fs: clamp(5rem, 3.3929rem + 1.7857vw, 6.25rem);
+
+    /* The content column widens with the type so the measure holds. */
+    --page-max: clamp(1200px, 865.714px + 23.2143vw, 1460px);
+  }
+}
+
+/* ==========================================================================
+   Below the 430px design frame
+   ==========================================================================
+   The scale above is the design spec: exactly 62/48/38/24/20/18/16 at the
+   1440 desktop frame and 62/48/30/22/18/16/14 at the 430 mobile frame, with
+   a linear interpolation between them. Those two frames are the whole of
+   what the spec defines.
+
+   A clamp floors at its minimum though, so on its own that spec renders a
+   320px handset at the same size as a 430px one, in a container 110px
+   narrower — which is why the hero headline ran to five lines there. This
+   continues the ramp down to 320px and touches nothing at 430 or above: at
+   exactly 430 every value below equals its spec figure, so the design frame
+   is matched and only the undefined range beneath it is filled in.
+   ========================================================================== */
+@media (max-width: 430px) {
+  :root {
+    --fs-display: clamp(2.375rem, -1.9886rem + 21.8182vw, 3.875rem);
+    --lh-display: clamp(2.85rem, -0.1318rem + 14.9091vw, 3.875rem);
+    --fs-h1: clamp(2rem, -0.9091rem + 14.5455vw, 3rem);
+    --lh-h1: clamp(2.4rem, -1.0909rem + 17.4545vw, 3.6rem);
+    --fs-h2: clamp(1.5rem, 0.4091rem + 5.4545vw, 1.875rem);
+    --lh-h2: clamp(1.8rem, 0.4909rem + 6.5455vw, 2.25rem);
+    --fs-h3: clamp(1.1875rem, 0.6421rem + 2.7273vw, 1.375rem);
+    --lh-h3: clamp(1.7812rem, 0.9631rem + 4.0909vw, 2.0625rem);
+    --fs-body: clamp(1rem, 0.6364rem + 1.8182vw, 1.125rem);
+    --lh-body: clamp(1.5rem, 0.9546rem + 2.7273vw, 1.6875rem);
+    --fs-cta: clamp(0.9375rem, 0.7557rem + 0.9091vw, 1rem);
+    --lh-cta: clamp(1.5rem, 1.1364rem + 1.8182vw, 1.625rem);
+    --fs-caption: clamp(0.8125rem, 0.6307rem + 0.9091vw, 0.875rem);
+    --lh-caption: clamp(1.25rem, 0.2318rem + 5.0909vw, 1.6rem);
+    --hero-pill-fs: clamp(0.6875rem, 0.5057rem + 0.9091vw, 0.75rem);
+    --fs-metrics: clamp(2.375rem, -0.8978rem + 16.3636vw, 3.5rem);
+    --lh-metrics: clamp(2.375rem, -0.8978rem + 16.3636vw, 3.5rem);
+    --fs-num-badge: clamp(1.0625rem, 0.5171rem + 2.7273vw, 1.25rem);
+    --fs-offering-index: clamp(1.25rem, 0.5228rem + 3.6364vw, 1.5rem);
+    --fs-stat-label: clamp(1.125rem, 0.3977rem + 3.6364vw, 1.375rem);
+    --lh-stat-label: clamp(1.625rem, 0.5341rem + 5.4545vw, 2rem);
+    --stat-badge-fs: clamp(2.5rem, 0.3182rem + 10.9091vw, 3.25rem);
   }
 }

@@ -22,17 +22,12 @@
   inset: 0 0 auto 0;
   z-index: 50;
   width: 100%;
-  /* No backdrop-filter. It existed to settle busy hero video footage
-     behind the nav text, and there is no video any more — over the line
-     graphic it only smeared the curves into a visibly blurred band across
-     the top of the section. The 10% black fill stays: it still separates
-     the bar from the hero, and being a flat tint it leaves the lines
-     crisp. */
+  /* A 10%-black fill over a blur, so the bar reads as frosted glass sitting
+     on the hero — the line graphic stays visible through it but softened,
+     which separates the nav text from the curves running behind it. */
   background: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5.2px);
   border-bottom: 0.5px solid var(--color-bone);
-  /* backdrop-filter is back in the transition list only because the mobile
-     nav frosts the bar while its panel is open (see body.has-nav-open
-     below); the property is otherwise unset and never animates. */
   transition: background-color 0.25s ease, backdrop-filter 0.25s ease, border-color 0.25s ease, transform 0.25s ease, opacity 0.25s ease;
 }
 
@@ -45,9 +40,13 @@
   pointer-events: none;
 }
 
+/* Solid white once past the hero: the blur is dropped rather than left
+   running behind an opaque fill, where it would cost a compositing layer
+   for something nobody can see. */
 .no-js .site-header,
 .site-header--solid {
   background: var(--color-white);
+  backdrop-filter: none;
   border-bottom-color: rgba(85, 0, 0, 0.15);
 }
 
@@ -72,7 +71,9 @@
 .brand__name {
   font-family: var(--font-serif);
   font-weight: 700;
-  font-size: 24px;
+  /* Fluid like the rest of the scale rather than a flat 24px, anchored the
+     same way the type tokens are: 20px at 320, the Figma 24px from 1440. */
+  font-size: clamp(1.25rem, 1.1786rem + 0.3571vw, 1.5rem);
   color: var(--color-bone);
   transition: color 0.25s ease;
 }
@@ -469,7 +470,10 @@
    beneath that meeting. Left-aligned copy puts the glow off to one side of
    the text and the relationship disappears. */
 .hero__content {
-  max-width: 820px;
+  /* Figma's 820px up to 1440, widening with the type above that (see the
+     large-screen block in tokens.css) — otherwise the 78px headline would
+     wrap to an extra line on a 4K display rather than reading larger. */
+  max-width: clamp(820px, 588.571px + 16.0714vw, 1000px);
   margin-inline: auto;
   display: flex;
   flex-direction: column;
@@ -502,7 +506,7 @@
    with the rest of the viewport empty below it. */
 .hero__body-row { margin-top: auto; }
 .hero__body {
-  max-width: 708px;
+  max-width: clamp(708px, 512.571px + 13.5714vw, 860px);
   margin-inline: auto;
   text-align: center;
 }
@@ -519,8 +523,10 @@
   gap: var(--gap-xxs);
   padding-inline: var(--container-pad);
   height: var(--header-h);
-  backdrop-filter: blur(6px);
-  background: rgba(0, 0, 0, 0.3);
+  /* No fill and no blur — the links sit straight on the hero. Both existed
+     to hold contrast over the old background video; over the line graphic
+     the tint just read as a dark band across the bottom and the blur
+     smeared the curves running behind it. */
 }
 
 .hero__quicklinks a { display: inline-flex; align-items: center; gap: var(--gap-xxs); }
@@ -536,15 +542,13 @@
     height: auto;
     gap: 0;
     padding-inline: 0;
-    background: none;
-    backdrop-filter: none;
   }
+  /* Same as desktop: no fill, no blur. The border-top stays — stacked, the
+     rows need a divider between them, which the desktop row doesn't. */
   .hero__quicklinks a {
     justify-content: space-between;
     padding: 18px var(--container-pad);
     border-top: 0.25px solid var(--color-bone);
-    backdrop-filter: blur(6px);
-    background: rgba(0, 0, 0, 0.4);
   }
 }
 
@@ -579,6 +583,22 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--gap-xs);
+}
+
+/* Tablet: two per row. Between the phone's single column and the desktop
+   masonry's three, one full-width card per row leaves a 656px tile holding
+   a single line of copy and a lot of empty colour. Two columns put the tile
+   at 320px here — close to the 360px the desktop composition is drawn
+   around, so the copy and the graphic below it sit at proportions the
+   design already accounts for.
+
+   A plain grid, not the masonry: the stagger exists to offset a middle
+   column, and there isn't one with an even number of columns. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .tiles {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--tile-gap);
+  }
 }
 
 .tile {
@@ -628,8 +648,17 @@
    shared row track would either force all three columns to shift together
    or let the offset tile overlap the row below it. DOM order stays 1–6
    (reading order for mobile/AT); position is purely visual. Must come
-   after the base .tile rule above so position:absolute wins the cascade. */
-@media (min-width: 768px) {
+   after the base .tile rule above so position:absolute wins the cascade.
+
+   1024px, not 768px. Three columns need more width than a tablet has once
+   the gutters are taken out: at 768px each tile was only 208px wide with a
+   160px content column, so the body wrapped to five lines and the copy ran
+   to 77% of a card whose height is fixed — overflowing it outright, and
+   leaving the decorative graphic a 23% sliver at the bottom. Stacked at
+   the same width the tile is 656px, the body is two lines, and the copy
+   ends at 46%. Tablets therefore keep the single-column layout, and the
+   masonry starts where there is actually room for it. */
+@media (min-width: 1024px) {
   .tiles {
     position: relative;
     display: block;
@@ -659,24 +688,27 @@
 .tile__title { font-family: var(--font-serif); font-weight: 500; font-size: var(--fs-h2); line-height: var(--lh-h2); }
 .tile__body { font-family: var(--font-body); font-weight: 300; font-size: var(--fs-body); line-height: var(--lh-body); }
 
-/* Mobile: step the tile's type and padding down a scale.
-   The shared --fs-* tokens are already fluid, but they're floored for
-   desktop reading, and the card they sit in is not: --tile-h bottoms out
-   at 300px. At phone widths that combination left the copy ending at
-   76–88% of the card, so there was no band for the graphic to occupy —
-   it either sat behind the text or had to be pushed off the edge and
-   cropped to nothing.
+/* Step the tile's type and padding down wherever its column is narrow.
+   That is BOTH ends of the range, not just phones: stacked single-column
+   below 768px, and again from 768px to ~1024px where the masonry goes
+   three-across inside a container that is still small — at 768px each
+   tile is only 208px wide, the narrowest it ever gets, while --tile-h is
+   already up to 330px of fixed height. At the shared token sizes the copy
+   overflowed the card by ~48px there.
 
-   Smaller type is what makes both fit. Text now ends at 57–65%, which
-   frees 104–128px at the bottom for the graphics anchored there below.
-   Trimming the padding to --gap-sm widens the column to 294px too, so
-   the longest body (Card 4's) wraps to three lines instead of four —
-   part of the saving comes from that rather than from size alone. */
-@media (max-width: 767px) {
+   Text now ends around 57–65% of the card, freeing the lower band for the
+   graphics anchored there. Trimming the padding to --gap-sm widens the
+   column as well, so the longest body wraps to three lines instead of
+   four — part of the saving comes from that rather than from size alone. */
+@media (max-width: 1023px) {
   .tile { padding: var(--gap-sm); }
-  .tile__num { font-size: 18px; line-height: 22px; }
-  .tile__title { font-size: 24px; line-height: 30px; }
-  .tile__body { font-size: 16px; line-height: 24px; }
+  /* The title is NOT overridden here — it stays on --fs-h2, which is the
+     spec's 30px at the 430 mobile frame and scales itself down below that.
+     Only the number and body step down, and only as far as the card's fixed
+     height needs to hold both the copy and the graphic beneath it. Fluid,
+     not flat, since the column varies across this range. */
+  .tile__num { font-size: clamp(1.0625rem, 0.9911rem + 0.3571vw, 1.25rem); line-height: 1.25; }
+  .tile__body { font-size: clamp(0.9375rem, 0.8899rem + 0.2381vw, 1.0625rem); line-height: 1.5; }
 }
 
 .tile__graphic { position: absolute; opacity: 0.3; pointer-events: none; }
@@ -891,14 +923,41 @@
 
    !important is unavoidable here: the properties being overridden are
    inline styles, which outrank any stylesheet rule without it. */
-@media (max-width: 767px) {
+@media (max-width: 1023px) {
   .tile__graphic--rings    { top: 62% !important; bottom: auto !important; }
   .tile__graphic--diamonds { top: 58% !important; bottom: auto !important; }
-  /* Card 4's copy is still the longest of the six, so its arcs start
-     lowest. The graphic is also by far the tallest (399px against a 300px
-     card), so this is the one that stays substantially cropped — which is
-     the read the desktop version's bottom:-62% was after anyway. */
-  .tile__graphic--orbs     { top: 62% !important; bottom: auto !important; }
+  /* Card 4 is the one graphic that must stay cropped. Its 12 ellipses share
+     a centre, so the intended read — stated in the markup — is the top arc
+     of each, down to roughly its widest point, rising above the card's
+     bottom edge. Show the whole thing and the arcs close into complete
+     ellipses, which reads as an eye rather than as a graphic running off
+     the card.
+
+     So it is sized off the card's HEIGHT, not its width: at height:100%
+     with the top at 50%, exactly the top half is on screen at any
+     viewport, and the rest is clipped. Sizing by width can't hold that —
+     the tile's proportions swing from 342x300 stacked to 208x330 in the
+     tablet grid, so the same percentage yields a different crop at each.
+
+     max-width caps it at 105%, the width the desktop composition already
+     uses, so on the narrow tablet tiles it never sprawls past the card.
+     Where that cap binds the graphic shortens and a little more than half
+     shows (68% at 768px) — still cropped, never the closed shape. */
+  .tile__graphic--orbs {
+    /* 58%, not 50%: this card carries the longest body of the six, which
+       still reaches 55% of the card on a 390px phone. Below that the copy
+       is clear of the arcs at every width in this range, and a constant
+       42% of the graphic shows — the top arcs, down to about their widest
+       point, which is the read the composition is after. */
+    top: 58% !important;
+    bottom: auto !important;
+    height: 100% !important;
+    width: auto !important;
+    max-width: 105% !important;
+    left: 50% !important;
+    margin-left: 0 !important;
+    transform: translateX(-50%) !important;
+  }
   .tile__graphic--atom     { top: 60% !important; left: 50% !important; }
   .hex-draw                { top: 62% !important; }
   /* Card 2 is the exception: six 2px rules are far less intrusive behind
@@ -1168,12 +1227,12 @@
 .qc-check__icon { width: 17px; height: 11px; flex: none; stroke: currentColor; }
 .qc-check.is-active { color: var(--color-maroon); }
 
-/* --fs-caption already floors at 14px, but pin an explicit, larger floor
+/* --fs-caption floors at 13px, but pin an explicit, larger floor
    on mobile — plus the heavier weight/letter-spacing/text-shadow above —
    so the ticker text is unambiguously legible against the salmon panel
    at small sizes. */
 @media (max-width: 767px) {
-  .qc-check { font-size: 16px; }
+  .qc-check { font-size: 1rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

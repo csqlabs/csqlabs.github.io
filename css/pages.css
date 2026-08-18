@@ -29,7 +29,11 @@
    the point where 794px would exceed the fluid .container width, it
    simply stops being the binding constraint (mobile reads it at full
    container width, matching Figma's own single-column mobile layout). ---- */
-.measure { max-width: 794px; margin-inline: auto; }
+/* Flat at Figma's 794px up to 1440, then widening with the type above it —
+   see the large-screen block in tokens.css. Left fixed, the article column
+   would hold the same 794px while the body grew from 20px to 24px, cutting
+   the words per line rather than making the page read larger. */
+.measure { max-width: clamp(794px, 580.571px + 14.8214vw, 960px); margin-inline: auto; }
 
 /* ---------------------------------------------------------------------- */
 /* Article page                                                            */
@@ -313,6 +317,10 @@
   box-sizing: border-box;
   text-align: center;
   padding-block: var(--gap-xxl);
+  /* The header is fixed and transparent over this block, so the copy needs
+     a floor of its own height — centred content would otherwise ride up
+     under the bar on a short viewport. */
+  padding-top: calc(var(--gap-xxl) + var(--header-h));
 }
 .careers-hero__inner { display: flex; flex-direction: column; align-items: center; gap: var(--gap-md); max-width: 613px; margin-inline: auto; }
 .careers-hero__title { opacity: 0.96; }
@@ -330,7 +338,9 @@
   .culture-card:last-child { padding-inline-end: 0; }
   .culture-card + .culture-card { border-left: 1px solid rgba(85, 0, 0, 0.15); }
 }
-.culture-card__num { font-family: var(--font-mono); font-weight: 500; font-size: 36px; letter-spacing: 0; text-transform: uppercase; color: var(--color-salmon); }
+/* Fluid, not a flat 36px — same anchoring as the type tokens: 26px at 320,
+   the Figma 36px from 1440. */
+.culture-card__num { font-family: var(--font-mono); font-weight: 500; font-size: clamp(1.625rem, 1.4464rem + 0.8929vw, 2.25rem); letter-spacing: 0; text-transform: uppercase; color: var(--color-salmon); }
 .culture-card__title { color: var(--color-maroon); opacity: 0.96; }
 .culture-card__body { color: var(--color-maroon); }
 

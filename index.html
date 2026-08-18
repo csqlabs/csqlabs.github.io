@@ -385,13 +385,23 @@
             <span class="balls-line" style="top:60.6%;"></span>
             <span class="balls-line" style="top:80.46%;"></span>
             <span class="balls-line" style="top:99.67%;"></span>
-            <span class="usage-ball-clip" style="left:86.67%;top:29.47%;width:5.64%;height:10.6%;">
+            <!-- Each clip's BOTTOM edge is the line its ball appears to rest
+                 on, so bottom (top + height) has to equal one of the
+                 .balls-line values above. Three were off: ball 1 by -0.66%,
+                 ball 2 by +0.66% (one unit of the 151-tall viewBox, enough
+                 to read as detached), and ball 3 by a whole 7.95% — its
+                 dome had no line beneath it at all and floated mid-gap.
+                 Tops below are derived as line - height. -->
+            <span class="usage-ball-clip" style="left:86.67%;top:30.13%;width:5.64%;height:10.6%;">
               <span class="usage-ball" style="height:137.5%;transition-delay:0.4s;"></span>
             </span>
-            <span class="usage-ball-clip" style="left:13.08%;top:12.91%;width:5.64%;height:8.61%;">
+            <span class="usage-ball-clip" style="left:13.08%;top:12.25%;width:5.64%;height:8.61%;">
               <span class="usage-ball" style="height:169.2%;transition-delay:0.5s;"></span>
             </span>
-            <span class="usage-ball-clip" style="left:55.9%;top:0.33%;width:5.64%;height:7.95%;">
+            <!-- Rests on the topmost line (0.33%), so its clip starts above
+                 the graphic box — the dome reads as poking up over that
+                 line, matching the reference. -->
+            <span class="usage-ball-clip" style="left:55.9%;top:-7.62%;width:5.64%;height:7.95%;">
               <span class="usage-ball" style="height:183.3%;transition-delay:0.6s;"></span>
             </span>
             <span class="usage-ball-clip" style="left:42.56%;top:48.68%;width:5.64%;height:11.92%;">
