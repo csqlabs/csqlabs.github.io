@@ -312,6 +312,27 @@
    percentages keep their relationship to each other. */
 .hero {
   --hero-cycle: 20s;
+
+  /* One unit the whole hero composition is measured in, and the reason it
+     scales properly on a short screen.
+
+     Everything here used to be sized off width alone (vw), so a 1157x742
+     window got 80% of the design width but nearly full-size type, because
+     the clamps floor out long before the window does. The composition then
+     needed more height than the window had, and the layout resolved that by
+     pushing the headline up into the convergence point. Height was never
+     part of the calculation.
+
+     min(6.944vw, 11.111vh) resolves to exactly 100px at the 1440x900 design
+     frame — 1440 x 0.06944 and 900 x 0.11111 — and to whichever axis is
+     tighter anywhere else. So the hero behaves like a poster: it scales as a
+     whole, keeping its proportions, instead of each value shrinking at its
+     own rate along one axis.
+
+     The clamp is for legibility, not layout. Below 75px the headline would
+     drop under ~47px, and above 126px it would pass ~78px, the 4K figure in
+     the type spec. Inside those bounds the hero is free to scale. */
+  --hero-u: clamp(75px, min(6.944vw, 11.111vh), 126px);
 }
 
 /* Resting state: fully drawn. This is what shows before JS starts the loop,
@@ -545,24 +566,27 @@
      height the two collided. Common on Windows, where 125-150% display
      scaling leaves a 1080p screen reporting only ~600px of CSS height.
 
-     The second term is the ceiling: whatever is left after reserving 32rem
-     for the copy, the bottom padding and the quicklinks bar. Above ~880px
-     the 42vh is smaller and still governs, so the intended composition is
-     untouched on a normal window.
+     There is no ceiling on it any more. It used to be
+     min(42vh, calc(100vh - 32rem)), where the second term reserved a fixed
+     block for everything below. That reserve was a flat rem value while the
+     copy was sized off width, so the two disagreed on short windows: the
+     reserve won and dragged the headline UP — above the convergence point,
+     which is the overlap where the dot sat inside the headline.
 
-     32rem, not the earlier 30rem. The reserve has to cover the tallest the
-     copy ever gets, and that is a wide-but-short window: above 1440 the type
-     ramp grows the headline while the reserve is a flat rem value, so at
-     1920 the block needed 481px against a 480px reserve and the supporting
-     line landed on the quicklinks. 32rem (512px) leaves ~30px of real slack
-     across 1280-1920 instead of rounding-error slack. */
-  padding-top: min(42vh, calc(100vh - 32rem));
-  /* This is the gap between the supporting line and the quicklinks bar,
-     since .hero__body-row is pinned to the bottom of this block. It was
-     --header-h (84px), matching the bar's own height, which held the copy
-     noticeably higher than the design — that wants it sitting close to the
-     bar, about 40px off. --gap-md is 36px. */
-  padding-bottom: var(--gap-md);
+     It is gone because --hero-u removed the need for it. The composition now
+     scales with height as well as width, so it shrinks to fit rather than
+     having to be clamped into place. And 42vh is provably below the dot at
+     every window: the graphic covers the box, so the convergence point lands
+     at min(50vh - 6.215vw, 40.387vh), and both branches are under 42vh for
+     any window wider than it is tall. On a window too short even for the
+     scaled-down composition, .hero's min-height lets the section grow and
+     the page scroll a little — which is the honest outcome, and cannot
+     produce a collision the way the reserve could. */
+  padding-top: 42vh;
+  /* Gap between the supporting line and the quicklinks bar. In --hero-u so
+     it scales with the rest of the composition; 0.36 x 100px = the 36px the
+     design frame uses. */
+  padding-bottom: calc(0.36 * var(--hero-u));
 }
 
 /* Mobile: the banner alone owns the first viewport, and the quicklinks drop
@@ -617,6 +641,37 @@
 
 .hero__title { opacity: 0.96; }
 .hero__cta { align-self: center; }
+
+/* The hero composition in --hero-u. Every multiplier is that element's own
+   size at the 1440x900 design frame divided by 100, so at that frame this
+   block changes nothing at all — 0.62 x 100 = the 62px --fs-h1 already
+   gives, 1.12 x 100 = the 112px gap, and so on. Away from it, all of them
+   move together by one factor instead of each interpolating along width at
+   its own rate, which is what left the type nearly full-size in a window
+   20% shorter than the design.
+
+   Desktop only. Below 768 the hero is a different composition — .hero__inner
+   is exactly 100dvh, the graphic is the mobile SVG, and the supporting line
+   is pinned above the fold rather than set a fixed distance under the
+   button — so it keeps the ordinary width-based type scale. */
+@media (min-width: 768px) {
+  .hero {
+    --hero-title-gap: calc(0.36 * var(--hero-u));
+    --hero-body-gap: calc(1.12 * var(--hero-u));
+  }
+  .hero__title {
+    font-size: calc(0.62 * var(--hero-u));
+    line-height: calc(0.744 * var(--hero-u));
+  }
+  .hero__body {
+    font-size: calc(0.2 * var(--hero-u));
+    line-height: calc(0.3 * var(--hero-u));
+  }
+  .hero__cta {
+    font-size: calc(0.18 * var(--hero-u));
+    padding: calc(0.12 * var(--hero-u)) calc(0.24 * var(--hero-u));
+  }
+}
 
 /* Hard break in the headline, desktop only — it balances the two lines at
    the width the copy was written for. Below that the line can't hold
