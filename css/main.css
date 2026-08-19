@@ -587,6 +587,13 @@
        it), so the bottom just needs a closing gutter, not a bar's height. */
     padding-bottom: var(--gap-lg);
   }
+  /* Mobile keeps the auto margin. The objection to it on desktop is that it
+     turns the gap into a slack bucket whose size depends on leftover room —
+     but here .hero__inner is exactly 100dvh, a known box, and the design
+     asks for the paragraph to sit just above the fold rather than a fixed
+     distance under the button. Pinning it to the bottom is the requirement
+     at this size, not an accident of layout. */
+  .hero__body-row { margin-top: auto; }
 }
 
 /* Centred, and centred on the convergence point specifically — the whole
@@ -603,7 +610,9 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: var(--gap-md);
+  /* Was a flat --gap-md. Same 36px at 1440, but now scaling with the
+     headline it sits under instead of holding still while the type grows. */
+  gap: var(--hero-title-gap);
 }
 
 .hero__title { opacity: 0.96; }
@@ -617,18 +626,24 @@
   .hero__title-break { display: inline; }
 }
 
-/* margin-top:auto pins the supporting line to the bottom of .hero__inner
-   instead of letting it trail the CTA. That single rule covers both
-   breakpoints: on desktop .hero__inner fills the space above the quicklinks
-   bar, so the copy lands in the lower band the design wants; on mobile
-   .hero__inner is the whole viewport, so it lands just above the fold.
+/* An explicit gap, not margin-top:auto.
 
-   It has to sit on the .container wrapper, not on the <p> inside it: the
-   container is what .hero__inner lays out as a flex item, and an auto
-   margin only absorbs free space on the flex item itself. On the <p> it
-   silently did nothing, which is why the copy sat directly under the CTA
-   with the rest of the viewport empty below it. */
-.hero__body-row { margin-top: auto; }
+   auto pinned the supporting line to the bottom of .hero__inner, which made
+   the space above it the section's slack bucket: every pixel not used by
+   anything else landed in this one gap. That is why it measured 112px at
+   1440 but 393px at 2560 — not a gap that scales, a void that grows. It
+   also meant the gap shrank toward nothing on short windows while the
+   copy above it was pushed up into the graphic.
+
+   --hero-body-gap is 112px at 1440, so the design frame renders exactly as
+   before; either side of it the gap now scales with the type rather than
+   with whatever room happens to be spare. The slack it used to swallow
+   collects below the paragraph instead, above the quicklinks bar, where
+   empty space in a full-height banner belongs.
+
+   The margin has to sit on the .container wrapper, not the <p> inside it:
+   the container is what .hero__inner lays out as a flex item. */
+.hero__body-row { margin-top: var(--hero-body-gap); }
 .hero__body {
   max-width: clamp(708px, 512.571px + 13.5714vw, 860px);
   margin-inline: auto;

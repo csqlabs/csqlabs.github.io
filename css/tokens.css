@@ -123,6 +123,26 @@
   --careers-culture-roles-gap: clamp(53px, -12.5644px + 15.2475vw, 207px);
   --role-row-pad: 36px;                                             /* accordion row vertical padding — flat both bp */
 
+  /* The two gaps stacking the hero copy: headline -> button -> supporting
+     line. Both were unresponsive, in opposite ways. The first was a flat
+     --gap-md (36px at every width). The second was not a value at all — the
+     supporting line used margin-top:auto, so the space above it was just
+     whatever was left after everything else was placed, which meant it
+     absorbed all the slack in the section: 112px at 1440 but 393px at 2560,
+     a void between the button and the paragraph rather than a scaled gap.
+
+     Anchored to reproduce 1440 exactly (36 / 112), so the design frame is
+     untouched and only the sizes either side of it change. 24 / 64 at 430,
+     44 / 136 at 2560 — the same ~1.2x the type takes into the 4K band.
+
+     The body gap is additionally capped at 13vh. It is the largest gap in
+     the hero and the one with the least to say, so it is what should give
+     on a short window rather than pushing the copy up into the graphic.
+     13vh exceeds the width-driven value at every normal window height and
+     only bites below ~860px, where the space genuinely is not there. */
+  --hero-title-gap: clamp(1.5rem, 1.1807rem + 1.1881vw, 2.25rem);
+  --hero-body-gap: min(clamp(4rem, 2.7228rem + 4.7525vw, 7rem), 13vh);
+
   --gap-xxl: clamp(96px, 73.0099px + 5.3465vw, 150px);
   --gap-xl: clamp(72px, 68.5941px + 0.7921vw, 80px);
   --gap-lg: 64px;
@@ -209,6 +229,12 @@
 
     /* The content column widens with the type so the measure holds. */
     --page-max: clamp(1200px, 865.714px + 23.2143vw, 1460px);
+
+    /* Continue the hero stack past 1440 at the same ~1.2x as the type, so
+       the copy keeps its proportions instead of the gaps staying put while
+       the headline grows around them: 36 -> 44 and 112 -> 136 by 2560. */
+    --hero-title-gap: clamp(2.25rem, 1.6071rem + 0.7143vw, 2.75rem);
+    --hero-body-gap: min(clamp(7rem, 5.0714rem + 2.1429vw, 8.5rem), 13vh);
   }
 }
 
@@ -251,5 +277,11 @@
     --fs-stat-label: clamp(1.125rem, 0.3977rem + 3.6364vw, 1.375rem);
     --lh-stat-label: clamp(1.625rem, 0.5341rem + 5.4545vw, 2rem);
     --stat-badge-fs: clamp(2.5rem, 0.3182rem + 10.9091vw, 3.25rem);
+
+    /* Ramp on down to 320px rather than flooring at the 430 figures: 24 -> 20
+       and 64 -> 48. A 320px handset wraps the headline further, so the gaps
+       around it have to give a little or the block runs past the fold. */
+    --hero-title-gap: clamp(1.25rem, 0.5227rem + 3.6364vw, 1.5rem);
+    --hero-body-gap: min(clamp(3rem, 0.0909rem + 14.5455vw, 4rem), 13vh);
   }
 }
