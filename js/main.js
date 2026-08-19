@@ -574,18 +574,14 @@
      cubeIndex = floor(i/9), lineIndex = i%9 — each cube starts
      CUBE_DELAY_STEP after the previous one, and within a cube each line
      starts LINE_DELAY_STEP after the last, tracing the hexagon outline
-     first and then the 3 internal spokes. 800ms base delay matches
-     tile--cx's own transition-delay (.tile:nth-child(6) in main.css) —
-     without it, most of the draw-in finishes while the card is still
-     nearly opacity:0, so by the time it's visible the cube already reads
-     as fully drawn instead of animating in (same fix already applied to
-     Card 1's arcs and Card 3's diamonds, whose stagger delays likewise
-     start from their own tile's delay). The per-line stagger + duration
-     is sized so the LAST line of the LAST cube still finishes at
-     2*CUBE_DELAY_STEP + 8*LINE_DELAY_STEP + LINE_DURATION = 3000ms after
-     that base delay — the same ~3s draw budget every other card in this
-     row uses for its own reveal, just spent one line at a time instead
-     of all at once. cubic-bezier(0.16,1,0.3,1) (the same ease-out curve
+     first and then the 3 internal spokes. A small base delay keeps the
+     draw from running while the card is still near opacity:0, where it
+     would be finished by the time anyone could see it (the same reason
+     Card 1's arcs and Card 3's diamonds hold off briefly). The per-line
+     stagger + duration is sized so the LAST line of the LAST cube
+     finishes well inside the time the card is actually on screen — see
+     the constants below for the arithmetic and why they shrank.
+     cubic-bezier(0.16,1,0.3,1) (the same ease-out curve
      as Card 5's atom-spin) so each line decelerates into its stop rather
      than cutting off abruptly. */
   var hexDrawPaths = document.querySelectorAll(".hex-draw-path");
@@ -600,11 +596,29 @@
       path.style.strokeDasharray = length;
       path.style.strokeDashoffset = length;
     });
+    /* Retimed from 3800ms total to 1320ms. The old numbers were sized to a
+       "~3s draw budget" borrowed from the tile fade back when that fade was
+       3s with a 0.4s stagger. The fade was cut to 0.7s with no stagger
+       because scrolling at any normal speed left cards animating well after
+       they had arrived — the same argument applies here and was never
+       carried over. On a phone the card is 300px of a ~660px viewport and
+       leaves in about a second, and the observer resets the draw on exit, so
+       a 3.8s sequence never once reached its end: the cubes read as
+       permanently half-drawn.
+
+       BASE_DELAY drops 800 -> 150. Its old value was explicitly matched to
+       tile--cx's transition-delay from .tile:nth-child(6), and that
+       nth-child stagger no longer exists (see the note by .tile in
+       main.css) — so it was 800ms of dead air over a card that had already
+       finished fading in at 700ms. 150 just lets the fade get underway
+       first.
+
+       Last line now lands at 150 + 2*180 + 8*45 + 450 = 1320ms. */
     var HEX_LINES_PER_CUBE = 9;
-    var HEX_CUBE_DELAY_STEP = 750;
-    var HEX_LINE_DELAY_STEP = 100;
-    var HEX_LINE_DURATION = 700;
-    var HEX_BASE_DELAY = 800;
+    var HEX_CUBE_DELAY_STEP = 180;
+    var HEX_LINE_DELAY_STEP = 45;
+    var HEX_LINE_DURATION = 450;
+    var HEX_BASE_DELAY = 150;
     var HEX_EASING = "cubic-bezier(0.16, 1, 0.3, 1)";
     if (reduceMotionHexDraw) {
       revealHexDrawIn = function () {
@@ -654,16 +668,13 @@
      toward the convergence point" rather than every ellipse appearing at
      once.
 
-     No base delay here (unlike Card 6 above): tile--social is
-     nth-child(4) of its row, whose OWN transition-delay is 0s (see
-     .tile:nth-child(4) in main.css), so — unlike Card 6's 0.8s-delayed
-     tile--cx — this card is already visible from the moment the row
-     triggers, and the draw-in can start immediately. Tier delay step
-     and duration are sized so the innermost tier (tier 5) still finishes
-     at 5*ORB_TIER_DELAY_STEP + ORB_DURATION = 3000ms, the same ~3s
-     one-shot budget as every other card, and cubic-bezier(0.16,1,0.3,1)
-     (Card 5's atom-spin curve) decelerates each ellipse into its stop
-     instead of an abrupt cut. */
+     No base delay here (unlike Card 6 above): no tile carries a
+     transition-delay any more, and this card's draw reads fine starting
+     with the fade rather than just after it. Tier delay step and duration
+     are sized so the innermost tier (tier 5) finishes inside the time the
+     card is actually on screen — see the constants below — and
+     cubic-bezier(0.16,1,0.3,1) (Card 5's atom-spin curve) decelerates each
+     ellipse into its stop instead of an abrupt cut. */
   var orbEllipses = document.querySelectorAll(".orb-ellipse");
   var revealOrbDrawIn = function () {};
   var resetOrbDrawIn = function () {};
@@ -677,8 +688,12 @@
       ellipse.style.strokeDashoffset = length;
     });
     var ORB_TIER_BY_INDEX = [5, 5, 4, 4, 3, 3, 0, 0, 1, 1, 2, 2];
-    var ORB_TIER_DELAY_STEP = 350;
-    var ORB_DURATION = 1250;
+    /* Retimed from 3000ms total to 1350ms, for the reason given at
+       HEX_CUBE_DELAY_STEP above: this card shares the same stale ~3s budget
+       and the same scroll-past problem on a phone. Last tier now lands at
+       5*150 + 600 = 1350ms, alongside Card 6's 1320ms. */
+    var ORB_TIER_DELAY_STEP = 150;
+    var ORB_DURATION = 600;
     var ORB_EASING = "cubic-bezier(0.16, 1, 0.3, 1)";
     if (reduceMotionOrbDraw) {
       revealOrbDrawIn = function () {

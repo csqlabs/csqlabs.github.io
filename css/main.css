@@ -440,17 +440,44 @@
    Separate keyframes because the cycle ones end at opacity 0 — running
    those with fill:forwards would hold the fan invisible. These end on the
    drawn state, which is also .hero-line's resting state, so the handoff
-   when the animation finishes is seamless. */
+   when the animation finishes is seamless.
+
+   Timings keep the loop's PROPORTIONS but run at 0.625x its pace. At
+   --hero-cycle 20s the loop draws over 0-24%, i.e. 4.8s; this draws in 3s,
+   and every glow delay below is the matching loop percentage times the same
+   0.625, so the dot still lands exactly on contact and the aura still
+   swells from there.
+
+   3s is the third value tried. 1.2s came first and read as the fan snapping
+   into place; 4.8s matched desktop exactly and dragged, because a loop you
+   watch repeat can afford a slower converge than a one-shot you see once on
+   arrival. Duration was never the cause of the flicker — a perpetual
+   repaint was — so the pace here is purely a feel decision. */
 @media (hover: none) {
   .hero.is-replaying .hero-line {
-    animation: hero-line-draw-once 1.2s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+    animation: hero-line-draw-once 3s cubic-bezier(0.65, 0, 0.35, 1) forwards;
   }
-  /* Dot lands as the lines meet; the haze swells just behind it. */
+  /* Dot lands as the lines meet; the haze swells just behind it.
+
+     fill-mode BOTH, not forwards. Both circles are opacity 1 at rest (that
+     is the no-JS picture: drawn fan, lit centre), and these two animations
+     are the only ones that start after a delay. forwards holds the end
+     state but does nothing during the delay, so for the first full second
+     the glow sat at its resting opacity — the light was already burning at
+     full strength while the fan was still drawing toward it. both applies
+     the 0% frame backwards through the delay as well, so the centre stays
+     dark until the lines actually arrive.
+
+     Loop percentages off --hero-cycle 20s, each scaled by the same 0.625.
+     Dot ramps 22-24% (4.4s + 0.4s) -> 2.75s + 0.25s, full exactly as the 3s
+     line draw lands. Aura runs 24-36% (4.8s + 2.4s) -> 3s + 1.5s, swelling
+     from that same instant. Retiming the draw means rescaling all three by
+     one factor, or the dot drifts off the moment of contact. */
   .hero.is-replaying .hero-glow-dot {
-    animation: hero-glow-in-once 0.3s ease-out 1s forwards;
+    animation: hero-glow-in-once 0.25s ease-out 2.75s both;
   }
   .hero.is-replaying .hero-glow-aura {
-    animation: hero-glow-in-once 0.8s ease-out 1.1s forwards;
+    animation: hero-glow-in-once 1.5s ease-out 3s both;
   }
 }
 
