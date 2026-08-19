@@ -254,9 +254,31 @@
    paint-animated content costs more than it saves. Containment is the part
    that actually helps. The per-frame cost itself is dealt with by not
    repainting forever — see the one-shot block for touch devices below. */
+/* One viewport tall, pinned to the top — NOT the full height of .hero.
+
+   The graphic is a one-screen composition: the copy is placed at 42vh so it
+   hangs just under the point where the lines meet, and that only works if
+   the meeting point is fixed relative to the viewport. It was inset:0, so
+   the SVG filled the whole section instead. That is identical while the
+   hero is exactly 100vh, but .hero has min-height (so a viewport too short
+   for the copy makes the section grow rather than overlap), and when it
+   grew the graphic grew with it: preserveAspectRatio="slice" scales to
+   cover, so a taller box pushed the convergence point DOWN the screen while
+   the copy stayed at 42vh of the viewport. Below ~690px tall the point
+   crossed the headline and the dot appeared inside the type.
+
+   Height-capping it decouples the two. The convergence now lands at
+   min(50vh - 6.215vw, 40.387vh) at every window, which is below 42vh for
+   any window wider than it is tall, so the copy always clears it.
+
+   On a window short enough for the section to grow, the strip below the
+   fold has no lines behind it. That strip is where the quicklinks bar sits
+   and the lines there are at their widest and faintest, so it reads as the
+   fan running off the bottom of the screen rather than as a cut. */
 .hero__lines {
   position: absolute;
-  inset: 0;
+  inset: 0 0 auto;
+  height: 100vh;
   pointer-events: none;
   contain: paint;
 }
