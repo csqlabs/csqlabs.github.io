@@ -18,7 +18,18 @@
 .site-header--static-solid .brand__logo circle { fill: var(--color-maroon); }
 .site-header--static-solid .brand__name { color: var(--color-maroon); }
 .site-header--static-solid .site-nav__links a:not(.btn) { color: var(--color-maroon); }
+.site-header--static-solid .site-nav__actions .btn--light,
 .site-header--static-solid .site-nav__links-cta .btn--light { background: var(--color-maroon); color: var(--color-bone); }
+.site-header--static-solid .site-nav__actions .btn--outline {
+  border-color: var(--color-maroon);
+  color: var(--color-maroon);
+}
+.site-header--static-solid .site-nav__actions .btn--outline:hover {
+  background: rgba(85, 0, 0, 0.08);
+}
+.site-header--static-solid .site-nav__actions .btn--outline:active {
+  background: rgba(85, 0, 0, 0.15);
+}
 
 /* A page that opens with .site-header--static-solid has no fixed-header
    overlay to compensate for, so its first section can sit in normal flow

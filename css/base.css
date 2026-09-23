@@ -128,7 +128,7 @@ p, h1, h2, h3, h4, h5, h6 { margin: 0; }
   letter-spacing: var(--ls-cta);
   white-space: nowrap;
   border: none;
-  transition: background-color 0.25s ease, color 0.25s ease, filter 0.15s ease, box-shadow 0.15s ease;
+  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, filter 0.15s ease, box-shadow 0.15s ease;
 }
 
 /* Light (bone) surfaces get a maroon fill at 10% opacity laid on top on
@@ -144,6 +144,18 @@ p, h1, h2, h3, h4, h5, h6 { margin: 0; }
 .btn--dark  { background: var(--color-maroon); color: var(--color-bone); }
 .btn--dark:hover { filter: brightness(1.18); }
 .btn--dark:active { filter: brightness(1.32); }
+
+.btn--outline {
+  background: transparent;
+  color: var(--color-bone);
+  border: 1px solid var(--color-bone);
+}
+.btn--outline:hover {
+  background: rgba(248, 247, 245, 0.12);
+}
+.btn--outline:active {
+  background: rgba(248, 247, 245, 0.22);
+}
 
 .btn-cta {
   display: inline-flex;

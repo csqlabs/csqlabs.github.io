@@ -149,6 +149,12 @@
 
     var openContactModal = function (trigger) {
       lastFocusedBeforeModal = trigger || document.activeElement;
+      if (trigger && trigger.dataset && trigger.dataset.engagement) {
+        var engSelect = contactForm.querySelector("#cf-engagement");
+        if (engSelect) {
+          engSelect.value = trigger.dataset.engagement;
+        }
+      }
       contactModal.hidden = false;
       document.body.classList.add("has-modal-open");
       document.addEventListener("keydown", onContactModalKeydown);

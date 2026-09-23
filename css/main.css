@@ -85,6 +85,12 @@
   display: flex;
   align-items: center;
 }
+@media (min-width: 768px) {
+  .site-nav {
+    flex: 1;
+    margin-left: clamp(2rem, 1.5rem + 1.5vw, 3.5rem);
+  }
+}
 
 .site-nav__links {
   display: flex;
@@ -94,6 +100,12 @@
   margin: 0;
   padding: 0;
 }
+@media (min-width: 768px) {
+  .site-nav__links {
+    width: 100%;
+    gap: clamp(1.25rem, 2vw, var(--nav-links-gap));
+  }
+}
 
 .site-nav__links a:not(.btn) {
   font-family: var(--font-mono);
@@ -102,22 +114,50 @@
   letter-spacing: 0;
   color: var(--color-bone);
   text-transform: uppercase;
+  white-space: nowrap;
   transition: color 0.25s ease;
 }
 
 .no-js .site-nav__links a:not(.btn),
 .site-header--solid .site-nav__links a:not(.btn) { color: var(--color-maroon); }
 
+.site-nav__actions,
 .site-nav__links-cta { display: flex; }
-@media (min-width: 768px) { .site-nav__links-cta { list-style: none; } }
+@media (min-width: 768px) {
+  .site-nav__actions,
+  .site-nav__links-cta {
+    list-style: none;
+  }
+  .site-nav__actions {
+    margin-left: auto;
+    align-items: center;
+    gap: var(--gap-xxs);
+  }
+}
 
 /* Nav CTA reverses with the header: bone-on-maroon over the hero,
    maroon-on-bone once the header goes solid white (otherwise it'd render
    as a near-invisible white button on a white bar). */
+.no-js .site-nav__actions .btn--light,
+.site-header--solid .site-nav__actions .btn--light,
 .no-js .site-nav__links-cta .btn--light,
 .site-header--solid .site-nav__links-cta .btn--light {
   background: var(--color-maroon);
   color: var(--color-bone);
+}
+
+.no-js .site-nav__actions .btn--outline,
+.site-header--solid .site-nav__actions .btn--outline {
+  border-color: var(--color-maroon);
+  color: var(--color-maroon);
+}
+.no-js .site-nav__actions .btn--outline:hover,
+.site-header--solid .site-nav__actions .btn--outline:hover {
+  background: rgba(85, 0, 0, 0.08);
+}
+.no-js .site-nav__actions .btn--outline:active,
+.site-header--solid .site-nav__actions .btn--outline:active {
+  background: rgba(85, 0, 0, 0.15);
 }
 
 .nav-toggle {
@@ -161,15 +201,23 @@
     border-top: 0.5px solid var(--color-bone);
   }
   .site-nav__links.is-open li { width: 100%; }
-  /* Now that the panel is full-height, the CTA anchors to its bottom
+  /* Now that the panel is full-height, the CTAs anchor to its bottom
      instead of trailing the last link. auto margin rather than
      justify-content on the panel, so only this item gets pushed down —
      the links above it stay stacked tight against the bar. It collapses
      harmlessly back to a normal flow item if the panel ever runs out of
      spare height (short landscape viewports), where the panel's own
      overflow-y takes over. */
-  .site-nav__links.is-open .site-nav__links-cta { margin-top: auto; }
-  .site-nav__links.is-open a {
+  .site-nav__links.is-open .site-nav__actions,
+  .site-nav__links.is-open .site-nav__links-cta {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-xs);
+    width: 100%;
+    padding: var(--gap-sm) var(--container-pad);
+  }
+  .site-nav__links.is-open a:not(.btn) {
     display: block;
     width: 100%;
     padding: var(--gap-sm) var(--container-pad);
@@ -177,8 +225,8 @@
   }
   .site-nav__links.is-open .btn {
     display: flex;
-    width: calc(100% - 2 * var(--container-pad));
-    margin: var(--gap-sm) var(--container-pad);
+    width: 100%;
+    margin: 0;
   }
 
   /* The open panel is maroon in every header state, so its contents have
@@ -193,6 +241,15 @@
   .site-header .site-nav__links.is-open .btn--light {
     background: var(--color-bone);
     color: var(--color-maroon);
+    border: none;
+  }
+  .site-header .site-nav__links.is-open .btn--outline {
+    background: transparent;
+    color: var(--color-bone);
+    border: 1px solid var(--color-bone);
+  }
+  .site-header .site-nav__links.is-open .btn--outline:hover {
+    background: rgba(248, 247, 245, 0.12);
   }
 
   /* Frost the bar while the panel is open. In its transparent state the bar
