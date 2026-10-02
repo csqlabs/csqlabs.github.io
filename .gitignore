@@ -1,3 +1,4 @@
 # macOS Finder metadata — created automatically in any folder that's been
 # opened in Finder, never part of the site.
 .DS_Store
+.vscode/
