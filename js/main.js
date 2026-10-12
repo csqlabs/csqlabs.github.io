@@ -810,19 +810,4 @@
   } else {
     revealTargets.forEach(function (el) { el.classList.add("is-visible"); });
   }
-
-  /* Veterans / Team bio toggle (mobile "Read more" / "Read less") */
-  var bioToggles = document.querySelectorAll(".veterans__bio-toggle");
-  bioToggles.forEach(function (btn) {
-    btn.addEventListener("click", function () {
-      var copy = btn.closest(".veterans__copy");
-      if (!copy) return;
-      var isExpanded = copy.classList.toggle("is-expanded");
-      btn.setAttribute("aria-expanded", String(isExpanded));
-      var textEl = btn.querySelector(".veterans__bio-toggle-text");
-      if (textEl) {
-        textEl.textContent = isExpanded ? "Read less" : "Read more";
-      }
-    });
-  });
 })();

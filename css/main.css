@@ -1537,130 +1537,89 @@
 
 /* ---------------------------------------------------------------------- */
 /* ---------------------------------------------------------------------- */
-/* Industry veterans / Team                                                 */
-/* Source: Figma "Serifo Website" — Node 226:203 (Desktop) & Node 226:245 (Mobile) */
-/* Max width: 1200px (Desktop content width). Does not scale above 1440px.   */
-/* Scales down proportionately to mobile (430px frame) where text hits minimums. */
+/* Industry veterans                                                       */
 /* ---------------------------------------------------------------------- */
 .veterans {
   background: var(--color-maroon);
   color: var(--color-bone);
-  padding-block: clamp(60px, 34.46px + 5.94vw, 120px);
-  box-sizing: border-box;
-  width: 100%;
-}
-
-/* Explicitly cap content container at 1200px (desktop width) so it never
-   grows on ultra-wide screens even though --page-max widens past 1440px */
-.veterans .veterans__container {
-  max-width: 1200px;
-  width: calc(100% - 2 * var(--container-pad));
-  margin-inline: auto;
+  padding-block: var(--gap-xl);
   box-sizing: border-box;
 }
 
-/* Header: centered headline & CTA button */
-.veterans__header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  margin-bottom: clamp(60px, 34.46px + 5.94vw, 120px);
-  gap: 36px;
+@media (min-width: 768px) {
+  .veterans {
+    padding-block: var(--gap-xxl);
+  }
 }
 
-.veterans__title {
-  font-family: var(--font-serif);
-  font-weight: 500;
-  font-size: clamp(30px, 26.59px + 0.792vw, 38px);
-  line-height: clamp(36px, 31.91px + 0.95vw, 45.6px);
-  letter-spacing: 0px;
-  color: var(--color-white);
-  max-width: 750px;
-  margin: 0 auto;
-}
-
-.veterans__title-accent {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-weight: 500;
-  color: var(--color-salmon);
-}
-
-.veterans__cta {
-  display: flex;
-  justify-content: center;
-}
-
-.veterans__cta .btn {
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: clamp(16px, 15.15px + 0.198vw, 18px);
-  line-height: clamp(26px, 24.3px + 0.396vw, 30px);
-  padding: 12px 24px;
-  background: var(--color-bone);
-  color: var(--color-maroon);
-  min-width: 152px;
-  text-align: center;
-}
-
-/* Grid holding both member rows */
+/* The grid container holds both member rows with clean vertical rhythm */
 .veterans__grid {
   display: flex;
   flex-direction: column;
-  gap: clamp(60px, 34.46px + 5.94vw, 120px);
-  width: 100%;
+  gap: var(--gap-xl);
 }
 
-/* Member rows: on mobile (< 768px), photo & meta stack above copy */
+@media (min-width: 768px) {
+  .veterans__grid {
+    gap: clamp(48px, 6vw, 80px);
+  }
+}
+
+/* Individual member rows */
 .veterans__row {
   display: flex;
-  flex-direction: column;
-  gap: 36px;
+  flex-direction: column-reverse;
+  gap: var(--gap-md);
   width: 100%;
 }
 
 .veterans__row--reverse {
-  flex-direction: column-reverse;
+  flex-direction: column;
 }
 
-@media (min-width: 768px) {
-  .veterans__row {
-    display: grid;
-    grid-template-columns: minmax(260px, 388px) 1fr;
-    column-gap: clamp(48px, -4.6px + 8.58vw, 119px);
-    align-items: start;
-    width: 100%;
-  }
-
-  .veterans__row--reverse {
-    grid-template-columns: 1fr minmax(260px, 388px);
-  }
-}
-
-/* Photo and meta column */
+/* Photo and caption stack together as one column */
 .veterans__aside {
   display: flex;
   flex-direction: column;
-  gap: clamp(24px, 21.45px + 0.594vw, 30px);
+  gap: var(--gap-xs);
   width: 100%;
-  max-width: 388px;
-  margin-inline: auto;
+  max-width: 320px;
+  min-width: 0;
 }
 
-@media (min-width: 768px) {
-  .veterans__aside {
-    margin-inline: 0;
-  }
+.veterans__photo-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap-sm);
 }
 
+.veterans__photo-meta .caption {
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+/* LinkedIn icon badge */
+.veterans__linkedin {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 26px;
+  height: 26px;
+  background: var(--color-bone);
+  transition: opacity 0.25s ease;
+}
+.veterans__linkedin:hover { opacity: 0.8; }
+.veterans__linkedin img { width: 18px; height: 18px; object-fit: contain; }
+
+/* Portrait photo frame with fixed 1:1 aspect ratio */
 .veterans__photo {
   width: 100%;
   aspect-ratio: 1 / 1;
   overflow: hidden;
   position: relative;
 }
-
 .veterans__photo img {
   position: absolute;
   inset: 0;
@@ -1669,226 +1628,103 @@
   object-fit: cover;
   object-position: center top;
 }
-
 .veterans__photo::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(85, 0, 0, 0.1);
+  background: rgba(85,0,0,0.1);
   pointer-events: none;
 }
 
-.veterans__photo-meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  width: 100%;
-}
-
-.veterans__caption {
-  font-family: var(--font-mono);
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 25.6px;
-  color: var(--color-bone);
-  text-transform: uppercase;
-  margin: 0;
-}
-
-.veterans__linkedin {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: none;
-  width: 24px;
-  height: 24px;
-  background: var(--color-bone);
-  transition: opacity 0.25s ease;
-}
-
-.veterans__linkedin:hover {
-  opacity: 0.8;
-}
-
-.veterans__linkedin img {
-  width: 18px;
-  height: 18px;
-  object-fit: contain;
-}
-
-/* Bio copy */
+/* Bio copy column */
 .veterans__copy {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  justify-content: flex-start;
+  gap: var(--gap-md);
   width: 100%;
   min-width: 0;
 }
-
-.veterans__bio-wrap {
-  position: relative;
+.veterans__copy-top {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--gap-sm);
   width: 100%;
 }
-
-.veterans__bio {
-  font-family: var(--font-body);
-  font-weight: 300;
-  font-size: clamp(18px, 17.15px + 0.198vw, 20px);
-  line-height: clamp(27px, 25.72px + 0.297vw, 30px);
-  color: var(--color-bone);
-  margin: 0;
+.veterans__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-md);
+  margin-top: var(--gap-xs);
 }
 
-.veterans__bio p {
-  margin: 0 0 1.25em 0;
-}
-
-.veterans__bio p:last-child {
-  margin-bottom: 0;
-}
-
-/* Mobile expandable bio */
-@media (max-width: 767px) {
-  .veterans__bio-wrap {
-    max-height: 380px;
-    overflow: hidden;
-    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .veterans__copy.is-expanded .veterans__bio-wrap {
-    max-height: 1400px;
-  }
-
-  .veterans__bio-fade {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 102px;
-    background: linear-gradient(to bottom, rgba(85, 0, 0, 0) 0%, rgba(85, 0, 0, 1) 100%);
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-  }
-
-  .veterans__copy.is-expanded .veterans__bio-fade {
-    opacity: 0;
-  }
-
-  .veterans__bio-toggle {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: transparent;
-    border: none;
-    color: var(--color-white);
-    font-family: var(--font-body);
-    font-size: 18px;
-    font-weight: 600;
-    line-height: 30px;
-    padding: 0;
-    margin-top: 18px;
-    cursor: pointer;
-    transition: color 0.2s ease;
-  }
-
-  .veterans__bio-toggle:hover {
-    color: var(--color-salmon);
-  }
-
-  .veterans__bio-toggle-icon {
-    width: 13px;
-    height: 7px;
-    transition: transform 0.3s ease;
-  }
-
-  .veterans__copy.is-expanded .veterans__bio-toggle-icon {
-    transform: rotate(180deg);
-  }
-}
-
+/* Desktop: alternating 2-column layouts.
+   Row 1: photo left (1fr), copy right (3fr).
+   Row 2: copy left (3fr), photo right (1fr). */
 @media (min-width: 768px) {
-  .veterans__bio-wrap {
-    max-height: none !important;
-    overflow: visible;
+  .veterans__row {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    column-gap: var(--gap-lg);
+    align-items: start;
+    width: 100%;
   }
-
-  .veterans__bio-fade,
-  .veterans__bio-toggle {
-    display: none !important;
+  .veterans__row--reverse {
+    grid-template-columns: 3fr 1fr;
+  }
+  .veterans__aside {
+    max-width: none;
+    width: 100%;
+  }
+  .veterans__copy {
+    width: 100%;
   }
 }
 
-.no-js .veterans__bio-wrap {
-  max-height: none !important;
-}
-.no-js .veterans__bio-fade,
-.no-js .veterans__bio-toggle {
-  display: none !important;
-}
-
-/* Logos row */
+/* Partner logos */
 .veterans__logos {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: clamp(16px, 2.5vw, 36px);
-  height: 36px;
-  width: 100%;
-  margin-top: 36px;
+  gap: var(--gap-md);
+  height: 24px;
 }
-
-.veterans__logo-slot {
-  display: inline-flex;
-  align-items: center;
-  height: 100%;
-}
-
 .veterans__logos img {
-  height: auto;
-  max-height: 24px;
+  height: 100%;
   width: auto;
   max-width: 100%;
   object-fit: contain;
 }
 
 .veterans__logos--mousumi {
-  gap: 30px;
+  height: 32px;
+  gap: var(--gap-lg);
 }
-
 .veterans__logo-kantar {
-  max-height: 20px !important;
+  height: 18px !important;
+  width: auto;
 }
-
 .veterans__logo-fs {
-  max-height: 36px !important;
+  height: 30px !important;
+  width: auto;
 }
 
 @media (max-width: 767px) {
   .veterans__logos {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    align-items: center;
-    gap: 12px;
-    height: 36px;
-    width: 100%;
+    gap: var(--gap-sm);
+    height: 18px;
   }
-
   .veterans__logos--mousumi {
-    display: flex;
-    gap: 30px;
+    height: 26px;
+    gap: var(--gap-md);
   }
-
-  .veterans__logos img {
-    max-height: 20px;
-  }
-
   .veterans__logo-kantar {
-    max-height: 18px !important;
+    height: 14px !important;
   }
-
   .veterans__logo-fs {
-    max-height: 30px !important;
+    height: 22px !important;
   }
 }
 
@@ -2392,5 +2228,12 @@ body.has-nav-open { overflow: hidden; }
   .closing-cta {
     padding-block: var(--section-pad-mobile);
   }
-}
 
+  /* Veterans puts its inset on the row rather than the section, so the
+     maroon block always keeps a margin around its contents — see the note
+     above .veterans__grid. */
+  .veterans__grid {
+    padding-top: var(--section-pad-mobile);
+    padding-bottom: var(--section-pad-mobile);
+  }
+}
