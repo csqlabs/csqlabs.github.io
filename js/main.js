@@ -825,4 +825,89 @@
       }
     });
   });
+
+  /* Articles carousel (desktop horizontal scroll navigation) */
+  var articlesList = document.querySelector(".articles__list");
+  var articlesWrap = document.querySelector(".articles__carousel-wrap");
+  if (articlesList && articlesWrap) {
+    var nextBtn = articlesWrap.querySelector(".articles__nav-btn--next");
+    var prevBtn = articlesWrap.querySelector(".articles__nav-btn--prev");
+    var rightFade = articlesWrap.querySelector(".articles__fade--right");
+    var leftFade = articlesWrap.querySelector(".articles__fade--left");
+
+    var updateCarouselState = function () {
+      var scrollLeft = articlesList.scrollLeft;
+      var maxScroll = articlesList.scrollWidth - articlesList.clientWidth;
+      var threshold = 15;
+
+      var canScrollPrev = scrollLeft > threshold;
+      var canScrollNext = scrollLeft < maxScroll - threshold;
+
+      if (prevBtn) {
+        prevBtn.classList.toggle("is-visible", canScrollPrev);
+        prevBtn.setAttribute("aria-hidden", String(!canScrollPrev));
+        if (canScrollPrev) {
+          prevBtn.removeAttribute("tabindex");
+        } else {
+          prevBtn.setAttribute("tabindex", "-1");
+        }
+      }
+
+      if (leftFade) {
+        leftFade.classList.toggle("is-visible", canScrollPrev);
+      }
+
+      if (nextBtn) {
+        nextBtn.classList.toggle("is-hidden", !canScrollNext);
+        nextBtn.setAttribute("aria-hidden", String(!canScrollNext));
+        if (canScrollNext) {
+          nextBtn.removeAttribute("tabindex");
+        } else {
+          nextBtn.setAttribute("tabindex", "-1");
+        }
+      }
+
+      if (rightFade) {
+        rightFade.classList.toggle("is-hidden", !canScrollNext);
+      }
+    };
+
+    var getScrollStep = function (direction) {
+      var cards = articlesList.querySelectorAll(".article-card");
+      if (cards.length < 2) return 350;
+      var current = articlesList.scrollLeft;
+      var threshold = 8;
+      if (direction === "next") {
+        for (var i = 0; i < cards.length; i++) {
+          if (cards[i].offsetLeft > current + threshold) {
+            return cards[i].offsetLeft - current;
+          }
+        }
+      } else if (direction === "prev") {
+        for (var j = cards.length - 1; j >= 0; j--) {
+          if (cards[j].offsetLeft < current - threshold) {
+            return current - cards[j].offsetLeft;
+          }
+        }
+      }
+      return cards[1].offsetLeft - cards[0].offsetLeft;
+    };
+
+    if (nextBtn) {
+      nextBtn.addEventListener("click", function () {
+        articlesList.scrollBy({ left: getScrollStep("next"), behavior: "smooth" });
+      });
+    }
+
+    if (prevBtn) {
+      prevBtn.addEventListener("click", function () {
+        articlesList.scrollBy({ left: -getScrollStep("prev"), behavior: "smooth" });
+      });
+    }
+
+    articlesList.addEventListener("scroll", updateCarouselState, { passive: true });
+    window.addEventListener("resize", updateCarouselState, { passive: true });
+    window.addEventListener("pageshow", updateCarouselState);
+    requestAnimationFrame(updateCarouselState);
+  }
 })();
