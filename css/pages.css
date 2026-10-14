@@ -314,7 +314,15 @@
   .related-articles__divider { display: block; margin-top: var(--gap-sm); height: 1px; background: var(--color-maroon); opacity: 0.4; }
 }
 .related-articles__list { margin-top: var(--gap-sm); display: flex; flex-direction: column; }
-@media (min-width: 768px) { .related-articles__list { flex-direction: row; align-items: stretch; } }
+@media (min-width: 768px) {
+  .related-articles__list {
+    flex-direction: row;
+    align-items: stretch;
+  }
+  .related-articles .article-card:last-child {
+    padding-inline-end: 0;
+  }
+}
 
 /* ---------------------------------------------------------------------- */
 /* Careers page                                                            */
