@@ -734,7 +734,7 @@
 @media (min-width: 768px) {
   .hero {
     --hero-title-gap: calc(0.36 * var(--hero-u));
-    --hero-body-gap: calc(1.12 * var(--hero-u));
+    --hero-body-gap: calc(0.55 * var(--hero-u));
   }
   .hero__title {
     font-size: calc(0.62 * var(--hero-u));
@@ -2284,14 +2284,20 @@
 
 .closing-cta__title {
   opacity: 0.96;
-  max-width: none;
-  white-space: nowrap;
+}
+
+@media (min-width: 768px) {
+  .closing-cta__title {
+    white-space: nowrap;
+    max-width: none;
+  }
 }
 
 @media (max-width: 767px) {
   .closing-cta__title {
-    font-size: clamp(1.5rem, 0.4rem + 5.5vw, var(--fs-display));
+    font-size: 62px;
     line-height: 1.15;
+    white-space: normal;
   }
 }
 .closing-cta__body { max-width: 592px; }

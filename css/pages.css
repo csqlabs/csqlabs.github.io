@@ -341,8 +341,26 @@
      under the bar on a short viewport. */
   padding-top: calc(var(--gap-xxl) + var(--header-h));
 }
-.careers-hero__inner { display: flex; flex-direction: column; align-items: center; gap: var(--gap-md); max-width: 613px; margin-inline: auto; }
-.careers-hero__title { opacity: 0.96; }
+.careers-hero__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gap-md);
+  margin-inline: auto;
+}
+.careers-hero__inner .body-text {
+  max-width: 613px;
+}
+.careers-hero__title {
+  opacity: 0.96;
+}
+@media (min-width: 768px) {
+  .careers-hero__title {
+    white-space: nowrap;
+    max-width: none;
+    font-size: min(var(--fs-h1), 5.8vw);
+  }
+}
 
 .culture { background: var(--color-white); }
 .culture__inner { padding-top: var(--careers-hero-culture-gap); }
