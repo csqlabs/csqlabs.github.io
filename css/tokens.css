@@ -29,6 +29,11 @@
   --color-aegean-blue: #09264d;
   --color-teal: #00aca3;
   --color-bright-blue: #0069bc;
+  --color-brightblue: #0069bc;
+  --color--green100: #cbdcd3;
+  --color-green-100: #cbdcd3;
+  --color--aubergine: #5c0555;
+  --color-aubergine: #5c0555;
 
   /* ---- Font families (guessed weights map to closest system/CDN name —
      see README note on fonts) ---- */
