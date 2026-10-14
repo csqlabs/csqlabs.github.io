@@ -788,17 +788,21 @@
   position: relative;
   z-index: 6;
   flex: none;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--gap-xxs);
-  padding-inline: var(--container-pad);
+  width: calc(100% - 2 * var(--container-pad));
+  max-width: var(--page-max);
+  margin-inline: auto;
   height: var(--header-h);
   /* No fill and no blur — the links sit straight on the hero. Both existed
      to hold contrast over the old background video; over the line graphic
      the tint just read as a dark band across the bottom and the blur
      smeared the curves running behind it. */
 }
+.hero__quicklinks a:nth-child(1) { justify-self: start; }
+.hero__quicklinks a:nth-child(2) { justify-self: center; }
+.hero__quicklinks a:nth-child(3) { justify-self: end; }
 
 .hero__quicklinks a { display: inline-flex; align-items: center; gap: var(--gap-xxs); }
 .hero__quicklinks img { width: 16px; }
@@ -808,11 +812,13 @@
      holds the headline, CTA and supporting copy, and only these links sit
      past the fold. */
   .hero__quicklinks {
+    display: flex;
     flex-direction: column;
     align-items: stretch;
+    width: 100%;
+    max-width: none;
     height: auto;
     gap: 0;
-    padding-inline: 0;
   }
   /* Same as desktop: no fill, no blur. The border-top stays — stacked, the
      rows need a divider between them, which the desktop row doesn't. */
@@ -939,7 +945,7 @@
   .tiles {
     position: relative;
     display: block;
-    height: calc(2 * var(--tile-h) + var(--tile-gap) + var(--tile-stagger));
+    height: calc(3 * var(--tile-h) + 2 * var(--tile-gap) + var(--tile-stagger));
   }
 
   .tile {
@@ -947,12 +953,15 @@
     width: calc((100% - 2 * var(--tile-gap)) / 3);
   }
 
-  .tile--brand   { left: 0; top: 0; }
-  .tile--concept { left: calc(2 * ((100% - 2 * var(--tile-gap)) / 3 + var(--tile-gap))); top: 0; }
-  .tile--usage   { left: calc((100% - 2 * var(--tile-gap)) / 3 + var(--tile-gap)); top: var(--tile-stagger); }
-  .tile--social  { left: 0; top: calc(var(--tile-h) + var(--tile-gap)); }
-  .tile--cx      { left: calc(2 * ((100% - 2 * var(--tile-gap)) / 3 + var(--tile-gap))); top: calc(var(--tile-h) + var(--tile-gap)); }
-  .tile--pricing { left: calc((100% - 2 * var(--tile-gap)) / 3 + var(--tile-gap)); top: calc(var(--tile-stagger) + var(--tile-h) + var(--tile-gap)); }
+  .tile--brand       { left: 0; top: 0; }
+  .tile--concept     { left: calc(2 * ((100% - 2 * var(--tile-gap)) / 3 + var(--tile-gap))); top: 0; }
+  .tile--usage       { left: calc((100% - 2 * var(--tile-gap)) / 3 + var(--tile-gap)); top: var(--tile-stagger); }
+  .tile--social      { left: 0; top: calc(var(--tile-h) + var(--tile-gap)); }
+  .tile--cx          { left: calc(2 * ((100% - 2 * var(--tile-gap)) / 3 + var(--tile-gap))); top: calc(var(--tile-h) + var(--tile-gap)); }
+  .tile--pricing     { left: calc((100% - 2 * var(--tile-gap)) / 3 + var(--tile-gap)); top: calc(var(--tile-stagger) + var(--tile-h) + var(--tile-gap)); }
+  .tile--competitive { left: 0; top: calc(2 * (var(--tile-h) + var(--tile-gap))); }
+  .tile--feature     { left: calc(2 * ((100% - 2 * var(--tile-gap)) / 3 + var(--tile-gap))); top: calc(2 * (var(--tile-h) + var(--tile-gap))); }
+  .tile--mmm         { left: calc((100% - 2 * var(--tile-gap)) / 3 + var(--tile-gap)); top: calc(var(--tile-stagger) + 2 * (var(--tile-h) + var(--tile-gap))); }
 }
 
 .tile__num {
@@ -1169,12 +1178,82 @@
    block in js/main.js. */
 .orb-ellipse { fill: none; stroke: var(--color-aegean-blue); stroke-width: 2; }
 
+/* Competitive Landscaping (Card 7): 9 cross/plus marks (.cross-mark),
+   each spun 360deg with cubic-bezier(0.16,1,0.3,1) when visible.
+   Individual segment draw-in is driven by JS via Element.animate()
+   like Card 6's cube lines — see the "Card 7: cross draw-in" block
+   in js/main.js. */
+.cross-draw-path { fill: none; stroke: var(--color-bone); stroke-width: 2; }
+.tile.is-visible .cross-mark {
+  animation: cross-spin 3s cubic-bezier(0.16, 1, 0.3, 1) 1 forwards;
+}
+@keyframes cross-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tile.is-visible .cross-mark { animation: none; }
+}
+
+/* Media Mix Modeling (Card 8): 4 nested triangle pairs converging on
+   the center line. Scaled up from the shared center vertex (195, 67.58)
+   with staggered delays per tier when visible. */
+.fan-draw-path {
+  fill: none;
+  stroke: var(--color-aegean-blue);
+  stroke-width: 2;
+  transform-box: view-box;
+  transform-origin: 195px 67.58px;
+  opacity: 0;
+  transform: scale(0.4);
+  transition: opacity 2s ease, transform 2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.tile.is-visible .fan-draw-path {
+  opacity: 1;
+  transform: scale(1);
+}
+.fan-draw-path[data-tier="0"] { transition-delay: 0.1s; }
+.fan-draw-path[data-tier="1"] { transition-delay: 0.25s; }
+.fan-draw-path[data-tier="2"] { transition-delay: 0.4s; }
+.fan-draw-path[data-tier="3"] { transition-delay: 0.55s; }
+@media (prefers-reduced-motion: reduce) {
+  .fan-draw-path { transition: none; }
+}
+
+/* Feature Innovation (Card 9): 5 overlapping circles scaling in from
+   their respective centers with staggered delays when visible. */
+.feature-circle {
+  fill: none;
+  stroke: var(--color-salmon);
+  stroke-width: 2;
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  transform: scale(0.4);
+  transition: opacity 2s ease, transform 2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.tile.is-visible .feature-circle {
+  opacity: 1;
+  transform: scale(1);
+}
+.feature-circle:nth-child(1) { transition-delay: 0.1s; }
+.feature-circle:nth-child(2) { transition-delay: 0.22s; }
+.feature-circle:nth-child(3) { transition-delay: 0.34s; }
+.feature-circle:nth-child(4) { transition-delay: 0.46s; }
+.feature-circle:nth-child(5) { transition-delay: 0.58s; }
+@media (prefers-reduced-motion: reduce) {
+  .feature-circle { transition: none; }
+}
+
 .tile--brand { background: var(--color-burnt-orange); }
 .tile--usage { background: var(--color-peach); color: var(--color-burnt-orange); }
 .tile--concept { background: var(--color-salmon); color: var(--color-maroon); }
 .tile--social { background: var(--color-light-teal); color: var(--color-aegean-blue); }
 .tile--pricing { background: var(--color-aegean-blue); }
 .tile--cx { background: var(--color-teal); }
+.tile--competitive { background: var(--color-brightblue); color: var(--color-bone); }
+.tile--mmm { background: var(--color--green100); color: var(--color-aegean-blue); }
+.tile--feature { background: var(--color--aubergine); color: var(--color-bone); }
 
 /* Card 4 at every width, not just the narrow ones. Its 12 ellipses share a
    centre, so the intended read — stated in the markup — is the top arc of
@@ -1243,6 +1322,9 @@
   .tile__graphic--diamonds { top: 58% !important; bottom: auto !important; }
   .tile__graphic--atom     { top: 60% !important; left: 50% !important; }
   .hex-draw                { top: 62% !important; }
+  .cross-draw              { top: 62% !important; bottom: auto !important; }
+  .fan-draw                { top: 62% !important; bottom: auto !important; }
+  .feature-circles         { top: 60% !important; bottom: auto !important; }
   /* Card 2 is the exception: six 2px rules are far less intrusive behind
      text than the other cards' large curves, and top-anchoring them would
      push two of the six lines (plus a ball) off the bottom edge entirely.
@@ -2200,7 +2282,18 @@
   gap: var(--gap-md);
 }
 
-.closing-cta__title { opacity: 0.96; max-width: 850px; }
+.closing-cta__title {
+  opacity: 0.96;
+  max-width: none;
+  white-space: nowrap;
+}
+
+@media (max-width: 767px) {
+  .closing-cta__title {
+    font-size: clamp(1.5rem, 0.4rem + 5.5vw, var(--fs-display));
+    line-height: 1.15;
+  }
+}
 .closing-cta__body { max-width: 592px; }
 
 /* This CTA gets the brand's maroon-fill treatment instead of .btn-cta's

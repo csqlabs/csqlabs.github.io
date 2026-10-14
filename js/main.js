@@ -728,6 +728,55 @@
     };
   }
 
+  /* Card 7 "cross mark segment draw-in": 9 cross/plus marks (.cross-mark),
+     each composed of 4 individual line-segment <path>s (.cross-draw-path,
+     36 segments total). Sized and measured via getTotalLength() and animated
+     with Element.animate() in the same pattern as Card 6's cubes and Card 4's
+     ellipses. Marks are staggered in DOM order matching their rotation delay,
+     with each mark's 4 segments drawing in rapid succession. */
+  var crossDrawPaths = document.querySelectorAll(".cross-draw-path");
+  var revealCrossDrawIn = function () {};
+  var resetCrossDrawIn = function () {};
+  if (crossDrawPaths.length && crossDrawPaths[0].getTotalLength) {
+    var reduceMotionCrossDraw = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var crossPathLengths = [];
+    crossDrawPaths.forEach(function (path, i) {
+      var length = path.getTotalLength();
+      crossPathLengths[i] = length;
+      path.style.strokeDasharray = length;
+      path.style.strokeDashoffset = length;
+    });
+    var CROSS_SEGMENTS_PER_MARK = 4;
+    var CROSS_MARK_DELAY_STEP = 180;
+    var CROSS_SEG_DELAY_STEP = 40;
+    var CROSS_SEG_DURATION = 450;
+    var CROSS_BASE_DELAY = 150;
+    var CROSS_EASING = "cubic-bezier(0.16, 1, 0.3, 1)";
+    if (reduceMotionCrossDraw) {
+      revealCrossDrawIn = function () {
+        crossDrawPaths.forEach(function (path) { path.style.strokeDashoffset = "0"; });
+      };
+    } else {
+      revealCrossDrawIn = function () {
+        crossDrawPaths.forEach(function (path, i) {
+          var markIndex = Math.floor(i / CROSS_SEGMENTS_PER_MARK);
+          var segIndex = i % CROSS_SEGMENTS_PER_MARK;
+          var delay = CROSS_BASE_DELAY + markIndex * CROSS_MARK_DELAY_STEP + segIndex * CROSS_SEG_DELAY_STEP;
+          path.animate(
+            [{ strokeDashoffset: crossPathLengths[i] }, { strokeDashoffset: 0 }],
+            { duration: CROSS_SEG_DURATION, delay: delay, easing: CROSS_EASING, fill: "forwards" }
+          );
+        });
+      };
+    }
+    resetCrossDrawIn = function () {
+      crossDrawPaths.forEach(function (path, i) {
+        if (path.getAnimations) path.getAnimations().forEach(function (anim) { anim.cancel(); });
+        path.style.strokeDashoffset = crossPathLengths[i];
+      });
+    };
+  }
+
   /* Per-tile reveal. Each card is observed on its own and reveals when it
      personally scrolls into view, which is what makes this follow the
      layout for free: stacked, cards arrive one at a time; two-up, the pair
@@ -741,20 +790,22 @@
 
      Repeatable, not one-shot: the observer is never unobserved, and
      .is-visible is removed again once a card leaves. Removing that class
-     is enough to reset the CSS-driven cards (1, 2, 3, 5, and the tile's
+     is enough to reset the CSS-driven cards (1, 2, 3, 5, 8, 9, and the tile's
      own fade/slide) since their revealed look exists only via a
-     `.tile.is-visible …` rule — but Cards 4 and 6 draw in via
+     `.tile.is-visible …` rule — but Cards 4, 6, and 7 draw in via
      Element.animate() outside CSS entirely, so their finished
      fill:forwards animations need an explicit reset (see
-     resetHexDrawIn/resetOrbDrawIn above) or a later re-entry would find
-     them already drawn instead of hidden. */
+     resetHexDrawIn/resetOrbDrawIn/resetCrossDrawIn above) or a later
+     re-entry would find them already drawn instead of hidden. */
   var playTileDrawIn = function (tile) {
     if (tile.classList.contains("tile--cx")) revealHexDrawIn();
     if (tile.classList.contains("tile--social")) revealOrbDrawIn();
+    if (tile.classList.contains("tile--competitive")) revealCrossDrawIn();
   };
   var resetTileDrawIn = function (tile) {
     if (tile.classList.contains("tile--cx")) resetHexDrawIn();
     if (tile.classList.contains("tile--social")) resetOrbDrawIn();
+    if (tile.classList.contains("tile--competitive")) resetCrossDrawIn();
   };
   var allTiles = Array.prototype.slice.call(document.querySelectorAll(".tile"));
   if (allTiles.length) {
