@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anti-Spam Policy</title>
+    <!-- Tailwind CSS for clean, responsive styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Import Inter font for better readability */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased min-h-screen py-10 px-4 sm:px-6 lg:px-8">
+
+    <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-sm border border-gray-100 p-8 sm:p-12">
+        
+        <!-- Header Section -->
+        <header class="mb-10 text-center sm:text-left">
+            <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">Anti-Spam Policy</h1>
+            <p class="text-sm text-gray-500">Last updated: <span id="current-date">[Date]</span></p>
+        </header>
+
+        <!-- Content Section -->
+        <main class="space-y-6">
+            
+            <section>
+                <p class="leading-relaxed text-gray-700 text-lg">
+                    We are committed to providing a safe, secure, and spam-free environment for our users. This Anti-Spam Policy outlines our strict zero-tolerance approach to spam and sets forth the rules governing communications related to our website and services.
+                </p>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4 border-b border-gray-100 pb-2">1. What is Spam?</h2>
+                <p class="leading-relaxed text-gray-700 mb-4">
+                    Spam, also known as junk email, is unsolicited bulk commercial email. In the context of our website, spam also includes unsolicited comments, forum posts, direct messages, and any other form of unauthorized mass communication.
+                </p>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4 border-b border-gray-100 pb-2">2. Zero-Tolerance Policy</h2>
+                <p class="leading-relaxed text-gray-700 mb-4">
+                    We maintain a strict zero-tolerance policy against spam. We do not engage in spamming, nor do we authorize any third parties to send spam on our behalf. Any account found to be associated with the transmission of spam will be immediately suspended or terminated without prior notice.
+                </p>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4 border-b border-gray-100 pb-2">3. User Obligations</h2>
+                <p class="leading-relaxed text-gray-700 mb-4">
+                    By using our website and services, you agree that you will not:
+                </p>
+                <ul class="list-disc pl-6 space-y-2 text-gray-700">
+                    <li>Harvest or collect email addresses or other contact information of other users from the service by electronic or other means for the purposes of sending unsolicited emails or other unsolicited communications.</li>
+                    <li>Use our forms, comment sections, or messaging systems to distribute unauthorized advertising, promotional materials, "junk mail," "spam," "chain letters," or "pyramid schemes."</li>
+                    <li>Send emails to our users that contain false, misleading, or deceptive information in the subject line or body.</li>
+                    <li>Attempt to bypass our automated spam filtering systems.</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4 border-b border-gray-100 pb-2">4. Automated Spam Filtering</h2>
+                <p class="leading-relaxed text-gray-700 mb-4">
+                    Our messaging systems automatically scan all incoming emails and internal messages, and filter out those that appear to be spam. However, no message filtering system is 100% accurate. From time to time, legitimate messages may be filtered out by our systems. If you believe this has happened to a message you have sent, please contact us by another means.
+                </p>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4 border-b border-gray-100 pb-2">5. Reporting Spam</h2>
+                <p class="leading-relaxed text-gray-700 mb-4">
+                    If you suspect that you have received spam from our domain or from an account registered on our website, please report it to us immediately. Please forward the suspected email or provide a link to the offending content along with a brief explanation.
+                </p>
+                <div class="bg-blue-50 text-blue-800 p-4 rounded-lg mt-4 inline-block">
+                    <strong>Report spam to:</strong> <a href="mailto:legal@csqlabs.com" class="text-blue-600 hover:underline">legal@csqlabs.com</a>
+                </div>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4 border-b border-gray-100 pb-2">6. Changes to this Policy</h2>
+                <p class="leading-relaxed text-gray-700 mb-4">
+                    We may amend this anti-spam policy at any time by publishing a new version on this website. It is your responsibility to review this policy periodically for any changes.
+                </p>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4 border-b border-gray-100 pb-2">7. Contact Us</h2>
+                <p class="leading-relaxed text-gray-700 mb-4">
+                    If you have any questions about this Anti-Spam Policy, please contact us at:
+                </p>
+                <address class="not-italic text-gray-700 bg-gray-50 p-6 rounded-lg border border-gray-100">
+                    <strong>csqlabs.com</strong><br>
+                    Email: <a href="mailto:legal@csqlabs.com" class="text-blue-600 hover:underline">legal@csqlabs.com</a><br>
+                </address>
+            </section>
+
+        </main>
+        
+        <footer class="mt-12 pt-6 border-t border-gray-100 text-center text-sm text-gray-400">
+            &copy; <span id="current-year"></span> [Your Company/Website Name]. All rights reserved.
+        </footer>
+
+    </div>
+
+    <script>
+        // Automatically set the current date and year for the template
+        const today = new Date();
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('current-date').textContent = today.toLocaleDateString('en-US', options);
+        document.getElementById('current-year').textContent = today.getFullYear();
+    </script>
+</body>
+</html>
